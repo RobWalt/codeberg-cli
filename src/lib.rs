@@ -1,2 +1,4 @@
-mod args;
-pub use args::Opts;
+pub mod endpoints;
+mod frontend;
+
+pub use frontend::MainArgs;
