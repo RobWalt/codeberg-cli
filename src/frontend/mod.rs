@@ -1,4 +1,4 @@
-mod auth;
+pub mod auth;
 use clap::Parser;
 
 #[derive(Parser, Debug)]

@@ -1,4 +1,4 @@
-mod login;
+pub mod login;
 use clap::Subcommand;
 
 #[derive(Subcommand, Debug)]
