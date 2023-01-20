@@ -1,6 +1,7 @@
 pub(crate) mod actions;
 pub(crate) mod endpoints;
 pub(crate) mod frontend;
+pub(crate) mod git_info;
 pub(crate) mod paths;
 pub(crate) mod types;
 
