@@ -1,17 +1,18 @@
-use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
 use anyhow::Context;
-use reqwest::header::{self, HeaderMap};
-use reqwest::{Client, Url};
-use serde::Deserialize;
+use reqwest::Url;
 
 use crate::endpoints::{AUTHENTIFICATION_VERIFICATION, CODEBERG_API_BASE};
+use crate::paths::token_directory;
+use crate::types::client::CodebergClient;
+use crate::types::response::JSONResponse;
+use crate::{LoginArgs, Token};
 
 const TOKEN_GENERATION_URL: &str = "https://codeberg.org/user/settings/applications";
 
-pub async fn login() -> anyhow::Result<()> {
+pub async fn login(_args: LoginArgs) -> anyhow::Result<()> {
     // ask for usage of browser
     if dialoguer::Confirm::new()
         .with_prompt("Authenticating. Open Browser to generate token for codeberg-cli?")
@@ -35,7 +36,7 @@ pub async fn login() -> anyhow::Result<()> {
     // save the token
     std::fs::write(token_path.as_path(), token.as_str())?;
 
-    verify_setup(token.as_str())
+    verify_setup(&token)
         .await
         .or_else(cleanup_token_failed_verification(token_path.as_path()))
 }
@@ -51,19 +52,8 @@ fn cleanup_token_failed_verification(
     }
 }
 
-async fn verify_setup(token: &str) -> anyhow::Result<()> {
-    #[derive(Deserialize, Debug)]
-    #[serde(untagged)]
-    pub enum ResponseValue {
-        Int(i32),
-        String(String),
-        Bool(bool),
-    }
-    let mut headers = HeaderMap::new();
-    headers.insert(header::ACCEPT, "application/json".parse()?);
-    headers.insert(header::AUTHORIZATION, format!("Bearer {token}").parse()?);
-
-    let client = Client::builder().default_headers(headers).build()?;
+async fn verify_setup(token: &Token) -> anyhow::Result<()> {
+    let client = CodebergClient::new(token).context("Couldn't create CodClient.")?;
 
     let verification_api_endpoint =
         Url::from_str(CODEBERG_API_BASE)?.join(AUTHENTIFICATION_VERIFICATION)?;
@@ -72,7 +62,7 @@ async fn verify_setup(token: &str) -> anyhow::Result<()> {
         .get(verification_api_endpoint)
         .send()
         .await?
-        .json::<HashMap<String, ResponseValue>>()
+        .json::<JSONResponse>()
         .await?
         .contains_key("username")
         .then_some(())
@@ -86,14 +76,11 @@ async fn verify_setup(token: &str) -> anyhow::Result<()> {
 }
 
 fn create_token_storage_path() -> anyhow::Result<PathBuf> {
-    dirs::data_dir()
-        .context("Couldn't find data directory for saving the token.")
-        .map(|data_dir| data_dir.join(".cod"))
-        .and_then(|token_dir| {
-            std::fs::create_dir_all(&token_dir)
-                .context("Couldn't create directory for saving the token.")?;
-            Ok(token_dir.join("TOKEN"))
-        })
+    token_directory().and_then(|token_dir| {
+        std::fs::create_dir_all(&token_dir)
+            .context("Couldn't create directory for saving the token.")?;
+        Ok(token_dir.join("TOKEN"))
+    })
 }
 
 fn validate_token(input: &String) -> anyhow::Result<()> {
@@ -125,11 +112,12 @@ fn validate_token_length(token: &str) -> anyhow::Result<()> {
     Ok(())
 }
 
-fn ask_for_token() -> anyhow::Result<String> {
+fn ask_for_token() -> anyhow::Result<Token> {
     dialoguer::Input::new()
         .with_prompt("Token")
         .allow_empty(false)
         .validate_with(validate_token)
         .interact()
+        .map(Token)
         .map_err(anyhow::Error::from)
 }
