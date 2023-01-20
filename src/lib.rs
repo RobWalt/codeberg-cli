@@ -1,6 +1,7 @@
 mod actions;
 pub mod endpoints;
 mod frontend;
+pub(crate) mod paths;
 
 pub use frontend::auth::login::LoginArgs;
 pub use frontend::auth::AuthArgs;
