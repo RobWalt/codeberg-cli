@@ -3,9 +3,11 @@ use std::ops::DerefMut;
 
 use reqwest::header;
 use reqwest::Client;
+use reqwest::Url;
 
 use crate::Token;
 
+#[derive(Debug, Clone)]
 pub struct CodebergClient(Client);
 
 impl Deref for CodebergClient {
@@ -31,5 +33,10 @@ impl CodebergClient {
 
         let client = Client::builder().default_headers(headers).build()?;
         Ok(Self(client))
+    }
+
+    pub async fn get(&self, api_endpoint: Url) -> anyhow::Result<serde_json::Value> {
+        let response = self.deref().get(api_endpoint).send().await?.json().await?;
+        Ok(response)
     }
 }
