@@ -7,7 +7,6 @@ use reqwest::Url;
 use crate::endpoints::{AUTHENTIFICATION_VERIFICATION, CODEBERG_API_BASE};
 use crate::paths::token_directory;
 use crate::types::client::CodebergClient;
-use crate::types::response::JSONResponse;
 use crate::{LoginArgs, Token};
 
 const TOKEN_GENERATION_URL: &str = "https://codeberg.org/user/settings/applications";
@@ -58,17 +57,17 @@ async fn verify_setup(token: &Token) -> anyhow::Result<()> {
     let verification_api_endpoint =
         Url::from_str(CODEBERG_API_BASE)?.join(AUTHENTIFICATION_VERIFICATION)?;
 
-    client
+    let json_response = client
         .get(verification_api_endpoint)
         .send()
         .await?
-        .json::<JSONResponse>()
-        .await?
-        .contains_key("username")
-        .then_some(())
-        .ok_or_else(|| {
-            anyhow::anyhow!("Verification API call didn't contain expected information.")
-        })?;
+        .json::<serde_json::Value>()
+        .await?;
+
+    match json_response {
+        serde_json::Value::Object(map) if map.contains_key("username") => {}
+        _ => anyhow::bail!("Verification API call didn't contain expected information."),
+    };
 
     println!("\nAuthentication success!");
 
