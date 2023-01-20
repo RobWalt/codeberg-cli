@@ -9,3 +9,4 @@ pub use frontend::auth::AuthArgs;
 pub use frontend::MainArgs;
 
 pub use actions::auth::login::login;
+pub use actions::auth::logout::logout;
