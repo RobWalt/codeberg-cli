@@ -1,4 +1,6 @@
 pub mod auth;
+pub mod user;
+
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -6,4 +8,7 @@ use clap::Parser;
 pub enum MainArgs {
     #[command(subcommand)]
     Auth(auth::AuthArgs),
+
+    #[command(subcommand)]
+    User(user::UserArgs),
 }
