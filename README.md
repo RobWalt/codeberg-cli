@@ -1,6 +1,10 @@
-# cod-rs
+# cod-rs (wip)
 
 CLI Tool for Codeberg similar to `gh` and `glab`
+
+# Usage
+
+Run `cod --help` for a detailed help menu.
 
 # Development 
 
