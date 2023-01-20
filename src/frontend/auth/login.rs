@@ -11,5 +11,4 @@ use clap::Parser;
     before_long_help = None,
     after_long_help = None
 )]
-
 pub struct LoginArgs {}
