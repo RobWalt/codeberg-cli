@@ -57,12 +57,7 @@ async fn verify_setup(token: &Token) -> anyhow::Result<()> {
     let verification_api_endpoint =
         Url::from_str(CODEBERG_API_BASE)?.join(AUTHENTIFICATION_VERIFICATION)?;
 
-    let json_response = client
-        .get(verification_api_endpoint)
-        .send()
-        .await?
-        .json::<serde_json::Value>()
-        .await?;
+    let json_response = client.get(verification_api_endpoint).await?;
 
     match json_response {
         serde_json::Value::Object(map) if map.contains_key("username") => {}
