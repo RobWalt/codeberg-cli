@@ -1,0 +1,18 @@
+[package]
+name = "cod-actions"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.68"
+cod-cli = { version = "0.1.0", path = "../cod-cli" }
+cod-endpoints = { version = "0.1.0", path = "../cod-endpoints" }
+cod-git-info = { version = "0.1.0", path = "../cod-git-info" }
+cod-paths = { version = "0.1.0", path = "../cod-paths" }
+cod-types = { version = "0.1.0", path = "../cod-types" }
+dialoguer = { git = "https://github.com/RobWalt/dialoguer" }
+reqwest = "0.11.14"
+term-table = "1.3.2"
+webbrowser = "0.8.4"

@@ -3,26 +3,15 @@ name = "codeberg-cli"
 version = "0.1.0"
 edition = "2021"
 
-[lib]
-name = "codeberg_cli_backend"
-path = "src/lib.rs"
-
 [[bin]]
 name = "cod"
-path = "src/bin/main.rs"
+path = "src/main.rs"
 
 [dependencies]
-anyhow = "1.0.68"
-dirs = "4.0.0"
-reqwest = { version = "0.11.13", features = ["json"] }
-serde = { version = "1.0.152", features = ["derive"] }
-serde_json = "1.0.91"
-strum = { version = "0.24.1", features = ["derive"] }
-tokio = { version = "1.24.1", features = ["full"] }
-webbrowser = "0.8.4"
-dialoguer = { git = "https://github.com/RobWalt/dialoguer" }
-clap = { version = "4.1.1", features = ["derive"] }
-derive-new = "0.5.9"
-term-table = "1.3.2"
-tracing = "0.1.37"
-tracing-subscriber = "0.3.16"
+cod-bin = { version = "0.1.0", path = "crates/cod-bin" }
+tokio = { version = "1.24.2", features = ["full"] }
+
+[workspace]
+members = [
+  "crates/*"
+]
