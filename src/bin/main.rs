@@ -4,6 +4,8 @@ use codeberg_cli_backend::{info, login, logout, AuthArgs, MainArgs, Token, UserA
 
 #[tokio::main]
 async fn main() {
+    tracing_subscriber::fmt::init();
+
     let cli = Command::new("cod");
     let mut cli = MainArgs::augment_subcommands(cli);
     let args = MainArgs::from_arg_matches(&cli.clone().get_matches()).unwrap();
