@@ -1,9 +1,11 @@
+use std::fmt::Debug;
 use std::ops::Deref;
 use std::ops::DerefMut;
 
 use reqwest::header;
 use reqwest::Client;
 use reqwest::Url;
+use serde::de::DeserializeOwned;
 
 use crate::Token;
 
@@ -35,8 +37,21 @@ impl CodebergClient {
         Ok(Self(client))
     }
 
-    pub async fn get(&self, api_endpoint: Url) -> anyhow::Result<serde_json::Value> {
-        let response = self.deref().get(api_endpoint).send().await?.json().await?;
-        Ok(response)
+    pub async fn get<T: DeserializeOwned + Debug>(&self, api_endpoint: Url) -> anyhow::Result<T> {
+        self.get_query::<[(&str, &str); 0], T>(api_endpoint, [])
+            .await
+    }
+
+    pub async fn get_query<Q: serde::Serialize, T: DeserializeOwned + Debug>(
+        &self,
+        api_endpoint: Url,
+        query: Q,
+    ) -> anyhow::Result<T> {
+        tracing::info!("Making API call. API endpoint: {:?}", api_endpoint.as_str());
+        let response = self.deref().get(api_endpoint).query(&query).send().await?;
+        tracing::info!("Response Status: {:?}", response.status());
+        let json_response = response.json().await?;
+        tracing::info!("Response: {:?}", json_response);
+        Ok(json_response)
     }
 }

@@ -1,4 +1,5 @@
 pub mod auth;
+pub mod issue;
 pub mod user;
 
 use clap::Parser;
@@ -11,4 +12,7 @@ pub enum MainArgs {
 
     #[command(subcommand)]
     User(user::UserArgs),
+
+    #[command(subcommand)]
+    Issue(issue::IssueArgs),
 }

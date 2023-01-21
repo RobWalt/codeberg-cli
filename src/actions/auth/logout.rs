@@ -1,4 +1,4 @@
-use crate::frontend::auth::logout::LogoutArgs;
+use crate::cli::auth::logout::LogoutArgs;
 use crate::paths::token_path;
 
 pub fn logout(args: LogoutArgs) -> anyhow::Result<()> {

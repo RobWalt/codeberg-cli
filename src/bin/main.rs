@@ -1,6 +1,8 @@
 use anyhow::Context;
 use clap::{Command, FromArgMatches, Subcommand};
-use codeberg_cli_backend::{info, login, logout, AuthArgs, MainArgs, Token, UserArgs};
+use codeberg_cli_backend::{
+    info, list, login, logout, AuthArgs, IssueArgs, MainArgs, Token, UserArgs,
+};
 
 #[tokio::main]
 async fn main() {
@@ -32,5 +34,6 @@ async fn dispatch_args(args: MainArgs) -> anyhow::Result<()> {
         MainArgs::Auth(AuthArgs::Logout(logout_args)) => logout(logout_args),
         MainArgs::Auth(AuthArgs::Login(_)) => unreachable!("was already handled"),
         MainArgs::User(UserArgs::Info(info_args)) => info(info_args, token).await,
+        MainArgs::Issue(IssueArgs::List(list_args)) => list(list_args, token).await,
     }
 }
