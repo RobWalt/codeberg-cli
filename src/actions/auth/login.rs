@@ -1,13 +1,10 @@
 use std::path::{Path, PathBuf};
-use std::str::FromStr;
 
-use anyhow::Context;
-use reqwest::Url;
-
-use crate::endpoints::{AUTHENTIFICATION_VERIFICATION, CODEBERG_API_BASE};
+use crate::endpoints::endpoint_generator::EndpointGenerator;
 use crate::paths::token_directory;
 use crate::types::client::CodebergClient;
 use crate::{LoginArgs, Token};
+use anyhow::Context;
 
 const TOKEN_GENERATION_URL: &str = "https://codeberg.org/user/settings/applications";
 
@@ -54,8 +51,7 @@ fn cleanup_token_failed_verification(
 async fn verify_setup(token: &Token) -> anyhow::Result<()> {
     let client = CodebergClient::new(token).context("Couldn't create CodClient.")?;
 
-    let verification_api_endpoint =
-        Url::from_str(CODEBERG_API_BASE)?.join(AUTHENTIFICATION_VERIFICATION)?;
+    let verification_api_endpoint = EndpointGenerator::verify()?;
 
     let json_response = client.get(verification_api_endpoint).await?;
 
