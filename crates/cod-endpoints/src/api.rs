@@ -9,6 +9,6 @@ pub const USER_REPOS: &str = "user/repos";
 
 pub const REPO_OWNER_REPOS: &str = "repos";
 
-pub const REPO_LIST_ISSUES: &str = "issues";
-pub const REPO_LIST_PULLS: &str = "pulls";
-pub const REPO_LIST_LABELS: &str = "labels";
+pub const REPO_ISSUES: &str = "issues";
+pub const REPO_PULLS: &str = "pulls";
+pub const REPO_LABELS: &str = "labels";

@@ -13,7 +13,7 @@ pub async fn list_issues(args: ListIssueArgs, token: Token) -> anyhow::Result<()
     let repo_name = get_reponame()?;
     let username = get_username(&client).await?;
 
-    let api_endpoint = EndpointGenerator::list_issues(username, repo_name)?;
+    let api_endpoint = EndpointGenerator::repo_issues(username, repo_name)?;
 
     let issues_list = get_issue_list(&client, args, api_endpoint).await?;
 

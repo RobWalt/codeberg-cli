@@ -13,7 +13,7 @@ pub async fn list_labels(args: ListLabelsArgs, token: Token) -> anyhow::Result<(
     let repo_name = get_reponame()?;
     let username = get_username(&client).await?;
 
-    let api_endpoint = EndpointGenerator::list_labels(username, repo_name)?;
+    let api_endpoint = EndpointGenerator::repo_labels(username, repo_name)?;
 
     let labels_list = get_labels_list(&client, args, api_endpoint).await?;
 
