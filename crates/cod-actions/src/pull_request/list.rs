@@ -33,42 +33,37 @@ async fn get_pull_list(
 }
 
 fn present_pull_requests_list(pull_requests: Vec<PullRequest>) {
-    use term_table::row::*;
-    use term_table::table_cell::*;
-    use term_table::*;
-
-    let mut table = Table::new();
-    table.max_column_width(40);
-    table.style = TableStyle::elegant();
+    use cod_render::prelude::*;
 
     let pull_requests_empty = pull_requests.is_empty();
 
-    let header = if pull_requests_empty {
-        "Pull Requests (empty)"
-    } else {
-        "Pull Requests"
-    };
-
-    table.add_row(Row::new(vec![TableCell::new_with_alignment(
-        header,
+    let rows = std::iter::once(Some(Row::new([TableCell::new_with_alignment(
+        format!(
+            "Issues{}",
+            pull_requests_empty
+                .then_some(" (empty)")
+                .unwrap_or_default()
+        ),
         3,
         Alignment::Center,
-    )]));
-
-    if !pull_requests_empty {
-        table.add_row(Row::new(vec![
-            TableCell::new_with_alignment("Number", 1, Alignment::Center),
-            TableCell::new_with_alignment("Name", 1, Alignment::Center),
-            TableCell::new_with_alignment("Labels", 1, Alignment::Center),
-        ]));
-
-        pull_requests.into_iter().for_each(|pull_request| {
+    )])))
+    .chain(std::iter::once_with(|| {
+        (!pull_requests_empty).then(|| {
+            Row::new([
+                TableCell::new_with_alignment("Number", 1, Alignment::Center),
+                TableCell::new_with_alignment("Name", 1, Alignment::Center),
+                TableCell::new_with_alignment("Labels", 1, Alignment::Center),
+            ])
+        })
+    }))
+    .chain(pull_requests.into_iter().map(|issue| {
+        (!pull_requests_empty).then(|| {
             let PullRequest {
                 title,
                 number,
                 labels,
-            } = pull_request;
-            table.add_row(Row::new(vec![
+            } = issue;
+            Row::new([
                 TableCell::new_with_alignment(number, 1, Alignment::Left),
                 TableCell::new_with_alignment(title, 1, Alignment::Left),
                 TableCell::new_with_alignment(
@@ -80,9 +75,12 @@ fn present_pull_requests_list(pull_requests: Vec<PullRequest>) {
                     1,
                     Alignment::Left,
                 ),
-            ]));
-        });
-    }
+            ])
+        })
+    }))
+    .flatten();
+
+    let table = CodTable::builder().build().add_rows(rows);
 
     println!("{}", table.render());
 }

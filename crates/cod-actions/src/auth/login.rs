@@ -75,8 +75,8 @@ fn create_token_storage_path() -> anyhow::Result<PathBuf> {
     })
 }
 
-fn validate_token(input: &String) -> anyhow::Result<()> {
-    validate_word_count(input.as_str()).and_then(validate_token_length)
+fn validate_token<T: ToString>(input: &T) -> anyhow::Result<()> {
+    validate_word_count(input.to_string().as_str()).and_then(validate_token_length)
 }
 
 fn validate_word_count(input: &str) -> anyhow::Result<&str> {
@@ -105,7 +105,7 @@ fn validate_token_length(token: &str) -> anyhow::Result<()> {
 }
 
 fn ask_for_token() -> anyhow::Result<Token> {
-    dialoguer::Input::new()
+    dialoguer::Input::<String>::new()
         .with_prompt("Token")
         .allow_empty(false)
         .validate_with(validate_token)
