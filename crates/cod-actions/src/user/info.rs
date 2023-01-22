@@ -7,7 +7,7 @@ use cod_types::api::user_info::UserInfo;
 use cod_types::client::CodebergClient;
 use cod_types::token::Token;
 
-pub async fn info(args: InfoArgs, token: Token) -> anyhow::Result<()> {
+pub async fn info(_args: InfoArgs, token: Token) -> anyhow::Result<()> {
     let client = CodebergClient::new(&token)?;
 
     let username = get_username(&client).await?;
@@ -77,43 +77,40 @@ fn present_user_info(
     repos_count: usize,
     top_repos: Vec<RepoInfo>,
 ) {
-    use term_table::row::Row;
-    use term_table::table_cell::Alignment;
-    use term_table::table_cell::TableCell;
-    use term_table::{Table, TableStyle};
+    use cod_render::prelude::*;
 
-    let mut table = Table::new();
-    table.max_column_width(40);
-    table.style = TableStyle::elegant();
+    let rows = [
+        Row::new([
+            TableCell::new_with_alignment("Username", 1, Alignment::Left),
+            TableCell::new_with_alignment(username, 1, Alignment::Center),
+        ]),
+        Row::new([
+            TableCell::new_with_alignment("Followers", 1, Alignment::Left),
+            TableCell::new_with_alignment(followers_count, 1, Alignment::Center),
+        ]),
+        Row::new([
+            TableCell::new_with_alignment("Following", 1, Alignment::Left),
+            TableCell::new_with_alignment(following_count, 1, Alignment::Center),
+        ]),
+        Row::new([
+            TableCell::new_with_alignment("Repos", 1, Alignment::Left),
+            TableCell::new_with_alignment(repos_count, 1, Alignment::Center),
+        ]),
+        Row::new([
+            TableCell::new_with_alignment("Top Repos", 1, Alignment::Left),
+            TableCell::new_with_alignment(
+                top_repos
+                    .into_iter()
+                    .map(|repo| format!("- {} ({}⭐)", repo.name, repo.stars_count))
+                    .collect::<Vec<_>>()
+                    .join("\n"),
+                1,
+                Alignment::Left,
+            ),
+        ]),
+    ];
 
-    table.add_row(Row::new(vec![
-        TableCell::new_with_alignment("Username", 1, Alignment::Left),
-        TableCell::new_with_alignment(username, 1, Alignment::Center),
-    ]));
-    table.add_row(Row::new(vec![
-        TableCell::new_with_alignment("Followers", 1, Alignment::Left),
-        TableCell::new_with_alignment(followers_count, 1, Alignment::Center),
-    ]));
-    table.add_row(Row::new(vec![
-        TableCell::new_with_alignment("Following", 1, Alignment::Left),
-        TableCell::new_with_alignment(following_count, 1, Alignment::Center),
-    ]));
-    table.add_row(Row::new(vec![
-        TableCell::new_with_alignment("Repos", 1, Alignment::Left),
-        TableCell::new_with_alignment(repos_count, 1, Alignment::Center),
-    ]));
-    table.add_row(Row::new(vec![
-        TableCell::new_with_alignment("Top Repos", 1, Alignment::Left),
-        TableCell::new_with_alignment(
-            top_repos
-                .into_iter()
-                .map(|repo| format!("- {} ({}⭐)", repo.name, repo.stars_count))
-                .collect::<Vec<_>>()
-                .join("\n"),
-            1,
-            Alignment::Left,
-        ),
-    ]));
+    let table = CodTable::builder().build().add_rows(rows);
 
     println!("{}", table.render());
 }

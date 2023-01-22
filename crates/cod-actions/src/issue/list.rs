@@ -33,42 +33,35 @@ async fn get_issue_list(
 }
 
 fn present_issues_list(issues: Vec<Issue>) {
-    use term_table::row::*;
-    use term_table::table_cell::*;
-    use term_table::*;
-
-    let mut table = Table::new();
-    table.max_column_width(40);
-    table.style = TableStyle::elegant();
+    use cod_render::prelude::*;
 
     let issues_empty = issues.is_empty();
 
-    let header = if issues_empty {
-        "Issues (empty)"
-    } else {
-        "Issues"
-    };
-
-    table.add_row(Row::new(vec![TableCell::new_with_alignment(
-        header,
+    let rows = std::iter::once(Some(Row::new([TableCell::new_with_alignment(
+        format!(
+            "Issues{}",
+            issues_empty.then_some(" (empty)").unwrap_or_default()
+        ),
         3,
         Alignment::Center,
-    )]));
-
-    if !issues_empty {
-        table.add_row(Row::new(vec![
-            TableCell::new_with_alignment("Number", 1, Alignment::Center),
-            TableCell::new_with_alignment("Name", 1, Alignment::Center),
-            TableCell::new_with_alignment("Labels", 1, Alignment::Center),
-        ]));
-
-        issues.into_iter().for_each(|issue| {
+    )])))
+    .chain(std::iter::once_with(|| {
+        (!issues_empty).then(|| {
+            Row::new([
+                TableCell::new_with_alignment("Number", 1, Alignment::Center),
+                TableCell::new_with_alignment("Name", 1, Alignment::Center),
+                TableCell::new_with_alignment("Labels", 1, Alignment::Center),
+            ])
+        })
+    }))
+    .chain(issues.into_iter().map(|issue| {
+        (!issues_empty).then(|| {
             let Issue {
                 title,
                 number,
                 labels,
             } = issue;
-            table.add_row(Row::new(vec![
+            Row::new([
                 TableCell::new_with_alignment(number, 1, Alignment::Left),
                 TableCell::new_with_alignment(title, 1, Alignment::Left),
                 TableCell::new_with_alignment(
@@ -80,9 +73,12 @@ fn present_issues_list(issues: Vec<Issue>) {
                     1,
                     Alignment::Left,
                 ),
-            ]));
-        });
-    }
+            ])
+        })
+    }))
+    .flatten();
+
+    let table = CodTable::builder().build().add_rows(rows);
 
     println!("{}", table.render());
 }
