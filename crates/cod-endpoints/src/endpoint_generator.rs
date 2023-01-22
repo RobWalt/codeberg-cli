@@ -35,21 +35,21 @@ impl EndpointGenerator {
         Ok(url)
     }
 
-    pub fn list_issues(owner: impl ToString, repo: impl ToString) -> anyhow::Result<Url> {
-        use crate::api::REPO_LIST_ISSUES;
-        let url = Self::repos_owner_repo(owner, repo)?.join(REPO_LIST_ISSUES)?;
+    pub fn repo_issues(owner: impl ToString, repo: impl ToString) -> anyhow::Result<Url> {
+        use crate::api::REPO_ISSUES;
+        let url = Self::repos_owner_repo(owner, repo)?.join(REPO_ISSUES)?;
         Ok(url)
     }
 
-    pub fn list_pulls(owner: impl ToString, repo: impl ToString) -> anyhow::Result<Url> {
-        use crate::api::REPO_LIST_PULLS;
-        let url = Self::repos_owner_repo(owner, repo)?.join(REPO_LIST_PULLS)?;
+    pub fn repo_pulls(owner: impl ToString, repo: impl ToString) -> anyhow::Result<Url> {
+        use crate::api::REPO_PULLS;
+        let url = Self::repos_owner_repo(owner, repo)?.join(REPO_PULLS)?;
         Ok(url)
     }
 
-    pub fn list_labels(owner: impl ToString, repo: impl ToString) -> anyhow::Result<Url> {
-        use crate::api::REPO_LIST_LABELS;
-        let url = Self::repos_owner_repo(owner, repo)?.join(REPO_LIST_LABELS)?;
+    pub fn repo_labels(owner: impl ToString, repo: impl ToString) -> anyhow::Result<Url> {
+        use crate::api::REPO_LABELS;
+        let url = Self::repos_owner_repo(owner, repo)?.join(REPO_LABELS)?;
         Ok(url)
     }
 }

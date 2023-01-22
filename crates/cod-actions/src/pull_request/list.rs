@@ -13,7 +13,7 @@ pub async fn list_pulls(args: ListPullRequestArgs, token: Token) -> anyhow::Resu
     let repo_name = get_reponame()?;
     let username = get_username(&client).await?;
 
-    let api_endpoint = EndpointGenerator::list_pulls(username, repo_name)?;
+    let api_endpoint = EndpointGenerator::repo_pulls(username, repo_name)?;
 
     let pull_requests_list = get_pull_list(&client, args, api_endpoint).await?;
 
