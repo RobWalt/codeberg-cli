@@ -26,23 +26,30 @@ generator_method!(user_following, USER_FOLLOWING);
 generator_method!(user_repos, USER_REPOS);
 
 impl EndpointGenerator {
-    pub fn issues_list(owner: impl ToString, repo: impl ToString) -> anyhow::Result<Url> {
-        use crate::api::{ISSUE_LIST_END, ISSUE_LIST_START};
+    fn repos_owner_repo(owner: impl ToString, repo: impl ToString) -> anyhow::Result<Url> {
+        use crate::api::REPO_OWNER_REPOS;
         let url = Url::from_str(CODEBERG_API_BASE)?
-            .join((ISSUE_LIST_START.to_owned() + "/").as_str())?
+            .join((REPO_OWNER_REPOS.to_owned() + "/").as_str())?
             .join((owner.to_string() + "/").as_str())?
-            .join((repo.to_string() + "/").as_str())?
-            .join(ISSUE_LIST_END)?;
+            .join((repo.to_string() + "/").as_str())?;
         Ok(url)
     }
 
-    pub fn pull_list(owner: impl ToString, repo: impl ToString) -> anyhow::Result<Url> {
-        use crate::api::{PULL_LIST_END, PULL_LIST_START};
-        let url = Url::from_str(CODEBERG_API_BASE)?
-            .join((PULL_LIST_START.to_owned() + "/").as_str())?
-            .join((owner.to_string() + "/").as_str())?
-            .join((repo.to_string() + "/").as_str())?
-            .join(PULL_LIST_END)?;
+    pub fn list_issues(owner: impl ToString, repo: impl ToString) -> anyhow::Result<Url> {
+        use crate::api::REPO_LIST_ISSUES;
+        let url = Self::repos_owner_repo(owner, repo)?.join(REPO_LIST_ISSUES)?;
+        Ok(url)
+    }
+
+    pub fn list_pulls(owner: impl ToString, repo: impl ToString) -> anyhow::Result<Url> {
+        use crate::api::REPO_LIST_PULLS;
+        let url = Self::repos_owner_repo(owner, repo)?.join(REPO_LIST_PULLS)?;
+        Ok(url)
+    }
+
+    pub fn list_labels(owner: impl ToString, repo: impl ToString) -> anyhow::Result<Url> {
+        use crate::api::REPO_LIST_LABELS;
+        let url = Self::repos_owner_repo(owner, repo)?.join(REPO_LIST_LABELS)?;
         Ok(url)
     }
 }

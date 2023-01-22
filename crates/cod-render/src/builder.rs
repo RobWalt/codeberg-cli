@@ -1,23 +1,16 @@
-use term_table::{Table, TableStyle};
+use term_table::row::Row;
+use term_table::{TableBuilder, TableStyle};
 
 use crate::table::CodTable;
 
-#[derive(Debug, Clone)]
-pub struct CodTableBuilder {
+#[derive(Debug, Clone, Default)]
+pub struct CodTableBuilder<'a> {
     pub(crate) max_column_width: Option<usize>,
     pub(crate) style: Option<TableStyle>,
+    pub(crate) rows: Vec<Row<'a>>,
 }
 
-impl Default for CodTableBuilder {
-    fn default() -> Self {
-        Self {
-            max_column_width: Some(40),
-            style: Some(TableStyle::elegant()),
-        }
-    }
-}
-
-impl CodTableBuilder {
+impl<'a> CodTableBuilder<'a> {
     pub fn new() -> Self {
         Self::default()
     }
@@ -32,22 +25,32 @@ impl CodTableBuilder {
         self
     }
 
-    pub fn build<'a>(self) -> CodTable<'a> {
+    pub fn add_row(mut self, row: Row<'a>) -> Self {
+        self.rows.push(row);
+        self
+    }
+
+    pub fn add_rows<RI>(mut self, rows: RI) -> Self
+    where
+        RI: IntoIterator<Item = Row<'a>>,
+    {
+        self.rows.extend(rows);
+        self
+    }
+
+    pub fn build(self) -> CodTable<'a> {
         let CodTableBuilder {
             max_column_width,
             style,
+            rows,
         } = self;
 
-        let mut table = Table::new();
-
-        if let Some(witdh) = max_column_width {
-            table.max_column_width(witdh);
+        CodTable {
+            table: TableBuilder::new()
+                .max_column_width(max_column_width.unwrap_or(40))
+                .style(style.unwrap_or(TableStyle::elegant()))
+                .rows(rows)
+                .build(),
         }
-
-        if let Some(style) = style {
-            table.style = style;
-        }
-
-        CodTable { table }
     }
 }

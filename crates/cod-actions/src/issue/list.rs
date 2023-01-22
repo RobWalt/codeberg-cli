@@ -8,12 +8,12 @@ use cod_git_info::username::get_username;
 use cod_types::api::issue::Issue;
 use cod_types::client::CodebergClient;
 
-pub async fn list_issue(args: ListIssueArgs, token: Token) -> anyhow::Result<()> {
+pub async fn list_issues(args: ListIssueArgs, token: Token) -> anyhow::Result<()> {
     let client = CodebergClient::new(&token)?;
     let repo_name = get_reponame()?;
     let username = get_username(&client).await?;
 
-    let api_endpoint = EndpointGenerator::issues_list(username, repo_name)?;
+    let api_endpoint = EndpointGenerator::list_issues(username, repo_name)?;
 
     let issues_list = get_issue_list(&client, args, api_endpoint).await?;
 
@@ -78,7 +78,7 @@ fn present_issues_list(issues: Vec<Issue>) {
     }))
     .flatten();
 
-    let table = CodTable::builder().build().add_rows(rows);
+    let table = CodTableBuilder::new().add_rows(rows).build();
 
     println!("{}", table.render());
 }

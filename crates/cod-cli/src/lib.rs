@@ -1,5 +1,6 @@
 pub mod auth;
 pub mod issue;
+pub mod label;
 pub mod pull_request;
 pub mod user;
 
@@ -19,4 +20,7 @@ pub enum MainArgs {
 
     #[command(subcommand)]
     Pull(pull_request::PullRequestArgs),
+
+    #[command(subcommand)]
+    Label(label::LabelArgs),
 }
