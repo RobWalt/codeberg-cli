@@ -110,7 +110,7 @@ fn present_user_info(
         ]),
     ];
 
-    let table = CodTable::builder().build().add_rows(rows);
+    let table = CodTableBuilder::new().add_rows(rows).build();
 
     println!("{}", table.render());
 }

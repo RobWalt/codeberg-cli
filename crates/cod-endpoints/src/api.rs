@@ -7,10 +7,8 @@ pub const USER_FOLLOWERS: &str = "user/followers";
 pub const USER_FOLLOWING: &str = "user/following";
 pub const USER_REPOS: &str = "user/repos";
 
-// repos/{owner}/{repo}/issues
-pub const ISSUE_LIST_START: &str = "repos";
-pub const ISSUE_LIST_END: &str = "issues";
+pub const REPO_OWNER_REPOS: &str = "repos";
 
-// repos/{owner}/{repo}/pulls
-pub const PULL_LIST_START: &str = "repos";
-pub const PULL_LIST_END: &str = "pulls";
+pub const REPO_LIST_ISSUES: &str = "issues";
+pub const REPO_LIST_PULLS: &str = "pulls";
+pub const REPO_LIST_LABELS: &str = "labels";
