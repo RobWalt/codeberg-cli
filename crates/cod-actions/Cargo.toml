@@ -14,5 +14,7 @@ cod-paths = { version = "0.1.0", path = "../cod-paths" }
 cod-render = { version = "0.1.0", path = "../cod-render" }
 cod-types = { version = "0.1.0", path = "../cod-types" }
 dialoguer = { git = "https://github.com/RobWalt/dialoguer" }
+indicatif = "0.17.3"
 reqwest = "0.11.14"
+tracing = "0.1.37"
 webbrowser = "0.8.4"

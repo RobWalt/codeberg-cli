@@ -1,3 +1,4 @@
+pub mod create_label_options;
 pub mod followers_info;
 pub mod following_info;
 pub mod issue;

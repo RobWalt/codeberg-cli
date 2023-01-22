@@ -3,6 +3,7 @@ use clap::{Command, FromArgMatches, Subcommand};
 use cod_actions::auth::login::login;
 use cod_actions::auth::logout::logout;
 use cod_actions::issue::list::list_issues;
+use cod_actions::label::create::create_label;
 use cod_actions::label::list::list_labels;
 use cod_actions::pull_request::list::list_pulls;
 use cod_actions::user::info::info;
@@ -53,5 +54,6 @@ async fn dispatch_args(args: MainArgs) -> anyhow::Result<()> {
         MainArgs::Issue(IssueArgs::List(list_args)) => list_issues(list_args, token).await,
         MainArgs::Pull(PullRequestArgs::List(list_args)) => list_pulls(list_args, token).await,
         MainArgs::Label(LabelArgs::List(list_args)) => list_labels(list_args, token).await,
+        MainArgs::Label(LabelArgs::Create(create_args)) => create_label(create_args, token).await,
     }
 }
