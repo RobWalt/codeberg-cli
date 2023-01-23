@@ -1,4 +1,5 @@
 use cod_cli::label::list::ListLabelsArgs;
+use cod_render::spinner::spin_until_ready;
 use cod_types::token::Token;
 use reqwest::Url;
 
@@ -10,12 +11,16 @@ use cod_types::client::CodebergClient;
 
 pub async fn list_labels(args: ListLabelsArgs, token: Token) -> anyhow::Result<()> {
     let client = CodebergClient::new(&token)?;
-    let repo_name = get_reponame()?;
-    let username = get_username(&client).await?;
 
-    let api_endpoint = EndpointGenerator::repo_labels(username, repo_name)?;
+    let labels_list = spin_until_ready(async {
+        let repo_name = get_reponame()?;
+        let username = get_username(&client).await?;
 
-    let labels_list = get_labels_list(&client, args, api_endpoint).await?;
+        let api_endpoint = EndpointGenerator::repo_labels(username, repo_name)?;
+
+        get_labels_list(&client, args, api_endpoint).await
+    })
+    .await?;
 
     present_labels_list(labels_list);
 

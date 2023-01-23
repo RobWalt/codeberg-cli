@@ -4,6 +4,7 @@ use anyhow::Context;
 use cod_cli::auth::login::LoginArgs;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_paths::token_directory;
+use cod_render::spinner::spin_until_ready;
 use cod_types::api::user_info::UserInfo;
 use cod_types::client::CodebergClient;
 use cod_types::token::Token;
@@ -34,9 +35,12 @@ pub async fn login(_args: LoginArgs) -> anyhow::Result<()> {
     // save the token
     std::fs::write(token_path.as_path(), token.as_str())?;
 
-    verify_setup(&token)
-        .await
-        .or_else(cleanup_token_failed_verification(token_path.as_path()))
+    spin_until_ready(async {
+        verify_setup(&token)
+            .await
+            .or_else(cleanup_token_failed_verification(token_path.as_path()))
+    })
+    .await
 }
 
 fn cleanup_token_failed_verification(

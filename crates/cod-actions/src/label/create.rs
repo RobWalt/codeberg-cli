@@ -1,4 +1,5 @@
 use cod_cli::label::create::CreateLabelArgs;
+use cod_render::spinner::spin_until_ready;
 use cod_types::api::create_label_options::CreateLabelOption;
 use cod_types::token::Token;
 use reqwest::Url;
@@ -11,12 +12,16 @@ use cod_types::client::CodebergClient;
 
 pub async fn create_label(args: CreateLabelArgs, token: Token) -> anyhow::Result<()> {
     let client = CodebergClient::new(&token)?;
-    let repo_name = get_reponame()?;
-    let username = get_username(&client).await?;
 
-    let api_endpoint = EndpointGenerator::repo_labels(username, repo_name)?;
+    let label = spin_until_ready(async {
+        let repo_name = get_reponame()?;
+        let username = get_username(&client).await?;
 
-    let label = create_label_post(&client, args, api_endpoint).await?;
+        let api_endpoint = EndpointGenerator::repo_labels(username, repo_name)?;
+
+        create_label_post(&client, args, api_endpoint).await
+    })
+    .await?;
 
     println!("Successfully created label: {}", label.name);
 
