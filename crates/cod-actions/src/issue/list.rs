@@ -1,4 +1,5 @@
 use cod_cli::issue::list::ListIssueArgs;
+use cod_render::spinner::spin_until_ready;
 use cod_types::token::Token;
 use reqwest::Url;
 
@@ -10,12 +11,16 @@ use cod_types::client::CodebergClient;
 
 pub async fn list_issues(args: ListIssueArgs, token: Token) -> anyhow::Result<()> {
     let client = CodebergClient::new(&token)?;
-    let repo_name = get_reponame()?;
-    let username = get_username(&client).await?;
 
-    let api_endpoint = EndpointGenerator::repo_issues(username, repo_name)?;
+    let issues_list = spin_until_ready(async {
+        let repo_name = get_reponame()?;
+        let username = get_username(&client).await?;
 
-    let issues_list = get_issue_list(&client, args, api_endpoint).await?;
+        let api_endpoint = EndpointGenerator::repo_issues(username, repo_name)?;
+
+        get_issue_list(&client, args, api_endpoint).await
+    })
+    .await?;
 
     present_issues_list(issues_list);
 

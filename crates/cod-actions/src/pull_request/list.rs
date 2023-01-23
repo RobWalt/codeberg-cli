@@ -1,4 +1,5 @@
 use cod_cli::pull_request::list::ListPullRequestArgs;
+use cod_render::spinner::spin_until_ready;
 use cod_types::token::Token;
 use reqwest::Url;
 
@@ -10,12 +11,16 @@ use cod_types::client::CodebergClient;
 
 pub async fn list_pulls(args: ListPullRequestArgs, token: Token) -> anyhow::Result<()> {
     let client = CodebergClient::new(&token)?;
-    let repo_name = get_reponame()?;
-    let username = get_username(&client).await?;
 
-    let api_endpoint = EndpointGenerator::repo_pulls(username, repo_name)?;
+    let pull_requests_list = spin_until_ready(async {
+        let repo_name = get_reponame()?;
+        let username = get_username(&client).await?;
 
-    let pull_requests_list = get_pull_list(&client, args, api_endpoint).await?;
+        let api_endpoint = EndpointGenerator::repo_pulls(username, repo_name)?;
+
+        get_pull_list(&client, args, api_endpoint).await
+    })
+    .await?;
 
     present_pull_requests_list(pull_requests_list);
 

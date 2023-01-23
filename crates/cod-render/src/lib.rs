@@ -1,5 +1,6 @@
-mod builder;
-mod table;
+pub mod builder;
+pub mod spinner;
+pub mod table;
 
 pub mod prelude {
     pub use super::builder::CodTableBuilder;
