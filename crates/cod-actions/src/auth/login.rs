@@ -5,7 +5,7 @@ use cod_cli::auth::login::LoginArgs;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_paths::token_directory;
 use cod_render::spinner::spin_until_ready;
-use cod_types::api::user_info::UserInfo;
+use cod_types::api::user::User;
 use cod_types::client::CodebergClient;
 use cod_types::token::Token;
 
@@ -60,7 +60,7 @@ async fn verify_setup(token: &Token) -> anyhow::Result<()> {
     let verification_api_endpoint = EndpointGenerator::verify()?;
 
     _ = client
-        .get::<UserInfo>(verification_api_endpoint)
+        .get::<User>(verification_api_endpoint)
         .await
         .map_err(|_| {
             anyhow::anyhow!("Verification API call didn't contain expected information.")

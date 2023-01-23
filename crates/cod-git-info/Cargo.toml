@@ -7,5 +7,3 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.68"
-cod-endpoints = { version = "0.1.0", path = "../cod-endpoints" }
-cod-types = { version = "0.1.0", path = "../cod-types" }

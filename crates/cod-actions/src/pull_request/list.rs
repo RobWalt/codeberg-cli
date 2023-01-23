@@ -4,8 +4,6 @@ use cod_types::token::Token;
 use reqwest::Url;
 
 use cod_endpoints::endpoint_generator::EndpointGenerator;
-use cod_git_info::reponame::get_reponame;
-use cod_git_info::username::get_username;
 use cod_types::api::pull_request::PullRequest;
 use cod_types::client::CodebergClient;
 
@@ -13,10 +11,7 @@ pub async fn list_pulls(args: ListPullRequestArgs, token: Token) -> anyhow::Resu
     let client = CodebergClient::new(&token)?;
 
     let pull_requests_list = spin_until_ready(async {
-        let repo_name = get_reponame()?;
-        let username = get_username(&client).await?;
-
-        let api_endpoint = EndpointGenerator::repo_pulls(username, repo_name)?;
+        let api_endpoint = EndpointGenerator::repo_pulls()?;
 
         get_pull_list(&client, args, api_endpoint).await
     })
