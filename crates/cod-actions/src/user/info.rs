@@ -1,8 +1,8 @@
-use cod_cli::user::info::InfoArgs;
+use cod_cli::user::info::UserInfoArgs;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_render::spinner::spin_until_ready;
-use cod_types::api::repo_info::RepoInfo;
-use cod_types::api::user_info::UserInfo;
+use cod_types::api::repository::Repository;
+use cod_types::api::user::User;
 use cod_types::client::CodebergClient;
 use cod_types::token::Token;
 
@@ -11,10 +11,10 @@ struct UserData {
     following_count: usize,
     followers_count: usize,
     repos_count: usize,
-    top_repos: Vec<RepoInfo>,
+    top_repos: Vec<Repository>,
 }
 
-pub async fn info(_args: InfoArgs, token: Token) -> anyhow::Result<()> {
+pub async fn user_info(_args: UserInfoArgs, token: Token) -> anyhow::Result<()> {
     let client = CodebergClient::new(&token)?;
 
     let user_data = spin_until_ready(get_user_data(&client)).await?;
@@ -38,24 +38,24 @@ async fn get_user_data(client: &CodebergClient) -> anyhow::Result<UserData> {
     })
 }
 
-async fn get_user_info(client: &CodebergClient) -> anyhow::Result<UserInfo> {
+async fn get_user_info(client: &CodebergClient) -> anyhow::Result<User> {
     let api_endpoint = EndpointGenerator::user_info()?;
 
-    let user_info = client.get::<UserInfo>(api_endpoint).await?;
+    let user_info = client.get::<User>(api_endpoint).await?;
 
     Ok(user_info)
 }
 
-async fn get_repos_info(client: &CodebergClient) -> anyhow::Result<Vec<RepoInfo>> {
+async fn get_repos_info(client: &CodebergClient) -> anyhow::Result<Vec<Repository>> {
     let api_endpoint = EndpointGenerator::user_repos()?;
 
-    let repos_info = client.get::<Vec<RepoInfo>>(api_endpoint).await?;
+    let repos_info = client.get::<Vec<Repository>>(api_endpoint).await?;
 
     Ok(repos_info)
 }
 
-fn get_top_n_repos(mut repos_info: Vec<RepoInfo>, n: usize) -> Vec<RepoInfo> {
-    repos_info.sort_by_key(|repo| -repo.stars_count);
+fn get_top_n_repos(mut repos_info: Vec<Repository>, n: usize) -> Vec<Repository> {
+    repos_info.sort_by_key(|repo| -(repo.stars_count as isize));
     repos_info.into_iter().take(n).collect::<Vec<_>>()
 }
 

@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+use cod_git_info::repo_owner::{get_repo_owner, RepoAndOwner};
 use reqwest::Url;
 
 use crate::api::CODEBERG_API_BASE;
@@ -26,30 +27,38 @@ generator_method!(user_following, USER_FOLLOWING);
 generator_method!(user_repos, USER_REPOS);
 
 impl EndpointGenerator {
-    fn repos_owner_repo(owner: impl ToString, repo: impl ToString) -> anyhow::Result<Url> {
+    fn repos_owner_repo(endpoint: impl ToString) -> anyhow::Result<Url> {
         use crate::api::REPO_OWNER_REPOS;
+        let RepoAndOwner { repo, owner } = get_repo_owner()?;
         let url = Url::from_str(CODEBERG_API_BASE)?
             .join((REPO_OWNER_REPOS.to_owned() + "/").as_str())?
-            .join((owner.to_string() + "/").as_str())?
-            .join((repo.to_string() + "/").as_str())?;
+            .join((owner + "/").as_str())?
+            .join((repo + "/").as_str())?
+            .join((endpoint.to_string()).as_str())?;
         Ok(url)
     }
 
-    pub fn repo_issues(owner: impl ToString, repo: impl ToString) -> anyhow::Result<Url> {
+    pub fn repo_assignees() -> anyhow::Result<Url> {
+        use crate::api::REPO_ASSIGNEES;
+        Self::repos_owner_repo(REPO_ASSIGNEES)
+    }
+
+    pub fn repo_infos() -> anyhow::Result<Url> {
+        Self::repos_owner_repo("")
+    }
+
+    pub fn repo_issues() -> anyhow::Result<Url> {
         use crate::api::REPO_ISSUES;
-        let url = Self::repos_owner_repo(owner, repo)?.join(REPO_ISSUES)?;
-        Ok(url)
+        Self::repos_owner_repo(REPO_ISSUES)
     }
 
-    pub fn repo_pulls(owner: impl ToString, repo: impl ToString) -> anyhow::Result<Url> {
+    pub fn repo_pulls() -> anyhow::Result<Url> {
         use crate::api::REPO_PULLS;
-        let url = Self::repos_owner_repo(owner, repo)?.join(REPO_PULLS)?;
-        Ok(url)
+        Self::repos_owner_repo(REPO_PULLS)
     }
 
-    pub fn repo_labels(owner: impl ToString, repo: impl ToString) -> anyhow::Result<Url> {
+    pub fn repo_labels() -> anyhow::Result<Url> {
         use crate::api::REPO_LABELS;
-        let url = Self::repos_owner_repo(owner, repo)?.join(REPO_LABELS)?;
-        Ok(url)
+        Self::repos_owner_repo(REPO_LABELS)
     }
 }

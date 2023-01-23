@@ -4,8 +4,6 @@ use cod_types::token::Token;
 use reqwest::Url;
 
 use cod_endpoints::endpoint_generator::EndpointGenerator;
-use cod_git_info::reponame::get_reponame;
-use cod_git_info::username::get_username;
 use cod_types::api::issue::Issue;
 use cod_types::client::CodebergClient;
 
@@ -13,10 +11,7 @@ pub async fn list_issues(args: ListIssueArgs, token: Token) -> anyhow::Result<()
     let client = CodebergClient::new(&token)?;
 
     let issues_list = spin_until_ready(async {
-        let repo_name = get_reponame()?;
-        let username = get_username(&client).await?;
-
-        let api_endpoint = EndpointGenerator::repo_issues(username, repo_name)?;
+        let api_endpoint = EndpointGenerator::repo_issues()?;
 
         get_issue_list(&client, args, api_endpoint).await
     })

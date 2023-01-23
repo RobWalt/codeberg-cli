@@ -2,6 +2,7 @@ pub mod auth;
 pub mod issue;
 pub mod label;
 pub mod pull_request;
+pub mod repo;
 pub mod user;
 
 use clap::Parser;
@@ -23,4 +24,7 @@ pub enum MainArgs {
 
     #[command(subcommand)]
     Label(label::LabelArgs),
+
+    #[command(subcommand)]
+    Repo(repo::RepoArgs),
 }

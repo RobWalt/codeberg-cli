@@ -2,15 +2,19 @@ use anyhow::Context;
 use clap::{Command, FromArgMatches, Subcommand};
 use cod_actions::auth::login::login;
 use cod_actions::auth::logout::logout;
+use cod_actions::issue::create::create_issue;
 use cod_actions::issue::list::list_issues;
 use cod_actions::label::create::create_label;
 use cod_actions::label::list::list_labels;
 use cod_actions::pull_request::list::list_pulls;
-use cod_actions::user::info::info;
+use cod_actions::repo::assignees::repo_assignees;
+use cod_actions::repo::info::repo_info;
+use cod_actions::user::info::user_info;
 use cod_cli::auth::AuthArgs;
 use cod_cli::issue::IssueArgs;
 use cod_cli::label::LabelArgs;
 use cod_cli::pull_request::PullRequestArgs;
+use cod_cli::repo::RepoArgs;
 use cod_cli::user::UserArgs;
 use cod_cli::MainArgs;
 use cod_types::token::Token;
@@ -50,10 +54,13 @@ async fn dispatch_args(args: MainArgs) -> anyhow::Result<()> {
     match args {
         MainArgs::Auth(AuthArgs::Logout(logout_args)) => logout(logout_args),
         MainArgs::Auth(AuthArgs::Login(_)) => unreachable!("was already handled"),
-        MainArgs::User(UserArgs::Info(info_args)) => info(info_args, token).await,
+        MainArgs::User(UserArgs::Info(info_args)) => user_info(info_args, token).await,
+        MainArgs::Repo(RepoArgs::Info(info_args)) => repo_info(info_args, token).await,
+        MainArgs::Repo(RepoArgs::Assignees(info_args)) => repo_assignees(info_args, token).await,
         MainArgs::Issue(IssueArgs::List(list_args)) => list_issues(list_args, token).await,
         MainArgs::Pull(PullRequestArgs::List(list_args)) => list_pulls(list_args, token).await,
         MainArgs::Label(LabelArgs::List(list_args)) => list_labels(list_args, token).await,
         MainArgs::Label(LabelArgs::Create(create_args)) => create_label(create_args, token).await,
+        MainArgs::Issue(IssueArgs::Create(create_args)) => create_issue(create_args, token).await,
     }
 }

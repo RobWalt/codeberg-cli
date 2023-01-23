@@ -7,4 +7,5 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.68"
+cod-git-info = { version = "0.1.0", path = "../cod-git-info" }
 reqwest = "0.11.14"
