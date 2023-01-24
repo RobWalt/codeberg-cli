@@ -1,5 +1,6 @@
 use cod_cli::issue::create::CreateIssueArgs;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
+use cod_render::ui::multi_fuzzy_select_with_key;
 use cod_types::api::label::Label;
 use cod_types::api::user::User;
 use cod_types::client::CodebergClient;
@@ -29,14 +30,14 @@ async fn fill_in_optional_values(
     mut args: CreateIssueArgs,
     client: &CodebergClient,
 ) -> anyhow::Result<CreateIssueArgs> {
-    #[derive(Debug, Display, PartialEq, Eq)]
+    #[derive(Debug, Clone, Copy, Display, PartialEq, Eq)]
     enum PossiblyMissing {
         Description,
         Assignees,
         Labels,
     }
     use PossiblyMissing::*;
-    let missing_fields = [
+    let missing_options = [
         args.body.is_none().then_some(Description),
         args.assignees.is_none().then_some(Assignees),
         args.labels.is_none().then_some(Labels),
@@ -45,21 +46,15 @@ async fn fill_in_optional_values(
     .flatten()
     .collect::<Vec<_>>();
 
-    if missing_fields.is_empty() {
+    if missing_options.is_empty() {
         return Ok(args);
     }
 
-    let selected_options = dialoguer::MultiFuzzySelect::new()
-        .items(&missing_fields)
-        .interact()
-        .map(|item_idxs| {
-            missing_fields
-                .into_iter()
-                .enumerate()
-                .filter(|(idx, _)| item_idxs.contains(idx))
-                .map(|(_, option)| option)
-                .collect::<Vec<_>>()
-        })?;
+    let selected_options = multi_fuzzy_select_with_key(
+        missing_options,
+        |&missing_option| missing_option,
+        |missing_option| missing_option,
+    )?;
 
     if selected_options.contains(&Description) {
         args.body = dialoguer::Editor::new().edit("Enter a issue description")?;
@@ -67,27 +62,12 @@ async fn fill_in_optional_values(
 
     if selected_options.contains(&Assignees) {
         let api_endpoint_assignees = EndpointGenerator::repo_assignees()?;
-        let assignees_list =
-            client
-                .get::<Vec<User>>(api_endpoint_assignees)
-                .await
-                .map(|assignees| {
-                    assignees
-                        .into_iter()
-                        .map(|assignee| assignee.username)
-                        .collect::<Vec<_>>()
-                })?;
-        let selected_assignees = dialoguer::MultiFuzzySelect::new()
-            .items(&assignees_list)
-            .interact()
-            .map(|idxs| {
-                assignees_list
-                    .into_iter()
-                    .enumerate()
-                    .filter(|(idx, _)| idxs.contains(idx))
-                    .map(|(_, assignee)| assignee)
-                    .collect::<Vec<_>>()
-            })?;
+        let assignees_list = client.get::<Vec<User>>(api_endpoint_assignees).await?;
+        let selected_assignees = multi_fuzzy_select_with_key(
+            assignees_list,
+            |assignee| assignee.username.to_owned(),
+            |assignee| assignee.username,
+        )?;
 
         args.assignees.replace(selected_assignees);
     }
@@ -97,22 +77,11 @@ async fn fill_in_optional_values(
 
         let labels_list = client.get::<Vec<Label>>(api_endpoint_assignees).await?;
 
-        let selected_labels = dialoguer::MultiFuzzySelect::new()
-            .items(
-                &labels_list
-                    .iter()
-                    .map(|label| label.name.as_str())
-                    .collect::<Vec<_>>(),
-            )
-            .interact()
-            .map(|idxs| {
-                labels_list
-                    .into_iter()
-                    .enumerate()
-                    .filter(|(idx, _)| idxs.contains(idx))
-                    .map(|(_, label)| label.id)
-                    .collect::<Vec<_>>()
-            })?;
+        let selected_labels = multi_fuzzy_select_with_key(
+            labels_list,
+            |label| label.name.to_owned(),
+            |label| label.id,
+        )?;
 
         args.labels.replace(selected_labels);
     }
