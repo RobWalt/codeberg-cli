@@ -48,7 +48,7 @@ impl<'a> CodTableBuilder<'a> {
         CodTable {
             table: TableBuilder::new()
                 .max_column_width(max_column_width.unwrap_or(40))
-                .style(style.unwrap_or(TableStyle::elegant()))
+                .style(style.unwrap_or_else(TableStyle::elegant))
                 .rows(rows)
                 .build(),
         }

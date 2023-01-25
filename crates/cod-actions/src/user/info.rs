@@ -4,7 +4,6 @@ use cod_render::spinner::spin_until_ready;
 use cod_types::api::repository::Repository;
 use cod_types::api::user::User;
 use cod_types::client::CodebergClient;
-use cod_types::token::Token;
 
 struct UserData {
     username: String,
@@ -14,10 +13,8 @@ struct UserData {
     top_repos: Vec<Repository>,
 }
 
-pub async fn user_info(_args: UserInfoArgs, token: Token) -> anyhow::Result<()> {
-    let client = CodebergClient::new(&token)?;
-
-    let user_data = spin_until_ready(get_user_data(&client)).await?;
+pub async fn user_info(_args: UserInfoArgs, client: &CodebergClient) -> anyhow::Result<()> {
+    let user_data = spin_until_ready(get_user_data(client)).await?;
 
     present_user_info(user_data);
 

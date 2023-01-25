@@ -3,12 +3,12 @@ use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_render::spinner::spin_until_ready;
 use cod_types::api::user::User;
 use cod_types::client::CodebergClient;
-use cod_types::token::Token;
 
-pub async fn repo_assignees(args: RepoAssigneesArgs, token: Token) -> anyhow::Result<()> {
-    let client = CodebergClient::new(&token)?;
-
-    let repo_assignees = spin_until_ready(get_assignees_data(&client)).await?;
+pub async fn repo_assignees(
+    _args: RepoAssigneesArgs,
+    client: &CodebergClient,
+) -> anyhow::Result<()> {
+    let repo_assignees = spin_until_ready(get_assignees_data(client)).await?;
 
     present_repo_assignees(repo_assignees);
 

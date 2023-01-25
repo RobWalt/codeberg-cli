@@ -1,19 +1,16 @@
 use cod_cli::label::list::ListLabelsArgs;
 use cod_render::spinner::spin_until_ready;
-use cod_types::token::Token;
 use reqwest::Url;
 
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_types::api::label::Label;
 use cod_types::client::CodebergClient;
 
-pub async fn list_labels(args: ListLabelsArgs, token: Token) -> anyhow::Result<()> {
-    let client = CodebergClient::new(&token)?;
-
+pub async fn list_labels(args: ListLabelsArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let labels_list = spin_until_ready(async {
         let api_endpoint = EndpointGenerator::repo_labels()?;
 
-        get_labels_list(&client, args, api_endpoint).await
+        get_labels_list(client, args, api_endpoint).await
     })
     .await?;
 
