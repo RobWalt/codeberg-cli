@@ -3,12 +3,9 @@ use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_render::spinner::spin_until_ready;
 use cod_types::api::repository::Repository;
 use cod_types::client::CodebergClient;
-use cod_types::token::Token;
 
-pub async fn repo_info(_args: RepoInfoArgs, token: Token) -> anyhow::Result<()> {
-    let client = CodebergClient::new(&token)?;
-
-    let repo_data = spin_until_ready(get_user_data(&client)).await?;
+pub async fn repo_info(_args: RepoInfoArgs, client: &CodebergClient) -> anyhow::Result<()> {
+    let repo_data = spin_until_ready(get_user_data(client)).await?;
 
     present_repo_info(repo_data);
 

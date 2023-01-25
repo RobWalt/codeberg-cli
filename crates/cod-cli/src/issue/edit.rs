@@ -1,5 +1,4 @@
 use clap::Parser;
-use cod_types::api::state_type::StateType;
 
 #[derive(Parser, Debug)]
 #[command(
@@ -12,7 +11,4 @@ use cod_types::api::state_type::StateType;
     before_long_help = None,
     after_long_help = None
 )]
-pub struct ViewIssueArgs {
-    #[arg(short, long, value_enum, default_value_t=StateType::All)]
-    pub state: StateType,
-}
+pub struct EditIssueArgs {}

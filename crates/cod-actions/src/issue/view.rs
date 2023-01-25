@@ -4,12 +4,9 @@ use cod_render::spinner::spin_until_ready;
 use cod_render::ui::fuzzy_select_with_key;
 use cod_types::api::issue::Issue;
 use cod_types::client::CodebergClient;
-use cod_types::token::Token;
 
-pub async fn view_issue(args: ViewIssueArgs, token: Token) -> anyhow::Result<()> {
-    let client = CodebergClient::new(&token)?;
-
-    let issues_list = spin_until_ready(get_issues_list(&client, args)).await?;
+pub async fn view_issue(args: ViewIssueArgs, client: &CodebergClient) -> anyhow::Result<()> {
+    let issues_list = spin_until_ready(get_issues_list(client, args)).await?;
 
     let selected_issue = fuzzy_select_with_key(
         issues_list,
