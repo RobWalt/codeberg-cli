@@ -47,8 +47,9 @@ impl CodebergClient {
         api_endpoint: Url,
         query: Q,
     ) -> anyhow::Result<T> {
-        tracing::info!("Making GET call. API endpoint: {:?}", api_endpoint.as_str());
-        let response = self.deref().get(api_endpoint).query(&query).send().await?;
+        let request = self.deref().get(api_endpoint).query(&query);
+        tracing::info!("Making GET call. Request: {:?}", request);
+        let response = request.send().await?;
         tracing::info!("Response Status: {:?}", response.status());
         let json_response = response.json().await?;
         tracing::info!("Response: {:?}", json_response);

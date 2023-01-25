@@ -1,6 +1,8 @@
 use cod_cli::issue::create::CreateIssueArgs;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_render::ui::multi_fuzzy_select_with_key;
+use cod_types::api::create_issue_options::CreateIssueOption;
+use cod_types::api::issue::Issue;
 use cod_types::api::label::Label;
 use cod_types::api::user::User;
 use cod_types::client::CodebergClient;
@@ -11,7 +13,10 @@ pub async fn create_issue(mut args: CreateIssueArgs, token: Token) -> anyhow::Re
     let client = CodebergClient::new(&token)?;
     args = fill_in_mandatory_values(args)?;
     args = fill_in_optional_values(args, &client).await?;
-    tracing::info!("{args:?}");
+    let body = create_body(args);
+    let api_endpoint = EndpointGenerator::repo_issues()?;
+    let response: Issue = client.post_body(api_endpoint, body).await?;
+    tracing::info!("{response:?}");
     Ok(())
 }
 
@@ -87,4 +92,11 @@ async fn fill_in_optional_values(
     }
 
     Ok(args)
+}
+
+fn create_body(args: CreateIssueArgs) -> CreateIssueOption {
+    CreateIssueOption::new(args.title.unwrap_or_default())
+        .with_body(args.body.unwrap_or_default())
+        .with_assignees(args.assignees.unwrap_or_default())
+        .with_labels(args.labels.unwrap_or_default())
 }

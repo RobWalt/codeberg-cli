@@ -60,6 +60,7 @@ fn present_issues_list(issues: Vec<Issue>) {
                 title,
                 number,
                 labels,
+                body: _body,
             } = issue;
             Row::new([
                 TableCell::new_with_alignment(number, 1, Alignment::Left),
