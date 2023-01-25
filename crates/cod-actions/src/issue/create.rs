@@ -4,8 +4,6 @@ use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_render::ui::multi_fuzzy_select_with_key;
 use cod_types::api::create_issue_options::CreateIssueOption;
 use cod_types::api::issue::Issue;
-use cod_types::api::label::Label;
-use cod_types::api::user::User;
 use strum::Display;
 
 pub async fn create_issue(
@@ -68,8 +66,7 @@ async fn fill_in_optional_values(
     }
 
     if selected_options.contains(&Assignees) {
-        let api_endpoint_assignees = EndpointGenerator::repo_assignees()?;
-        let assignees_list = client.get::<Vec<User>>(api_endpoint_assignees).await?;
+        let assignees_list = client.get_repo_assignees().await?;
         let selected_assignees = multi_fuzzy_select_with_key(
             assignees_list,
             |assignee| assignee.username.to_owned(),
@@ -81,9 +78,7 @@ async fn fill_in_optional_values(
     }
 
     if selected_options.contains(&Labels) {
-        let api_endpoint_assignees = EndpointGenerator::repo_labels()?;
-
-        let labels_list = client.get::<Vec<Label>>(api_endpoint_assignees).await?;
+        let labels_list = client.get_repo_labels(None).await?;
 
         let selected_labels = multi_fuzzy_select_with_key(
             labels_list,

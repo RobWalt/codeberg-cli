@@ -1,32 +1,15 @@
 use cod_cli::pull_request::list::ListPullRequestArgs;
 use cod_client::CodebergClient;
 use cod_render::spinner::spin_until_ready;
-use reqwest::Url;
 
-use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_types::api::pull_request::PullRequest;
 
 pub async fn list_pulls(args: ListPullRequestArgs, client: &CodebergClient) -> anyhow::Result<()> {
-    let pull_requests_list = spin_until_ready(async {
-        let api_endpoint = EndpointGenerator::repo_pulls()?;
-
-        get_pull_list(client, args, api_endpoint).await
-    })
-    .await?;
+    let pull_requests_list = spin_until_ready(client.get_repo_prs(Some(args.count))).await?;
 
     present_pull_requests_list(pull_requests_list);
 
     Ok(())
-}
-
-async fn get_pull_list(
-    client: &CodebergClient,
-    args: ListPullRequestArgs,
-    api_endpoint: Url,
-) -> anyhow::Result<Vec<PullRequest>> {
-    client
-        .get_query::<_, Vec<PullRequest>>(api_endpoint, [("limit", args.count)])
-        .await
 }
 
 fn present_pull_requests_list(pull_requests: Vec<PullRequest>) {

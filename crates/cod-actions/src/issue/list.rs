@@ -1,32 +1,15 @@
 use cod_cli::issue::list::ListIssueArgs;
 use cod_client::CodebergClient;
 use cod_render::spinner::spin_until_ready;
-use reqwest::Url;
 
-use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_types::api::issue::Issue;
 
 pub async fn list_issues(args: ListIssueArgs, client: &CodebergClient) -> anyhow::Result<()> {
-    let issues_list = spin_until_ready(async {
-        let api_endpoint = EndpointGenerator::repo_issues()?;
-
-        get_issue_list(client, args, api_endpoint).await
-    })
-    .await?;
+    let issues_list = spin_until_ready(client.get_repo_issues(None, Some(args.count))).await?;
 
     present_issues_list(issues_list);
 
     Ok(())
-}
-
-async fn get_issue_list(
-    client: &CodebergClient,
-    args: ListIssueArgs,
-    api_endpoint: Url,
-) -> anyhow::Result<Vec<Issue>> {
-    client
-        .get_query::<_, Vec<Issue>>(api_endpoint, [("limit", args.count)])
-        .await
 }
 
 fn present_issues_list(issues: Vec<Issue>) {

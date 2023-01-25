@@ -1,21 +1,14 @@
 use cod_cli::repo::info::RepoInfoArgs;
 use cod_client::CodebergClient;
-use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_render::spinner::spin_until_ready;
 use cod_types::api::repository::Repository;
 
 pub async fn repo_info(_args: RepoInfoArgs, client: &CodebergClient) -> anyhow::Result<()> {
-    let repo_data = spin_until_ready(get_user_data(client)).await?;
+    let repo_data = spin_until_ready(client.get_repo_info()).await?;
 
     present_repo_info(repo_data);
 
     Ok(())
-}
-
-async fn get_user_data(client: &CodebergClient) -> anyhow::Result<Repository> {
-    let api_endpoint = EndpointGenerator::repo_infos()?;
-    let repo_info = client.get(api_endpoint).await?;
-    Ok(repo_info)
 }
 
 fn present_repo_info(repo_data: Repository) {
