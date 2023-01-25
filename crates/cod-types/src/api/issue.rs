@@ -7,4 +7,5 @@ pub struct Issue {
     pub title: String,
     pub number: usize,
     pub labels: Vec<Label>,
+    pub body: String,
 }

@@ -1,7 +1,9 @@
+pub mod create_issue_options;
 pub mod create_label_options;
 pub mod followers_info;
 pub mod following_info;
 pub mod issue;
+pub mod issue_status;
 pub mod label;
 pub mod pull_request;
 pub mod repository;

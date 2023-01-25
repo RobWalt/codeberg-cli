@@ -4,6 +4,7 @@ use cod_actions::auth::login::login;
 use cod_actions::auth::logout::logout;
 use cod_actions::issue::create::create_issue;
 use cod_actions::issue::list::list_issues;
+use cod_actions::issue::view::view_issue;
 use cod_actions::label::create::create_label;
 use cod_actions::label::list::list_labels;
 use cod_actions::pull_request::list::list_pulls;
@@ -62,5 +63,6 @@ async fn dispatch_args(args: MainArgs) -> anyhow::Result<()> {
         MainArgs::Label(LabelArgs::List(list_args)) => list_labels(list_args, token).await,
         MainArgs::Label(LabelArgs::Create(create_args)) => create_label(create_args, token).await,
         MainArgs::Issue(IssueArgs::Create(create_args)) => create_issue(create_args, token).await,
+        MainArgs::Issue(IssueArgs::View(view_args)) => view_issue(view_args, token).await,
     }
 }
