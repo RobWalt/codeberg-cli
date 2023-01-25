@@ -6,7 +6,6 @@ use cod_render::ui::{fuzzy_select_with_key, multi_fuzzy_select_with_key};
 use cod_types::api::edit_issue_option::EditIssueOptions;
 use cod_types::api::issue::Issue;
 use cod_types::api::state_type::StateType;
-use cod_types::api::user::User;
 use strum::{Display, EnumIter, IntoEnumIterator};
 
 #[derive(Display, EnumIter, PartialEq, Eq)]
@@ -18,7 +17,7 @@ enum EditableFields {
 }
 
 pub async fn edit_issue(_args: EditIssueArgs, client: &CodebergClient) -> anyhow::Result<()> {
-    let issues_list = spin_until_ready(get_issue_list(client)).await?;
+    let issues_list = spin_until_ready(client.get_repo_issues(None, None)).await?;
 
     if issues_list.is_empty() {
         println!("No issues found in this repository");
@@ -52,11 +51,6 @@ pub async fn edit_issue(_args: EditIssueArgs, client: &CodebergClient) -> anyhow
     Ok(())
 }
 
-async fn get_issue_list(client: &CodebergClient) -> anyhow::Result<Vec<Issue>> {
-    let api_endpoint = EndpointGenerator::repo_issues()?;
-    client.get::<Vec<Issue>>(api_endpoint).await
-}
-
 async fn create_update_data(
     client: &CodebergClient,
     selected_update_fields: Vec<EditableFields>,
@@ -67,7 +61,7 @@ async fn create_update_data(
     let mut edit_issue_options = EditIssueOptions::from_issue(selected_issue);
 
     if selected_update_fields.contains(&Assignees) {
-        let assignees_list = get_assignees(client).await?;
+        let assignees_list = client.get_repo_assignees().await?;
         let selected_assignees = multi_fuzzy_select_with_key(
             assignees_list,
             |assignee| assignee.username.to_owned(),
@@ -110,10 +104,4 @@ async fn create_update_data(
     }
 
     Ok(edit_issue_options)
-}
-
-async fn get_assignees(client: &CodebergClient) -> anyhow::Result<Vec<User>> {
-    let api_endpoint = EndpointGenerator::repo_assignees()?;
-    let repo_assignees = client.get(api_endpoint).await?;
-    Ok(repo_assignees)
 }

@@ -57,7 +57,7 @@ impl EndpointGenerator {
         Self::repos_owner_repo(format!("{REPO_ISSUES}/{issue_idx}"))
     }
 
-    pub fn repo_pulls() -> anyhow::Result<Url> {
+    pub fn repo_pull_requests() -> anyhow::Result<Url> {
         use crate::api::REPO_PULLS;
         Self::repos_owner_repo(REPO_PULLS)
     }

@@ -1,32 +1,15 @@
 use cod_cli::label::list::ListLabelsArgs;
 use cod_client::CodebergClient;
 use cod_render::spinner::spin_until_ready;
-use reqwest::Url;
 
-use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_types::api::label::Label;
 
 pub async fn list_labels(args: ListLabelsArgs, client: &CodebergClient) -> anyhow::Result<()> {
-    let labels_list = spin_until_ready(async {
-        let api_endpoint = EndpointGenerator::repo_labels()?;
-
-        get_labels_list(client, args, api_endpoint).await
-    })
-    .await?;
+    let labels_list = spin_until_ready(client.get_repo_labels(Some(args.count))).await?;
 
     present_labels_list(labels_list);
 
     Ok(())
-}
-
-async fn get_labels_list(
-    client: &CodebergClient,
-    args: ListLabelsArgs,
-    api_endpoint: Url,
-) -> anyhow::Result<Vec<Label>> {
-    client
-        .get_query::<_, Vec<Label>>(api_endpoint, [("limit", args.count)])
-        .await
 }
 
 fn present_labels_list(labels: Vec<Label>) {

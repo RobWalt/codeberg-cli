@@ -1,9 +1,7 @@
 use cod_cli::user::info::UserInfoArgs;
 use cod_client::CodebergClient;
-use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_render::spinner::spin_until_ready;
 use cod_types::api::repository::Repository;
-use cod_types::api::user::User;
 
 struct UserData {
     username: String,
@@ -22,8 +20,8 @@ pub async fn user_info(_args: UserInfoArgs, client: &CodebergClient) -> anyhow::
 }
 
 async fn get_user_data(client: &CodebergClient) -> anyhow::Result<UserData> {
-    let user_info = get_user_info(client).await?;
-    let repos_info = get_repos_info(client).await?;
+    let user_info = client.get_user_info().await?;
+    let repos_info = client.get_all_repos_info().await?;
     let repos_count = repos_info.len();
     let top_repos = get_top_n_repos(repos_info, 5);
     Ok(UserData {
@@ -33,22 +31,6 @@ async fn get_user_data(client: &CodebergClient) -> anyhow::Result<UserData> {
         repos_count,
         top_repos,
     })
-}
-
-async fn get_user_info(client: &CodebergClient) -> anyhow::Result<User> {
-    let api_endpoint = EndpointGenerator::user_info()?;
-
-    let user_info = client.get::<User>(api_endpoint).await?;
-
-    Ok(user_info)
-}
-
-async fn get_repos_info(client: &CodebergClient) -> anyhow::Result<Vec<Repository>> {
-    let api_endpoint = EndpointGenerator::user_repos()?;
-
-    let repos_info = client.get::<Vec<Repository>>(api_endpoint).await?;
-
-    Ok(repos_info)
 }
 
 fn get_top_n_repos(mut repos_info: Vec<Repository>, n: usize) -> Vec<Repository> {
