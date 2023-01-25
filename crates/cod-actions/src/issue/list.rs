@@ -1,10 +1,10 @@
 use cod_cli::issue::list::ListIssueArgs;
+use cod_client::CodebergClient;
 use cod_render::spinner::spin_until_ready;
 use reqwest::Url;
 
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_types::api::issue::Issue;
-use cod_types::client::CodebergClient;
 
 pub async fn list_issues(args: ListIssueArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let issues_list = spin_until_ready(async {

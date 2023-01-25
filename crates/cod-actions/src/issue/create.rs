@@ -1,11 +1,11 @@
 use cod_cli::issue::create::CreateIssueArgs;
+use cod_client::CodebergClient;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_render::ui::multi_fuzzy_select_with_key;
 use cod_types::api::create_issue_options::CreateIssueOption;
 use cod_types::api::issue::Issue;
 use cod_types::api::label::Label;
 use cod_types::api::user::User;
-use cod_types::client::CodebergClient;
 use strum::Display;
 
 pub async fn create_issue(

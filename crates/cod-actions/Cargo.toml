@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.68"
 cod-cli = { version = "0.1.0", path = "../cod-cli" }
+cod-client = { version = "0.1.0", path = "../cod-client" }
 cod-endpoints = { version = "0.1.0", path = "../cod-endpoints" }
 cod-git-info = { version = "0.1.0", path = "../cod-git-info" }
 cod-paths = { version = "0.1.0", path = "../cod-paths" }
