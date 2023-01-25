@@ -1,9 +1,9 @@
 use cod_cli::user::info::UserInfoArgs;
+use cod_client::CodebergClient;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_render::spinner::spin_until_ready;
 use cod_types::api::repository::Repository;
 use cod_types::api::user::User;
-use cod_types::client::CodebergClient;
 
 struct UserData {
     username: String,

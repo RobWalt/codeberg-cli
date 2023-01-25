@@ -1,10 +1,10 @@
 use cod_cli::pull_request::list::ListPullRequestArgs;
+use cod_client::CodebergClient;
 use cod_render::spinner::spin_until_ready;
 use reqwest::Url;
 
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_types::api::pull_request::PullRequest;
-use cod_types::client::CodebergClient;
 
 pub async fn list_pulls(args: ListPullRequestArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let pull_requests_list = spin_until_ready(async {

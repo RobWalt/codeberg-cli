@@ -2,11 +2,11 @@ use std::path::{Path, PathBuf};
 
 use anyhow::Context;
 use cod_cli::auth::login::LoginArgs;
+use cod_client::CodebergClient;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_paths::token_directory;
 use cod_render::spinner::spin_until_ready;
 use cod_types::api::user::User;
-use cod_types::client::CodebergClient;
 use cod_types::token::Token;
 
 const TOKEN_GENERATION_URL: &str = "https://codeberg.org/user/settings/applications";

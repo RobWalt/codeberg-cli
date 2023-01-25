@@ -19,7 +19,7 @@ use cod_cli::pull_request::PullRequestArgs;
 use cod_cli::repo::RepoArgs;
 use cod_cli::user::UserArgs;
 use cod_cli::MainArgs;
-use cod_types::client::CodebergClient;
+use cod_client::CodebergClient;
 use cod_types::token::Token;
 
 pub async fn cod_main() {

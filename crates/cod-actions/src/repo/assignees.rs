@@ -1,8 +1,8 @@
 use cod_cli::repo::assignees::RepoAssigneesArgs;
+use cod_client::CodebergClient;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_render::spinner::spin_until_ready;
 use cod_types::api::user::User;
-use cod_types::client::CodebergClient;
 
 pub async fn repo_assignees(
     _args: RepoAssigneesArgs,

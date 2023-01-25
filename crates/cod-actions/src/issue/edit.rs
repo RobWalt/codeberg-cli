@@ -1,4 +1,5 @@
 use cod_cli::issue::edit::EditIssueArgs;
+use cod_client::CodebergClient;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_render::spinner::spin_until_ready;
 use cod_render::ui::{fuzzy_select_with_key, multi_fuzzy_select_with_key};
@@ -6,7 +7,6 @@ use cod_types::api::edit_issue_option::EditIssueOptions;
 use cod_types::api::issue::Issue;
 use cod_types::api::state_type::StateType;
 use cod_types::api::user::User;
-use cod_types::client::CodebergClient;
 use strum::{Display, EnumIter, IntoEnumIterator};
 
 #[derive(Display, EnumIter, PartialEq, Eq)]

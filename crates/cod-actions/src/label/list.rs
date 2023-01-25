@@ -1,10 +1,10 @@
 use cod_cli::label::list::ListLabelsArgs;
+use cod_client::CodebergClient;
 use cod_render::spinner::spin_until_ready;
 use reqwest::Url;
 
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_types::api::label::Label;
-use cod_types::client::CodebergClient;
 
 pub async fn list_labels(args: ListLabelsArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let labels_list = spin_until_ready(async {
