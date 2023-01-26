@@ -11,7 +11,7 @@ struct UserData {
     top_repos: Vec<Repository>,
 }
 
-pub async fn user_info(_args: UserInfoArgs, client: &CodebergClient) -> anyhow::Result<()> {
+pub async fn info_user(_args: UserInfoArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let user_data = spin_until_ready(get_user_data(client)).await?;
 
     present_user_info(user_data);

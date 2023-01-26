@@ -3,7 +3,7 @@ use cod_client::CodebergClient;
 use cod_render::spinner::spin_until_ready;
 use cod_types::api::repository::Repository;
 
-pub async fn repo_info(_args: RepoInfoArgs, client: &CodebergClient) -> anyhow::Result<()> {
+pub async fn info_repo(_args: RepoInfoArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let repo_data = spin_until_ready(client.get_repo_info()).await?;
 
     present_repo_info(repo_data);

@@ -11,7 +11,7 @@ use cod_types::token::Token;
 
 const TOKEN_GENERATION_URL: &str = "https://codeberg.org/user/settings/applications";
 
-pub async fn login(_args: LoginArgs) -> anyhow::Result<()> {
+pub async fn login_user(_args: LoginArgs) -> anyhow::Result<()> {
     // ask for usage of browser
     if dialoguer::Confirm::new()
         .with_prompt("Authenticating. Open Browser to generate token for codeberg-cli?")
