@@ -2,6 +2,7 @@ use anyhow::Context;
 use clap::{Command, FromArgMatches, Subcommand};
 use cod_actions::auth::login::login_user;
 use cod_actions::auth::logout::logout_user;
+use cod_actions::issue::comment::comment_issue;
 use cod_actions::issue::create::create_issue;
 use cod_actions::issue::edit::edit_issue;
 use cod_actions::issue::list::list_issue;
@@ -72,6 +73,9 @@ async fn dispatch_args(args: MainArgs) -> anyhow::Result<()> {
         MainArgs::Issue(IssueArgs::Create(create_args)) => create_issue(create_args, &client).await,
         MainArgs::Issue(IssueArgs::View(view_args)) => view_issue(view_args, &client).await,
         MainArgs::Issue(IssueArgs::Edit(edit_args)) => edit_issue(edit_args, &client).await,
+        MainArgs::Issue(IssueArgs::Comment(comment_args)) => {
+            comment_issue(comment_args, &client).await
+        }
         MainArgs::Pull(PullRequestArgs::List(list_args)) => list_pull(list_args, &client).await,
         MainArgs::Label(LabelArgs::List(list_args)) => list_label(list_args, &client).await,
         MainArgs::Label(LabelArgs::Create(create_args)) => create_label(create_args, &client).await,

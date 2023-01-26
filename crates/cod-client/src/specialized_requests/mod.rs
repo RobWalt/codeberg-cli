@@ -1,6 +1,7 @@
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_types::api::comment::Comment;
 use cod_types::api::create_fork_option::CreateForkOption;
+use cod_types::api::create_issue_comment_option::CreateIssueCommentOption;
 use cod_types::api::issue::Issue;
 use cod_types::api::label::Label;
 use cod_types::api::pull_request::PullRequest;
@@ -106,5 +107,14 @@ impl CodebergClient {
     pub async fn get_comments_for_issue(&self, issue_id: usize) -> anyhow::Result<Vec<Comment>> {
         let api = EndpointGenerator::repo_comments_for_issue(issue_id)?;
         self.get(api).await
+    }
+
+    pub async fn post_comment_for_issue(
+        &self,
+        issue_id: usize,
+        comment: CreateIssueCommentOption,
+    ) -> anyhow::Result<Comment> {
+        let api = EndpointGenerator::repo_comments_for_issue(issue_id)?;
+        self.post_body(api, comment).await
     }
 }

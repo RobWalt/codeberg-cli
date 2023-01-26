@@ -1,3 +1,4 @@
+pub mod comment;
 pub mod create;
 pub mod edit;
 pub mod list;
@@ -10,6 +11,7 @@ use clap::Subcommand;
 pub enum IssueArgs {
     List(list::ListIssueArgs),
     Create(create::CreateIssueArgs),
+    Comment(comment::CommentIssueArgs),
     View(view::ViewIssueArgs),
     Edit(edit::EditIssueArgs),
 }
