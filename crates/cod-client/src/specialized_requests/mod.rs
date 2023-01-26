@@ -117,4 +117,9 @@ impl CodebergClient {
         let api = EndpointGenerator::repo_comments_for_issue(issue_id)?;
         self.post_body(api, comment).await
     }
+
+    pub async fn delete_label(&self, label_id: usize) -> anyhow::Result<()> {
+        let api = EndpointGenerator::repo_labels_with_id(label_id)?;
+        self.delete(api).await
+    }
 }
