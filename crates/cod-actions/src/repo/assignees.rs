@@ -4,7 +4,7 @@ use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_render::spinner::spin_until_ready;
 use cod_types::api::user::User;
 
-pub async fn repo_assignees(
+pub async fn assignees_repo(
     _args: RepoAssigneesArgs,
     client: &CodebergClient,
 ) -> anyhow::Result<()> {

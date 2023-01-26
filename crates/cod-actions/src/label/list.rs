@@ -4,7 +4,7 @@ use cod_render::spinner::spin_until_ready;
 
 use cod_types::api::label::Label;
 
-pub async fn list_labels(args: ListLabelsArgs, client: &CodebergClient) -> anyhow::Result<()> {
+pub async fn list_label(args: ListLabelsArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let labels_list = spin_until_ready(client.get_repo_labels(Some(args.count))).await?;
 
     present_labels_list(labels_list);

@@ -4,7 +4,7 @@ use cod_render::spinner::spin_until_ready;
 
 use cod_types::api::issue::Issue;
 
-pub async fn list_issues(args: ListIssueArgs, client: &CodebergClient) -> anyhow::Result<()> {
+pub async fn list_issue(args: ListIssueArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let issues_list = spin_until_ready(client.get_repo_issues(None, Some(args.count))).await?;
 
     present_issues_list(issues_list);
