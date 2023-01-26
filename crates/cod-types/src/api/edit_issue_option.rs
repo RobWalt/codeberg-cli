@@ -4,14 +4,14 @@ use crate::api::issue::Issue;
 use crate::api::state_type::StateType;
 
 #[derive(Debug, Clone, Serialize, Default)]
-pub struct EditIssueOptions {
+pub struct EditIssueOption {
     pub assignees: Option<Vec<String>>,
     pub body: Option<String>,
     pub state: Option<StateType>,
     pub title: Option<String>,
 }
 
-impl EditIssueOptions {
+impl EditIssueOption {
     pub fn from_issue(issue: &Issue) -> Self {
         Self {
             assignees: issue.assignees.as_ref().map(|assignees| {
