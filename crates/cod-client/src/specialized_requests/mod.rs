@@ -1,4 +1,5 @@
 use cod_endpoints::endpoint_generator::EndpointGenerator;
+use cod_types::api::comment::Comment;
 use cod_types::api::create_fork_option::CreateForkOption;
 use cod_types::api::issue::Issue;
 use cod_types::api::label::Label;
@@ -100,5 +101,10 @@ impl CodebergClient {
         let body = CreateForkOption::same_repo_name();
         self.post_query_body(api, body, [("owner", ownername), ("repo", reponame)])
             .await
+    }
+
+    pub async fn get_comments_for_issue(&self, issue_id: usize) -> anyhow::Result<Vec<Comment>> {
+        let api = EndpointGenerator::repo_comments_for_issue(issue_id)?;
+        self.get(api).await
     }
 }

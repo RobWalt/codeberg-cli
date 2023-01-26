@@ -13,12 +13,16 @@ pub async fn view_issue(args: ViewIssueArgs, client: &CodebergClient) -> anyhow:
         |issue| issue,
     )?;
 
-    present_selected_issue(selected_issue);
+    if args.comments {
+        spin_until_ready(present_issue_comments(client, selected_issue)).await?;
+    } else {
+        present_issue_overview(selected_issue);
+    }
 
     Ok(())
 }
 
-fn present_selected_issue(selected_issue: Option<Issue>) {
+fn present_issue_overview(selected_issue: Option<Issue>) {
     use cod_render::prelude::*;
     use std::iter::once;
 
@@ -62,4 +66,60 @@ fn present_selected_issue(selected_issue: Option<Issue>) {
     let table = CodTableBuilder::new().add_rows(rows).build();
 
     println!("{}", table.render());
+}
+
+async fn present_issue_comments(
+    client: &CodebergClient,
+    selected_issue: Option<Issue>,
+) -> anyhow::Result<()> {
+    use cod_render::prelude::*;
+    use std::iter::once;
+
+    let (header, comments) = if let Some(issue) = selected_issue.as_ref() {
+        let comments_list = client.get_comments_for_issue(issue.number).await?;
+        let header = format!(
+            "Issue #{} {}",
+            issue.number,
+            if comments_list.is_empty() {
+                "(no comments)"
+            } else {
+                "comments"
+            }
+        );
+        (header, comments_list)
+    } else {
+        (String::from("No Issues available"), vec![])
+    };
+
+    let rows = once(Row::new([TableCell::new_with_alignment(
+        header,
+        1,
+        Alignment::Center,
+    )]))
+    .chain(comments.into_iter().map(|comment| {
+        tracing::info!("comment:{comment:?}");
+        Row::new([TableCell::new_with_alignment(
+            format!(
+                "{}\n({}):\n{}\n\n{}",
+                comment.user.username,
+                comment.created_at,
+                "=".repeat(comment.created_at.len() + 3),
+                CodTableBuilder::new()
+                    .add_row(Row::new(vec![TableCell::new(comment.body.as_str())]))
+                    .build()
+                    .render()
+            ),
+            1,
+            Alignment::Left,
+        )])
+    }));
+
+    let table = CodTableBuilder::new()
+        .add_rows(rows)
+        .with_max_column_width(50)
+        .build();
+
+    println!("{}", table.render());
+
+    Ok(())
 }

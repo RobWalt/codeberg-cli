@@ -22,7 +22,7 @@ fn present_issues_list(issues: Vec<Issue>) {
             "Issues{}",
             issues_empty.then_some(" (empty)").unwrap_or_default()
         ),
-        3,
+        4,
         Alignment::Center,
     )])))
     .chain(std::iter::once_with(|| {
@@ -42,8 +42,7 @@ fn present_issues_list(issues: Vec<Issue>) {
                 number,
                 labels,
                 state,
-                assignees: _assignees,
-                body: _body,
+                ..
             } = issue;
             Row::new([
                 TableCell::new_with_alignment(number, 1, Alignment::Left),
@@ -52,7 +51,7 @@ fn present_issues_list(issues: Vec<Issue>) {
                 TableCell::new_with_alignment(
                     labels
                         .into_iter()
-                        .map(|label| label.name)
+                        .map(|label| format!("- {}", label.name))
                         .collect::<Vec<_>>()
                         .join("\n"),
                     1,

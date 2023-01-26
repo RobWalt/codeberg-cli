@@ -15,4 +15,7 @@ use cod_types::api::state_type::StateType;
 pub struct ViewIssueArgs {
     #[arg(short, long, value_enum, default_value_t=StateType::All)]
     pub state: StateType,
+
+    #[arg(short, long)]
+    pub comments: bool,
 }
