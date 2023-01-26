@@ -6,6 +6,9 @@ pub const USER_INFO: &str = "user";
 pub const USER_FOLLOWERS: &str = "user/followers";
 pub const USER_FOLLOWING: &str = "user/following";
 pub const USER_REPOS: &str = "user/repos";
+pub const USER_SEARCH: &str = "users/search";
+
+pub const REPO_SEARCH: &str = "repos/search";
 
 pub const REPO_OWNER_REPOS: &str = "repos";
 

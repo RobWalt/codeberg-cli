@@ -20,11 +20,17 @@ impl CodebergClient {
         Q: Serialize,
         T: DeserializeOwned + Debug,
     {
-        let request = self.deref().get(api_endpoint).query(&query);
+        let request = self.deref().get(api_endpoint.clone()).query(&query);
         tracing::info!("Making GET call. Request: {:?}", request);
         let response = request.send().await?;
         tracing::info!("Response Status: {:?}", response.status());
-        let json_response = response.json().await?;
+        let json_response = response.json().await;
+        if json_response.is_err() {
+            let request = self.deref().get(api_endpoint).query(&query);
+            let response = request.send().await?;
+            tracing::info!("======\n{}\n======", response.text().await?);
+        }
+        let json_response = json_response?;
         tracing::info!("Response: {:?}", json_response);
         Ok(json_response)
     }

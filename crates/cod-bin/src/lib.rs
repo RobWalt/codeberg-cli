@@ -10,6 +10,7 @@ use cod_actions::label::create::create_label;
 use cod_actions::label::list::list_labels;
 use cod_actions::pull_request::list::list_pulls;
 use cod_actions::repo::assignees::repo_assignees;
+use cod_actions::repo::clone::clone_repo;
 use cod_actions::repo::create::create_repo;
 use cod_actions::repo::info::repo_info;
 use cod_actions::user::info::user_info;
@@ -63,6 +64,7 @@ async fn dispatch_args(args: MainArgs) -> anyhow::Result<()> {
         MainArgs::Repo(RepoArgs::Info(info_args)) => repo_info(info_args, &client).await,
         MainArgs::Repo(RepoArgs::Assignees(info_args)) => repo_assignees(info_args, &client).await,
         MainArgs::Repo(RepoArgs::Create(create_args)) => create_repo(create_args, &client).await,
+        MainArgs::Repo(RepoArgs::Clone(clone_args)) => clone_repo(clone_args, &client).await,
         MainArgs::Issue(IssueArgs::List(list_args)) => list_issues(list_args, &client).await,
         MainArgs::Pull(PullRequestArgs::List(list_args)) => list_pulls(list_args, &client).await,
         MainArgs::Label(LabelArgs::List(list_args)) => list_labels(list_args, &client).await,

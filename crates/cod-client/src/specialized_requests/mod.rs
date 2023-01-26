@@ -3,6 +3,7 @@ use cod_types::api::issue::Issue;
 use cod_types::api::label::Label;
 use cod_types::api::pull_request::PullRequest;
 use cod_types::api::repository::Repository;
+use cod_types::api::search_results::SearchResults;
 use cod_types::api::state_type::StateType;
 use cod_types::api::user::User;
 
@@ -70,5 +71,26 @@ impl CodebergClient {
     pub async fn get_repo_assignees(&self) -> anyhow::Result<Vec<User>> {
         let api = EndpointGenerator::repo_assignees()?;
         self.get(api).await
+    }
+
+    pub async fn search_for_user(
+        &self,
+        username: &str,
+    ) -> anyhow::Result<SearchResults<Vec<User>>> {
+        let api = EndpointGenerator::user_search()?;
+        self.get_query(api, [("q", username)]).await
+    }
+
+    pub async fn search_for_repo(
+        &self,
+        reponame: &str,
+        user_id: usize,
+    ) -> anyhow::Result<SearchResults<Vec<Repository>>> {
+        let api = EndpointGenerator::repo_search()?;
+        self.get_query(
+            api,
+            [("q", reponame.to_string()), ("uid", user_id.to_string())],
+        )
+        .await
     }
 }
