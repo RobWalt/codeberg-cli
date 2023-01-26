@@ -1,8 +1,10 @@
+pub mod branch;
 pub mod comment;
 pub mod create_fork_option;
 pub mod create_issue_comment_option;
 pub mod create_issue_options;
 pub mod create_label_options;
+pub mod create_pull_request_option;
 pub mod create_repo_options;
 pub mod edit_issue_option;
 pub mod followers_info;

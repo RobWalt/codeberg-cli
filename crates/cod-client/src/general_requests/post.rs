@@ -27,19 +27,35 @@ impl CodebergClient {
             "Making POST call. API endpoint: {:?}",
             api_endpoint.as_str()
         );
-        let body = serde_json::to_string(&body)?;
-        tracing::info!("POST Body: {body}");
+        let body_str = serde_json::to_string(&body)?;
+        tracing::info!("POST Body: {body_str}");
         let response = self
-            .post(api_endpoint)
+            .post(api_endpoint.clone())
             .query(&query)
             .header(
                 header::CONTENT_TYPE,
                 "application/json".parse::<header::HeaderValue>()?,
             )
-            .body(body)
+            .body(body_str)
             .send()
             .await?;
-        tracing::info!("Response Status: {:?}", response.status());
+        let status = response.status();
+        tracing::info!("Response Status: {status:?}");
+        if !status.is_success() {
+            let body_str = serde_json::to_string(&body)?;
+            let response = self
+                .post(api_endpoint)
+                .query(&query)
+                .header(
+                    header::CONTENT_TYPE,
+                    "application/json".parse::<header::HeaderValue>()?,
+                )
+                .body(body_str)
+                .send()
+                .await?;
+            let text = response.text().await?;
+            tracing::info!("Failed POST: {text}");
+        }
         let json_response = response.json().await?;
         tracing::info!("Response: {:?}", json_response);
         Ok(json_response)

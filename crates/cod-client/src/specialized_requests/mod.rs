@@ -1,4 +1,5 @@
 use cod_endpoints::endpoint_generator::EndpointGenerator;
+use cod_types::api::branch::Branch;
 use cod_types::api::comment::Comment;
 use cod_types::api::create_fork_option::CreateForkOption;
 use cod_types::api::create_issue_comment_option::CreateIssueCommentOption;
@@ -121,5 +122,10 @@ impl CodebergClient {
     pub async fn delete_label(&self, label_id: usize) -> anyhow::Result<()> {
         let api = EndpointGenerator::repo_labels_with_id(label_id)?;
         self.delete(api).await
+    }
+
+    pub async fn get_repo_branches(&self) -> anyhow::Result<Vec<Branch>> {
+        let api = EndpointGenerator::repo_branches()?;
+        self.get(api).await
     }
 }
