@@ -11,8 +11,7 @@ impl CodebergClient {
     where
         T: DeserializeOwned + Debug,
     {
-        self.get_query::<[(&str, &str); 0], T>(api_endpoint, [])
-            .await
+        self.get_query::<[(); 0], T>(api_endpoint, []).await
     }
 
     pub async fn get_query<Q, T>(&self, api_endpoint: Url, query: Q) -> anyhow::Result<T>

@@ -12,6 +12,7 @@ use cod_actions::pull_request::list::list_pull;
 use cod_actions::repo::assignees::assignees_repo;
 use cod_actions::repo::clone::clone_repo;
 use cod_actions::repo::create::create_repo;
+use cod_actions::repo::fork::fork_repo;
 use cod_actions::repo::info::info_repo;
 use cod_actions::user::info::info_user;
 use cod_cli::auth::AuthArgs;
@@ -65,6 +66,7 @@ async fn dispatch_args(args: MainArgs) -> anyhow::Result<()> {
         MainArgs::Repo(RepoArgs::Assignees(info_args)) => assignees_repo(info_args, &client).await,
         MainArgs::Repo(RepoArgs::Create(create_args)) => create_repo(create_args, &client).await,
         MainArgs::Repo(RepoArgs::Clone(clone_args)) => clone_repo(clone_args, &client).await,
+        MainArgs::Repo(RepoArgs::Fork(fork_args)) => fork_repo(fork_args, &client).await,
         MainArgs::Issue(IssueArgs::List(list_args)) => list_issue(list_args, &client).await,
         MainArgs::Issue(IssueArgs::Create(create_args)) => create_issue(create_args, &client).await,
         MainArgs::Issue(IssueArgs::View(view_args)) => view_issue(view_args, &client).await,
