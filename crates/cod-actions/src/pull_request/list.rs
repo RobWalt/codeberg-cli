@@ -19,18 +19,19 @@ fn present_pull_requests_list(pull_requests: Vec<PullRequest>) {
 
     let rows = std::iter::once(Some(Row::new([TableCell::new_with_alignment(
         format!(
-            "Issues{}",
+            "Pull Requests {}",
             pull_requests_empty
                 .then_some(" (empty)")
                 .unwrap_or_default()
         ),
-        3,
+        4,
         Alignment::Center,
     )])))
     .chain(std::iter::once_with(|| {
         (!pull_requests_empty).then(|| {
             Row::new([
                 TableCell::new_with_alignment("Number", 1, Alignment::Center),
+                TableCell::new_with_alignment("Status", 1, Alignment::Center),
                 TableCell::new_with_alignment("Name", 1, Alignment::Center),
                 TableCell::new_with_alignment("Labels", 1, Alignment::Center),
             ])
@@ -42,19 +43,22 @@ fn present_pull_requests_list(pull_requests: Vec<PullRequest>) {
                 title,
                 number,
                 labels,
+                state,
             } = issue;
+            let labels = if labels.is_empty() {
+                String::from("x")
+            } else {
+                labels
+                    .into_iter()
+                    .map(|label| label.name)
+                    .collect::<Vec<_>>()
+                    .join("\n")
+            };
             Row::new([
                 TableCell::new_with_alignment(number, 1, Alignment::Left),
+                TableCell::new_with_alignment(state, 1, Alignment::Left),
                 TableCell::new_with_alignment(title, 1, Alignment::Left),
-                TableCell::new_with_alignment(
-                    labels
-                        .into_iter()
-                        .map(|label| label.name)
-                        .collect::<Vec<_>>()
-                        .join("\n"),
-                    1,
-                    Alignment::Left,
-                ),
+                TableCell::new_with_alignment(labels, 1, Alignment::Left),
             ])
         })
     }))

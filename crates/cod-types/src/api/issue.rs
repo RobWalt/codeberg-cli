@@ -1,6 +1,7 @@
 use serde::Deserialize;
 
 use crate::api::label::Label;
+use crate::api::pull_request_meta::PullRequestMeta;
 use crate::api::state_type::StateType;
 use crate::api::user::User;
 
@@ -12,4 +13,5 @@ pub struct Issue {
     pub assignees: Option<Vec<User>>,
     pub body: String,
     pub state: StateType,
+    pub pull_request: Option<PullRequestMeta>,
 }

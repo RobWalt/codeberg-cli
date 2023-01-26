@@ -5,7 +5,9 @@ use cod_render::spinner::spin_until_ready;
 use cod_types::api::issue::Issue;
 
 pub async fn list_issue(args: ListIssueArgs, client: &CodebergClient) -> anyhow::Result<()> {
-    let issues_list = spin_until_ready(client.get_repo_issues(None, Some(args.count))).await?;
+    let mut issues_list = spin_until_ready(client.get_repo_issues(None, Some(args.count))).await?;
+
+    issues_list.retain(|issue| issue.pull_request.is_none());
 
     present_issues_list(issues_list);
 
@@ -44,19 +46,20 @@ fn present_issues_list(issues: Vec<Issue>) {
                 state,
                 ..
             } = issue;
+            let labels = if labels.is_empty() {
+                String::from("x")
+            } else {
+                labels
+                    .into_iter()
+                    .map(|label| format!("- {}", label.name))
+                    .collect::<Vec<_>>()
+                    .join("\n")
+            };
             Row::new([
                 TableCell::new_with_alignment(number, 1, Alignment::Left),
                 TableCell::new_with_alignment(state, 1, Alignment::Left),
                 TableCell::new_with_alignment(title, 1, Alignment::Left),
-                TableCell::new_with_alignment(
-                    labels
-                        .into_iter()
-                        .map(|label| format!("- {}", label.name))
-                        .collect::<Vec<_>>()
-                        .join("\n"),
-                    1,
-                    Alignment::Left,
-                ),
+                TableCell::new_with_alignment(labels, 1, Alignment::Left),
             ])
         })
     }))
