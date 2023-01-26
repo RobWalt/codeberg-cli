@@ -95,4 +95,9 @@ impl EndpointGenerator {
             .join(format!("{label_id}").as_str())
             .map_err(anyhow::Error::from)
     }
+
+    pub fn repo_branches() -> anyhow::Result<Url> {
+        use crate::api::REPO_BRANCHES;
+        Self::repos_owner_repo(REPO_BRANCHES)
+    }
 }
