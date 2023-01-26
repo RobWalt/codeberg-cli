@@ -61,23 +61,24 @@ async fn dispatch_args(main_args: MainArgs) -> anyhow::Result<()> {
     let token = Token::read_from_data_dir()
         .context("Couldn't find login data. Please use `cod auth login` to authenticate first.")?;
     let client = CodebergClient::new(&token)?;
+    use MainArgs::*;
     match main_args {
-        MainArgs::Auth(AuthArgs::Logout(args)) => logout_user(args),
-        MainArgs::Auth(AuthArgs::Login(_)) => unreachable!("was already handled"),
-        MainArgs::User(UserArgs::Info(args)) => info_user(args, &client).await,
-        MainArgs::Repo(RepoArgs::Info(args)) => info_repo(args, &client).await,
-        MainArgs::Repo(RepoArgs::Assignees(args)) => assignees_repo(args, &client).await,
-        MainArgs::Repo(RepoArgs::Create(args)) => create_repo(args, &client).await,
-        MainArgs::Repo(RepoArgs::Clone(args)) => clone_repo(args, &client).await,
-        MainArgs::Repo(RepoArgs::Fork(args)) => fork_repo(args, &client).await,
-        MainArgs::Issue(IssueArgs::List(args)) => list_issue(args, &client).await,
-        MainArgs::Issue(IssueArgs::Create(args)) => create_issue(args, &client).await,
-        MainArgs::Issue(IssueArgs::View(args)) => view_issue(args, &client).await,
-        MainArgs::Issue(IssueArgs::Edit(args)) => edit_issue(args, &client).await,
-        MainArgs::Issue(IssueArgs::Comment(args)) => comment_issue(args, &client).await,
-        MainArgs::Pull(PullRequestArgs::List(args)) => list_pull(args, &client).await,
-        MainArgs::Label(LabelArgs::List(args)) => list_label(args, &client).await,
-        MainArgs::Label(LabelArgs::Create(args)) => create_label(args, &client).await,
-        MainArgs::Label(LabelArgs::Delete(args)) => delete_label(args, &client).await,
+        Auth(AuthArgs::Logout(args)) => logout_user(args),
+        Auth(AuthArgs::Login(_)) => unreachable!("was already handled"),
+        User(UserArgs::Info(args)) => info_user(args, &client).await,
+        Repo(RepoArgs::Info(args)) => info_repo(args, &client).await,
+        Repo(RepoArgs::Assignees(args)) => assignees_repo(args, &client).await,
+        Repo(RepoArgs::Create(args)) => create_repo(args, &client).await,
+        Repo(RepoArgs::Clone(args)) => clone_repo(args, &client).await,
+        Repo(RepoArgs::Fork(args)) => fork_repo(args, &client).await,
+        Issue(IssueArgs::List(args)) => list_issue(args, &client).await,
+        Issue(IssueArgs::Create(args)) => create_issue(args, &client).await,
+        Issue(IssueArgs::View(args)) => view_issue(args, &client).await,
+        Issue(IssueArgs::Edit(args)) => edit_issue(args, &client).await,
+        Issue(IssueArgs::Comment(args)) => comment_issue(args, &client).await,
+        Pull(PullRequestArgs::List(args)) => list_pull(args, &client).await,
+        Label(LabelArgs::List(args)) => list_label(args, &client).await,
+        Label(LabelArgs::Create(args)) => create_label(args, &client).await,
+        Label(LabelArgs::Delete(args)) => delete_label(args, &client).await,
     }
 }
