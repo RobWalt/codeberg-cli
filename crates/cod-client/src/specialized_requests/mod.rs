@@ -1,4 +1,5 @@
 use cod_endpoints::endpoint_generator::EndpointGenerator;
+use cod_types::api::create_fork_option::CreateForkOption;
 use cod_types::api::issue::Issue;
 use cod_types::api::label::Label;
 use cod_types::api::pull_request::PullRequest;
@@ -92,5 +93,12 @@ impl CodebergClient {
             [("q", reponame.to_string()), ("uid", user_id.to_string())],
         )
         .await
+    }
+
+    pub async fn fork_repo(&self, ownername: &str, reponame: &str) -> anyhow::Result<Repository> {
+        let api = EndpointGenerator::repo_forks(ownername, reponame)?;
+        let body = CreateForkOption::same_repo_name();
+        self.post_query_body(api, body, [("owner", ownername), ("repo", reponame)])
+            .await
     }
 }

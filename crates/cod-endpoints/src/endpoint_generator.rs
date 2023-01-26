@@ -68,4 +68,15 @@ impl EndpointGenerator {
         use crate::api::REPO_LABELS;
         Self::repos_owner_repo(REPO_LABELS)
     }
+
+    pub fn repo_forks(ownername: &str, reponame: &str) -> anyhow::Result<Url> {
+        use crate::api::REPO_FORK;
+        use crate::api::REPO_OWNER_REPOS;
+        let url = Url::from_str(CODEBERG_API_BASE)?
+            .join((REPO_OWNER_REPOS.to_owned() + "/").as_str())?
+            .join(format!("{ownername}/").as_str())?
+            .join(format!("{reponame}/").as_str())?
+            .join(REPO_FORK)?;
+        Ok(url)
+    }
 }
