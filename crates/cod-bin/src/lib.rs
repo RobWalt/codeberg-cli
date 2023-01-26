@@ -55,6 +55,7 @@ async fn run(cli: Command) -> Result<(), (Command, anyhow::Error)> {
 }
 
 async fn dispatch_args(args: MainArgs) -> anyhow::Result<()> {
+    tracing::info!("args: {args:#?}");
     let token = Token::read_from_data_dir()
         .context("Couldn't find login data. Please use `cod auth login` to authenticate first.")?;
     let client = CodebergClient::new(&token)?;

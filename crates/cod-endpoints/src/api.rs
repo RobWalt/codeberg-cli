@@ -14,6 +14,7 @@ pub const REPO_OWNER_REPOS: &str = "repos";
 
 pub const REPO_ASSIGNEES: &str = "assignees";
 pub const REPO_ISSUES: &str = "issues";
+pub const REPO_ISSUES_COMMENTS: &str = "comments";
 pub const REPO_PULLS: &str = "pulls";
 pub const REPO_LABELS: &str = "labels";
 pub const REPO_FORK: &str = "forks";

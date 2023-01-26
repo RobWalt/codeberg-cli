@@ -1,3 +1,4 @@
+pub mod comment;
 pub mod create_fork_option;
 pub mod create_issue_options;
 pub mod create_label_options;
