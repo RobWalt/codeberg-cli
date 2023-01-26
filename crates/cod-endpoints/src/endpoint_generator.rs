@@ -25,6 +25,8 @@ generator_method!(user_info, USER_INFO);
 generator_method!(user_followers, USER_FOLLOWERS);
 generator_method!(user_following, USER_FOLLOWING);
 generator_method!(user_repos, USER_REPOS);
+generator_method!(user_search, USER_SEARCH);
+generator_method!(repo_search, REPO_SEARCH);
 
 impl EndpointGenerator {
     fn repos_owner_repo(endpoint: impl ToString) -> anyhow::Result<Url> {

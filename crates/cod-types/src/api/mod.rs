@@ -9,5 +9,6 @@ pub mod label;
 pub mod privacy_type;
 pub mod pull_request;
 pub mod repository;
+pub mod search_results;
 pub mod state_type;
 pub mod user;
