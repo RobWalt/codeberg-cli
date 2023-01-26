@@ -88,4 +88,11 @@ impl EndpointGenerator {
             .join(REPO_ISSUES_COMMENTS)
             .map_err(anyhow::Error::from)
     }
+
+    pub fn repo_labels_with_id(label_id: usize) -> anyhow::Result<Url> {
+        use crate::api::REPO_LABELS;
+        Self::repos_owner_repo(format!("{REPO_LABELS}/"))?
+            .join(format!("{label_id}").as_str())
+            .map_err(anyhow::Error::from)
+    }
 }
