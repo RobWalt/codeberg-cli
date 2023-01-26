@@ -11,6 +11,7 @@ pub mod issue;
 pub mod label;
 pub mod privacy_type;
 pub mod pull_request;
+pub mod pull_request_meta;
 pub mod repository;
 pub mod search_results;
 pub mod state_type;
