@@ -3,7 +3,7 @@ use cod_client::CodebergClient;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_render::spinner::spin_until_ready;
 use cod_render::ui::{fuzzy_select_with_key, multi_fuzzy_select_with_key};
-use cod_types::api::edit_issue_option::EditIssueOptions;
+use cod_types::api::edit_issue_option::EditIssueOption;
 use cod_types::api::issue::Issue;
 use cod_types::api::state_type::StateType;
 use strum::{Display, EnumIter, IntoEnumIterator};
@@ -55,10 +55,10 @@ async fn create_update_data(
     client: &CodebergClient,
     selected_update_fields: Vec<EditableFields>,
     selected_issue: &Issue,
-) -> anyhow::Result<EditIssueOptions> {
+) -> anyhow::Result<EditIssueOption> {
     use EditableFields::*;
 
-    let mut edit_issue_options = EditIssueOptions::from_issue(selected_issue);
+    let mut edit_issue_options = EditIssueOption::from_issue(selected_issue);
 
     if selected_update_fields.contains(&Assignees) {
         let assignees_list = client.get_repo_assignees().await?;

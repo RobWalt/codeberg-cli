@@ -1,10 +1,12 @@
 pub mod create_issue_options;
 pub mod create_label_options;
+pub mod create_repo_options;
 pub mod edit_issue_option;
 pub mod followers_info;
 pub mod following_info;
 pub mod issue;
 pub mod label;
+pub mod privacy_type;
 pub mod pull_request;
 pub mod repository;
 pub mod state_type;
