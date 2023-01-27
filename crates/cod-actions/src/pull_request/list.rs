@@ -44,6 +44,8 @@ fn present_pull_requests_list(pull_requests: Vec<PullRequest>) {
                 number,
                 labels,
                 state,
+                body: _body,
+                assignees: _assignees,
             } = issue;
             let labels = if labels.is_empty() {
                 String::from("x")
