@@ -11,6 +11,7 @@ use cod_actions::label::create::create_label;
 use cod_actions::label::delete::delete_label;
 use cod_actions::label::list::list_label;
 use cod_actions::pull_request::create::create_pull;
+use cod_actions::pull_request::edit::edit_pull;
 use cod_actions::pull_request::list::list_pull;
 use cod_actions::repo::assignees::assignees_repo;
 use cod_actions::repo::clone::clone_repo;
@@ -79,6 +80,7 @@ async fn dispatch_args(main_args: MainArgs) -> anyhow::Result<()> {
         Issue(IssueArgs::Comment(args)) => comment_issue(args, &client).await,
         Pull(PullRequestArgs::List(args)) => list_pull(args, &client).await,
         Pull(PullRequestArgs::Create(args)) => create_pull(args, &client).await,
+        Pull(PullRequestArgs::Edit(args)) => edit_pull(args, &client).await,
         Label(LabelArgs::List(args)) => list_label(args, &client).await,
         Label(LabelArgs::Create(args)) => create_label(args, &client).await,
         Label(LabelArgs::Delete(args)) => delete_label(args, &client).await,
