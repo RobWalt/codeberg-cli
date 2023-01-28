@@ -1,6 +1,6 @@
 use cod_cli::repo::fork::RepoForkArgs;
 use cod_client::CodebergClient;
-use cod_render::spinner::spin_until_ready;
+use cod_render::spinner::{spin_and_try_every_second_for, spin_until_ready};
 
 pub async fn fork_repo(args: RepoForkArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let (ownername, reponame) = parse_owner_and_repo(args.owner_and_repo)?;
@@ -32,10 +32,16 @@ async fn start_fork_repo(
     reponame: &str,
 ) -> anyhow::Result<String> {
     // just to check if the repo exists
-    let _ssh_url_original = get_ssh_url(client, ownername, reponame).await?;
+    let ssh_url_original = get_ssh_url(client, ownername, reponame).await?;
+    tracing::error!("Fork url: {ssh_url_original}");
     client.fork_repo(ownername, reponame).await?;
+    tracing::debug!("Forked successfully.");
     let user = client.get_user_info().await?;
-    let new_url = get_ssh_url(client, user.username.as_str(), reponame).await?;
+    tracing::debug!("User: {user:?}");
+    let new_url =
+        spin_and_try_every_second_for(|| get_ssh_url(client, user.username.as_str(), reponame), 10)
+            .await?;
+    tracing::debug!("Forked Repo SSH URL: {new_url:?}");
     Ok(new_url)
 }
 
