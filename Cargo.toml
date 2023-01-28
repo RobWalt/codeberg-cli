@@ -2,6 +2,13 @@
 name = "codeberg-cli"
 version = "0.1.0"
 edition = "2021"
+license = "AGPL3"
+keywords = ["cli", "codeberg", "api", "tool"]
+authors = ["Robert Walter <robwalter96@gmail.com>"]
+description = "CLI Tool for codeberg similar to gh and glab"
+homepage = "https://codeberg.org/RobWalt/codeberg-cli"
+repository = "https://codeberg.org/RobWalt/codeberg-cli"
+readme = "README.md"
 
 [[bin]]
 name = "cod"
