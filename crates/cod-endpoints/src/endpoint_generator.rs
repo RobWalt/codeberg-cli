@@ -21,7 +21,7 @@ macro_rules! generator_method {
 }
 
 generator_method!(verify, AUTHENTIFICATION_VERIFICATION);
-generator_method!(user_info, USER_BASE);
+generator_method!(user_info, USER_INFO);
 generator_method!(user_followers, USER_FOLLOWERS);
 generator_method!(user_following, USER_FOLLOWING);
 generator_method!(user_repos, USER_REPOS);
@@ -107,9 +107,9 @@ impl EndpointGenerator {
     }
 
     pub fn get_user_repos(username: String) -> anyhow::Result<Url> {
-        use crate::api::USER_BASE;
+        use crate::api::USERS_BASE;
         Url::from_str(CODEBERG_API_BASE)?
-            .join(format!("{USER_BASE}/").as_str())?
+            .join(format!("{USERS_BASE}/").as_str())?
             .join(format!("{username}/").as_str())?
             .join("repos")
             .map_err(anyhow::Error::from)
