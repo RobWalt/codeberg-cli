@@ -43,7 +43,7 @@ pub async fn edit_pull(_args: EditPullRequestArgs, client: &CodebergClient) -> a
         .patch_body(api_endpoint, edit_pull_request_options)
         .await?;
 
-    tracing::info!("{updated_pull_request:?}");
+    tracing::debug!("{updated_pull_request:?}");
 
     Ok(())
 }

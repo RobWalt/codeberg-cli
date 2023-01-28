@@ -40,13 +40,13 @@ pub async fn edit_issue(_args: EditIssueArgs, client: &CodebergClient) -> anyhow
     let edit_issue_options =
         create_update_data(client, selected_update_fields, &selected_issue).await?;
 
-    tracing::info!("{edit_issue_options:?}");
+    tracing::debug!("{edit_issue_options:?}");
 
     let api_endpoint = EndpointGenerator::repo_update_issue(selected_issue.number)?;
 
     let updated_issue: Issue = client.patch_body(api_endpoint, edit_issue_options).await?;
 
-    tracing::info!("{updated_issue:?}");
+    tracing::debug!("{updated_issue:?}");
 
     Ok(())
 }

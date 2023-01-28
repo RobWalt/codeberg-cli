@@ -13,7 +13,7 @@ pub async fn create_repo(mut args: RepoCreateArgs, client: &CodebergClient) -> a
     let body = create_body(args);
     let api_endpoint = EndpointGenerator::user_repos()?;
     let response: Repository = client.post_body(api_endpoint, body).await?;
-    tracing::info!("{response:?}");
+    tracing::debug!("{response:?}");
     Ok(())
 }
 
