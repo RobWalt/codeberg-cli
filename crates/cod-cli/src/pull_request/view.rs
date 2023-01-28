@@ -12,10 +12,10 @@ use cod_types::api::state_type::StateType;
     before_long_help = None,
     after_long_help = None
 )]
-pub struct ListPullRequestArgs {
-    #[arg(short, long, default_value_t = 5)]
-    pub count: usize,
-
-    #[arg(short, long, default_value_t = StateType::All)]
+pub struct ViewPullRequestsArgs {
+    #[arg(short, long, value_enum, default_value_t=StateType::All)]
     pub state: StateType,
+
+    #[arg(short, long)]
+    pub comments: bool,
 }

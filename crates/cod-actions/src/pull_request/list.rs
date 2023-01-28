@@ -5,7 +5,8 @@ use cod_render::spinner::spin_until_ready;
 use cod_types::api::pull_request::PullRequest;
 
 pub async fn list_pull(args: ListPullRequestArgs, client: &CodebergClient) -> anyhow::Result<()> {
-    let pull_requests_list = spin_until_ready(client.get_repo_prs(Some(args.count))).await?;
+    let pull_requests_list =
+        spin_until_ready(client.get_repo_prs(Some(args.state), Some(args.count))).await?;
 
     present_pull_requests_list(pull_requests_list);
 

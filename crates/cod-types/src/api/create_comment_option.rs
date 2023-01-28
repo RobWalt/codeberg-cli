@@ -1,11 +1,11 @@
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
-pub struct CreateIssueCommentOption {
+pub struct CreateCommentOption {
     body: String,
 }
 
-impl CreateIssueCommentOption {
+impl CreateCommentOption {
     pub fn new(body: String) -> Self {
         Self { body }
     }

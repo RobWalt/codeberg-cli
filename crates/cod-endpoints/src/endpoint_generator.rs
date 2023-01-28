@@ -80,11 +80,11 @@ impl EndpointGenerator {
         Ok(url)
     }
 
-    pub fn repo_comments_for_issue(comment_id: usize) -> anyhow::Result<Url> {
+    pub fn repo_comments_for_id(issue_or_pr_id: usize) -> anyhow::Result<Url> {
         use crate::api::REPO_ISSUES;
         use crate::api::REPO_ISSUES_COMMENTS;
         Self::repos_owner_repo(format!("{REPO_ISSUES}/"))?
-            .join(format!("{comment_id}/").as_str())?
+            .join(format!("{issue_or_pr_id}/").as_str())?
             .join(REPO_ISSUES_COMMENTS)
             .map_err(anyhow::Error::from)
     }

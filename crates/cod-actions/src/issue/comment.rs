@@ -2,7 +2,7 @@ use cod_cli::issue::comment::CommentIssueArgs;
 use cod_client::CodebergClient;
 use cod_render::spinner::spin_until_ready;
 use cod_render::ui::fuzzy_select_with_key;
-use cod_types::api::create_issue_comment_option::CreateIssueCommentOption;
+use cod_types::api::create_comment_option::CreateCommentOption;
 use cod_types::api::issue::Issue;
 
 pub async fn comment_issue(_args: CommentIssueArgs, client: &CodebergClient) -> anyhow::Result<()> {
@@ -17,16 +17,16 @@ pub async fn comment_issue(_args: CommentIssueArgs, client: &CodebergClient) -> 
     if let Some(issue) = selected_issue {
         let body = get_comment_input(issue.title.as_str())?;
 
-        let comment = client.post_comment_for_issue(issue.number, body).await?;
+        let comment = client.post_comment_for_id(issue.number, body).await?;
 
         println!("Posted comment: {comment:?}");
     }
     Ok(())
 }
 
-fn get_comment_input(issue_title: &str) -> anyhow::Result<CreateIssueCommentOption> {
+fn get_comment_input(issue_title: &str) -> anyhow::Result<CreateCommentOption> {
     dialoguer::Editor::new()
         .edit(format!("Write a comment for issue \"{}\"", issue_title).as_str())?
-        .map(CreateIssueCommentOption::new)
+        .map(CreateCommentOption::new)
         .ok_or_else(|| anyhow::anyhow!("Aborted submitting a comment."))
 }
