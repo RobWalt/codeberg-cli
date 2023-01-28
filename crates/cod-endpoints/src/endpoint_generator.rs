@@ -21,7 +21,7 @@ macro_rules! generator_method {
 }
 
 generator_method!(verify, AUTHENTIFICATION_VERIFICATION);
-generator_method!(user_info, USER_INFO);
+generator_method!(user_info, USER_BASE);
 generator_method!(user_followers, USER_FOLLOWERS);
 generator_method!(user_following, USER_FOLLOWING);
 generator_method!(user_repos, USER_REPOS);
@@ -104,5 +104,23 @@ impl EndpointGenerator {
     pub fn repo_update_pull_request(pull_request_id: usize) -> anyhow::Result<Url> {
         use crate::api::REPO_PULLS;
         Self::repos_owner_repo(format!("{REPO_PULLS}/{pull_request_id}"))
+    }
+
+    pub fn get_user_repos(username: String) -> anyhow::Result<Url> {
+        use crate::api::USER_BASE;
+        Url::from_str(CODEBERG_API_BASE)?
+            .join(format!("{USER_BASE}/").as_str())?
+            .join(format!("{username}/").as_str())?
+            .join("repos")
+            .map_err(anyhow::Error::from)
+    }
+
+    pub fn get_org_repos(orgname: String) -> anyhow::Result<Url> {
+        use crate::api::ORG_BASE;
+        Url::from_str(CODEBERG_API_BASE)?
+            .join(format!("{ORG_BASE}/").as_str())?
+            .join(format!("{orgname}/").as_str())?
+            .join("repos")
+            .map_err(anyhow::Error::from)
     }
 }

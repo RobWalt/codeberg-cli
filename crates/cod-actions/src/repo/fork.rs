@@ -44,31 +44,12 @@ async fn get_ssh_url(
     ownername: &str,
     reponame: &str,
 ) -> anyhow::Result<String> {
-    let user = client
-        .search_for_user(ownername)
-        .await
-        .and_then(|matching_users| {
-            matching_users
-                .data
-                .first()
-                .ok_or_else(|| {
-                    anyhow::anyhow!("Couldn't find repo when searching for {ownername}/{reponame}")
-                })
-                .cloned()
-        })?;
-    let repo = client
-        .search_for_repo(reponame, user.id)
-        .await
-        .and_then(|matching_repos| {
-            matching_repos
-                .data
-                .first()
-                .ok_or_else(|| {
-                    anyhow::anyhow!("Couldn't find repo when searching for {ownername}/{reponame}")
-                })
-                .cloned()
-        })?;
-    Ok(repo.ssh_url)
+    let owner_repos = client.get_user_or_org_repos(ownername.to_owned()).await?;
+    owner_repos
+        .iter()
+        .find(|repo| repo.name == reponame)
+        .ok_or_else(|| anyhow::anyhow!("User {ownername} doesn't own the repo {reponame}."))
+        .map(|repo| repo.ssh_url.to_owned())
 }
 
 fn ask_confirm_clone(reponame: &str) -> anyhow::Result<()> {
