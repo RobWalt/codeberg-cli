@@ -9,15 +9,32 @@ CLI Tool for [Codeberg](https://codeberg.org/) similar to `gh` and `glab`.
 
 # Installation 
 
-## Cargo
+
+## I. Cargo
 
 The easiest way to install the `cod` command is using cargo. (If you haven't installed rust/cargo yet, take a look [here](https://doc.rust-lang.org/cargo/getting-started/installation.html))
 
-Just run 
+### I.I. Cargo Build 
+
+Clone the repo and install `cod` with 
+
+```sh 
+cargo install --path .
+```
+
+### I.II. Cargo Crates.io (Not working at the moment)
+
+I can't publish the crate at the moment since all dependencies of this crate must be available on crates.io. However, some of my dependencies are forks that include fixes / new features and this prevents me from triggering the release workflow.
+
+---
+
+Anywhere, just run 
 
 ```sh
 cargo install codeberg-cli
 ```
+
+## II. Checking the installation
 
 After that, the `cod` command should be available for you. Check it with `cod -V`
 
