@@ -23,12 +23,12 @@ impl CodebergClient {
         body: B,
         query: Q,
     ) -> anyhow::Result<T> {
-        tracing::info!(
+        tracing::debug!(
             "Making POST call. API endpoint: {:?}",
             api_endpoint.as_str()
         );
         let body_str = serde_json::to_string(&body)?;
-        tracing::info!("POST Body: {body_str}");
+        tracing::debug!("POST Body: {body_str}");
         let response = self
             .post(api_endpoint.clone())
             .query(&query)
@@ -40,7 +40,7 @@ impl CodebergClient {
             .send()
             .await?;
         let status = response.status();
-        tracing::info!("Response Status: {status:?}");
+        tracing::debug!("Response Status: {status:?}");
         if !status.is_success() {
             let body_str = serde_json::to_string(&body)?;
             let response = self
@@ -54,10 +54,10 @@ impl CodebergClient {
                 .send()
                 .await?;
             let text = response.text().await?;
-            tracing::info!("Failed POST: {text}");
+            tracing::debug!("Failed POST: {text}");
         }
         let json_response = response.json().await?;
-        tracing::info!("Response: {:?}", json_response);
+        tracing::debug!("Response: {:?}", json_response);
         Ok(json_response)
     }
 }

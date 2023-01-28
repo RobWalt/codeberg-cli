@@ -15,7 +15,7 @@ pub async fn create_issue(
     let body = create_body(args);
     let api_endpoint = EndpointGenerator::repo_issues()?;
     let response: Issue = client.post_body(api_endpoint, body).await?;
-    tracing::info!("{response:?}");
+    tracing::debug!("{response:?}");
     Ok(())
 }
 

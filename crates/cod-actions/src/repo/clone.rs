@@ -72,7 +72,7 @@ fn ask_confirm_clone(reponame: &str) -> anyhow::Result<()> {
 fn start_clone_repo(ssh_url: String) -> anyhow::Result<()> {
     let mut cmd = std::process::Command::new("git");
     cmd.arg("clone").arg(ssh_url);
-    tracing::info!("cmd: {cmd:?}");
+    tracing::debug!("cmd: {cmd:?}");
     cmd.stdout(std::process::Stdio::inherit()).spawn()?;
     Ok(())
 }

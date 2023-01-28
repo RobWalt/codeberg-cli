@@ -14,7 +14,7 @@ pub async fn create_pull(
     let options = fill_in_optional_values(options, &args, client).await?;
     let api_endpoint = EndpointGenerator::repo_pull_requests()?;
     let response: PullRequest = client.post_body(api_endpoint, options).await?;
-    tracing::info!("{response:?}");
+    tracing::debug!("{response:?}");
     Ok(())
 }
 

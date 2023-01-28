@@ -97,7 +97,7 @@ async fn present_issue_comments(
         Alignment::Center,
     )]))
     .chain(comments.into_iter().map(|comment| {
-        tracing::info!("comment:{comment:?}");
+        tracing::debug!("comment:{comment:?}");
         Row::new([TableCell::new_with_alignment(
             format!(
                 "{}\n({}):\n{}\n\n{}",
