@@ -16,7 +16,7 @@ enum EditableFields {
 }
 
 pub async fn edit_pull(_args: EditPullRequestArgs, client: &CodebergClient) -> anyhow::Result<()> {
-    let list_pull_requests = client.get_repo_prs(None).await?;
+    let list_pull_requests = client.get_repo_prs(None, None).await?;
 
     let selected_pull_request = fuzzy_select_with_key(
         list_pull_requests,

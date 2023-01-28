@@ -1,50 +1,50 @@
-use cod_cli::issue::view::ViewIssueArgs;
+use cod_cli::pull_request::view::ViewPullRequestsArgs;
 use cod_client::CodebergClient;
 use cod_render::spinner::spin_until_ready;
 use cod_render::ui::fuzzy_select_with_key;
-use cod_types::api::issue::Issue;
+use cod_types::api::pull_request::PullRequest;
 
-pub async fn view_issue(args: ViewIssueArgs, client: &CodebergClient) -> anyhow::Result<()> {
-    let issues_list = spin_until_ready(client.get_repo_issues(Some(args.state), None)).await?;
+pub async fn view_pull(args: ViewPullRequestsArgs, client: &CodebergClient) -> anyhow::Result<()> {
+    let pull_requests_list = spin_until_ready(client.get_repo_prs(Some(args.state), None)).await?;
 
-    let selected_issue = fuzzy_select_with_key(
-        issues_list,
-        |issue: &Issue| format!("#{} {}", issue.number, issue.title),
+    let selected_pull_request = fuzzy_select_with_key(
+        pull_requests_list,
+        |pull_request: &PullRequest| format!("#{} {}", pull_request.number, pull_request.title),
         |issue| issue,
     )?;
 
     if args.comments {
-        spin_until_ready(present_issue_comments(client, selected_issue)).await?;
+        spin_until_ready(present_pull_request_comments(client, selected_pull_request)).await?;
     } else {
-        present_issue_overview(selected_issue);
+        present_pull_request_overview(selected_pull_request);
     }
 
     Ok(())
 }
 
-fn present_issue_overview(selected_issue: Option<Issue>) {
+fn present_pull_request_overview(selected_pull_request: Option<PullRequest>) {
     use cod_render::prelude::*;
     use std::iter::once;
 
     let rows = once(Some(Row::new([TableCell::new_with_alignment(
-        selected_issue
+        selected_pull_request
             .as_ref()
-            .map(|issue| format!("Issue #{}", issue.number))
-            .unwrap_or_else(|| String::from("No Issues available")),
+            .map(|pull_request| format!("Pull Request #{}", pull_request.number))
+            .unwrap_or_else(|| String::from("No Pull Requests available")),
         2,
         Alignment::Center,
     )])))
-    .chain(once(selected_issue.as_ref().map(|issue| {
+    .chain(once(selected_pull_request.as_ref().map(|pull_request| {
         Row::new([
             TableCell::new_with_alignment("Title", 1, Alignment::Center),
-            TableCell::new_with_alignment(issue.title.as_str(), 1, Alignment::Left),
+            TableCell::new_with_alignment(pull_request.title.as_str(), 1, Alignment::Left),
         ])
     })))
-    .chain(once(selected_issue.as_ref().map(|issue| {
+    .chain(once(selected_pull_request.as_ref().map(|pull_request| {
         Row::new([
             TableCell::new_with_alignment("Labels", 1, Alignment::Center),
             TableCell::new_with_alignment(
-                issue
+                pull_request
                     .labels
                     .iter()
                     .map(|label| label.name.as_str())
@@ -55,10 +55,10 @@ fn present_issue_overview(selected_issue: Option<Issue>) {
             ),
         ])
     })))
-    .chain(once(selected_issue.as_ref().map(|issue| {
+    .chain(once(selected_pull_request.as_ref().map(|pull_request| {
         Row::new([
             TableCell::new_with_alignment("Description", 1, Alignment::Center),
-            TableCell::new_with_alignment(issue.body.as_str(), 1, Alignment::Left),
+            TableCell::new_with_alignment(pull_request.body.as_str(), 1, Alignment::Left),
         ])
     })))
     .flatten();
@@ -68,18 +68,18 @@ fn present_issue_overview(selected_issue: Option<Issue>) {
     println!("{}", table.render());
 }
 
-async fn present_issue_comments(
+async fn present_pull_request_comments(
     client: &CodebergClient,
-    selected_issue: Option<Issue>,
+    selected_pull_request: Option<PullRequest>,
 ) -> anyhow::Result<()> {
     use cod_render::prelude::*;
     use std::iter::once;
 
-    let (header, comments) = if let Some(issue) = selected_issue.as_ref() {
-        let comments_list = client.get_comments_for_id(issue.number).await?;
+    let (header, comments) = if let Some(pull_request) = selected_pull_request.as_ref() {
+        let comments_list = client.get_comments_for_id(pull_request.number).await?;
         let header = format!(
-            "Issue #{} {}",
-            issue.number,
+            "Pull Request #{} {}",
+            pull_request.number,
             if comments_list.is_empty() {
                 "(no comments)"
             } else {
@@ -88,7 +88,7 @@ async fn present_issue_comments(
         );
         (header, comments_list)
     } else {
-        (String::from("No Issues available"), vec![])
+        (String::from("No Pull Requests available"), vec![])
     };
 
     let rows = once(Row::new([TableCell::new_with_alignment(

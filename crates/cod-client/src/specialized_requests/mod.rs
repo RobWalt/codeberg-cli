@@ -1,8 +1,8 @@
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_types::api::branch::Branch;
 use cod_types::api::comment::Comment;
+use cod_types::api::create_comment_option::CreateCommentOption;
 use cod_types::api::create_fork_option::CreateForkOption;
-use cod_types::api::create_issue_comment_option::CreateIssueCommentOption;
 use cod_types::api::issue::Issue;
 use cod_types::api::label::Label;
 use cod_types::api::pull_request::PullRequest;
@@ -31,13 +31,23 @@ impl CodebergClient {
 
     pub async fn get_repo_prs(
         &self,
+        maybe_state: Option<StateType>,
         maybe_limit: Option<usize>,
     ) -> anyhow::Result<Vec<PullRequest>> {
         let api = EndpointGenerator::repo_pull_requests()?;
-        if let Some(limit) = maybe_limit {
-            self.get_query(api, [("limit", limit)]).await
-        } else {
+        let query_args = maybe_limit
+            .map(|limit| ("limit", limit.to_string()))
+            .into_iter()
+            .chain(
+                maybe_state
+                    .map(|state| ("state", state.to_string()))
+                    .into_iter(),
+            )
+            .collect::<Vec<_>>();
+        if query_args.is_empty() {
             self.get(api).await
+        } else {
+            self.get_query(api, query_args).await
         }
     }
 
@@ -105,17 +115,17 @@ impl CodebergClient {
             .await
     }
 
-    pub async fn get_comments_for_issue(&self, issue_id: usize) -> anyhow::Result<Vec<Comment>> {
-        let api = EndpointGenerator::repo_comments_for_issue(issue_id)?;
+    pub async fn get_comments_for_id(&self, issue_or_pr_id: usize) -> anyhow::Result<Vec<Comment>> {
+        let api = EndpointGenerator::repo_comments_for_id(issue_or_pr_id)?;
         self.get(api).await
     }
 
-    pub async fn post_comment_for_issue(
+    pub async fn post_comment_for_id(
         &self,
         issue_id: usize,
-        comment: CreateIssueCommentOption,
+        comment: CreateCommentOption,
     ) -> anyhow::Result<Comment> {
-        let api = EndpointGenerator::repo_comments_for_issue(issue_id)?;
+        let api = EndpointGenerator::repo_comments_for_id(issue_id)?;
         self.post_body(api, comment).await
     }
 
