@@ -138,4 +138,20 @@ impl CodebergClient {
         let api = EndpointGenerator::repo_branches()?;
         self.get(api).await
     }
+
+    pub async fn get_user_repos(&self, username: String) -> anyhow::Result<Vec<Repository>> {
+        let api = EndpointGenerator::get_user_repos(username)?;
+        self.get(api).await
+    }
+
+    pub async fn get_org_repos(&self, orgname: String) -> anyhow::Result<Vec<Repository>> {
+        let api = EndpointGenerator::get_org_repos(orgname)?;
+        self.get(api).await
+    }
+
+    pub async fn get_user_or_org_repos(&self, name: String) -> anyhow::Result<Vec<Repository>> {
+        self.get_org_repos(name.clone())
+            .await
+            .or(self.get_user_repos(name).await)
+    }
 }
