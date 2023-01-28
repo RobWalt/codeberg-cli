@@ -2,6 +2,13 @@
 name = "cod-paths"
 version = "0.1.0"
 edition = "2021"
+license = "AGPL3"
+keywords = ["codeberg-cli"]
+authors = ["Robert Walter <robwalter96@gmail.com>"]
+description = "Provides general OS independent paths for codeberg-cli app"
+homepage = "https://codeberg.org/RobWalt/codeberg-cli"
+repository = "https://codeberg.org/RobWalt/codeberg-cli"
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
