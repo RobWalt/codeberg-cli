@@ -1,6 +1,8 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [<img alt="crates.io" src="https://img.shields.io/crates/v/codeberg-cli.svg?style=for-the-badge&color=fc8d62&logo=rust" height="20">](https://crates.io/crates/codeberg-cli)
 
+<img alt="codeberg-cli logo" src="https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/logo.png" width="500" height="500">
+
 # cod-rs
 
 CLI Tool for [Codeberg](https://codeberg.org/) similar to `gh` and `glab`.
