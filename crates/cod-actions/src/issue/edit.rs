@@ -8,6 +8,8 @@ use cod_types::api::issue::Issue;
 use cod_types::api::state_type::StateType;
 use strum::{Display, EnumIter, IntoEnumIterator};
 
+use crate::text_manipulation::select_prompt_for;
+
 #[derive(Display, EnumIter, PartialEq, Eq)]
 enum EditableFields {
     Assignees,
@@ -25,6 +27,7 @@ pub async fn edit_issue(_args: EditIssueArgs, client: &CodebergClient) -> anyhow
 
     let selected_issue = fuzzy_select_with_key(
         issues_list,
+        select_prompt_for("issue"),
         |issue: &Issue| format!("#{} {}", issue.number, issue.title),
         |issue| issue,
     )
@@ -32,6 +35,7 @@ pub async fn edit_issue(_args: EditIssueArgs, client: &CodebergClient) -> anyhow
 
     let selected_update_fields = multi_fuzzy_select_with_key(
         EditableFields::iter().collect::<Vec<_>>(),
+        select_prompt_for("options"),
         |option| option.to_string(),
         |option| option,
         |_| false,
@@ -64,6 +68,7 @@ async fn create_update_data(
         let assignees_list = client.get_repo_assignees().await?;
         let selected_assignees = multi_fuzzy_select_with_key(
             assignees_list,
+            select_prompt_for("assignees"),
             |assignee| assignee.username.to_owned(),
             |assignee| assignee.username,
             |assignee| {
@@ -86,7 +91,8 @@ async fn create_update_data(
     if selected_update_fields.contains(&State) {
         let new_state = fuzzy_select_with_key(
             StateType::available_for_choosing().to_vec(),
-            |x| x.to_owned(),
+            select_prompt_for("state"),
+            |state| state.to_owned(),
             StateType::try_from,
         )?
         .and_then(|state_result| state_result.ok());

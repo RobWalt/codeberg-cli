@@ -6,6 +6,8 @@ use cod_types::api::create_issue_options::CreateIssueOption;
 use cod_types::api::issue::Issue;
 use strum::Display;
 
+use crate::text_manipulation::select_prompt_for;
+
 pub async fn create_issue(
     mut args: CreateIssueArgs,
     client: &CodebergClient,
@@ -56,6 +58,7 @@ async fn fill_in_optional_values(
 
     let selected_options = multi_fuzzy_select_with_key(
         missing_options,
+        "Add additional information for",
         |&missing_option| missing_option,
         |missing_option| missing_option,
         |_| false,
@@ -69,6 +72,7 @@ async fn fill_in_optional_values(
         let assignees_list = client.get_repo_assignees().await?;
         let selected_assignees = multi_fuzzy_select_with_key(
             assignees_list,
+            select_prompt_for("assignees"),
             |assignee| assignee.username.to_owned(),
             |assignee| assignee.username,
             |_| false,
@@ -82,6 +86,7 @@ async fn fill_in_optional_values(
 
         let selected_labels = multi_fuzzy_select_with_key(
             labels_list,
+            select_prompt_for("labels"),
             |label| label.name.to_owned(),
             |label| label.id,
             |_| false,

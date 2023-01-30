@@ -7,6 +7,8 @@ use cod_types::api::privacy_type::Privacy;
 use cod_types::api::repository::Repository;
 use strum::{Display, VariantNames};
 
+use crate::text_manipulation::select_prompt_for;
+
 pub async fn create_repo(mut args: RepoCreateArgs, client: &CodebergClient) -> anyhow::Result<()> {
     args = fill_in_mandatory_values(args)?;
     args = fill_in_optional_values(args)?;
@@ -59,6 +61,7 @@ fn fill_in_optional_values(mut args: RepoCreateArgs) -> anyhow::Result<RepoCreat
 
     let selected_options = multi_fuzzy_select_with_key(
         missing_options,
+        select_prompt_for("option"),
         |&missing_option| missing_option,
         |missing_option| missing_option,
         |_| false,
@@ -81,6 +84,7 @@ fn fill_in_optional_values(mut args: RepoCreateArgs) -> anyhow::Result<RepoCreat
         // TODO make selection required
         let selected_privacy = fuzzy_select_with_key(
             Privacy::VARIANTS.to_vec(),
+            select_prompt_for("visibility"),
             |privacy| privacy.to_string(),
             Privacy::try_from,
         )

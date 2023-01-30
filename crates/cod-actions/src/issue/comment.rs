@@ -5,11 +5,14 @@ use cod_render::ui::fuzzy_select_with_key;
 use cod_types::api::create_comment_option::CreateCommentOption;
 use cod_types::api::issue::Issue;
 
+use crate::text_manipulation::select_prompt_for;
+
 pub async fn comment_issue(_args: CommentIssueArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let issues_list = spin_until_ready(client.get_repo_issues(None, None)).await?;
 
     let selected_issue = fuzzy_select_with_key(
         issues_list,
+        select_prompt_for("issue"),
         |issue: &Issue| format!("#{} {}", issue.number, issue.title),
         |issue| issue,
     )?;

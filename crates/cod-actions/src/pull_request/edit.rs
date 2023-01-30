@@ -7,6 +7,8 @@ use cod_types::api::pull_request::PullRequest;
 use cod_types::api::state_type::StateType;
 use strum::{Display, EnumIter, IntoEnumIterator};
 
+use crate::text_manipulation::select_prompt_for;
+
 #[derive(Display, EnumIter, PartialEq, Eq)]
 enum EditableFields {
     Assignees,
@@ -20,6 +22,7 @@ pub async fn edit_pull(_args: EditPullRequestArgs, client: &CodebergClient) -> a
 
     let selected_pull_request = fuzzy_select_with_key(
         list_pull_requests,
+        select_prompt_for("pull request"),
         |pr| format!("#{} {}", pr.number, pr.title),
         |pr| pr,
     )
@@ -29,6 +32,7 @@ pub async fn edit_pull(_args: EditPullRequestArgs, client: &CodebergClient) -> a
 
     let selected_update_fields = multi_fuzzy_select_with_key(
         EditableFields::iter().collect::<Vec<_>>(),
+        select_prompt_for("option"),
         |option| option.to_string(),
         |option| option,
         |_| false,
@@ -62,6 +66,7 @@ async fn create_update_data(
         let assignees_list = client.get_repo_assignees().await?;
         let selected_assignees = multi_fuzzy_select_with_key(
             assignees_list,
+            select_prompt_for("assignees"),
             |assignee| assignee.username.to_owned(),
             |assignee| assignee.username,
             |assignee| {
@@ -86,7 +91,8 @@ async fn create_update_data(
     if selected_update_fields.contains(&State) {
         let new_state = fuzzy_select_with_key(
             StateType::available_for_choosing().to_vec(),
-            |x| x.to_owned(),
+            select_prompt_for("state"),
+            |state| state.to_owned(),
             StateType::try_from,
         )?
         .and_then(|state_result| state_result.ok());
