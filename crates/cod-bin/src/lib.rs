@@ -27,7 +27,7 @@ use cod_cli::label::LabelArgs;
 use cod_cli::pull_request::PullRequestArgs;
 use cod_cli::repo::RepoArgs;
 use cod_cli::user::UserArgs;
-use cod_cli::MainArgs;
+use cod_cli::{generate_completion, MainArgs};
 use cod_client::CodebergClient;
 use cod_types::token::Token;
 
@@ -52,10 +52,13 @@ async fn run(cli: Command) -> Result<(), (Command, anyhow::Error)> {
     let args = MainArgs::from_arg_matches(&cli.clone().get_matches())
         .map_err(|error| (cli.clone(), anyhow::Error::from(error)))?;
 
-    let res = if let MainArgs::Auth(AuthArgs::Login(login_args)) = args {
-        login_user(login_args).await
-    } else {
-        dispatch_args(args).await
+    let res = match args {
+        MainArgs::Auth(AuthArgs::Login(login_args)) => login_user(login_args).await,
+        MainArgs::Completion { shell } => {
+            generate_completion(shell, "cod");
+            Ok(())
+        }
+        _ => dispatch_args(args).await,
     };
     res.map_err(|error| (cli, error))
 }
@@ -68,7 +71,7 @@ async fn dispatch_args(main_args: MainArgs) -> anyhow::Result<()> {
     use MainArgs::*;
     match main_args {
         Auth(AuthArgs::Logout(args)) => logout_user(args),
-        Auth(AuthArgs::Login(_)) => unreachable!("was already handled"),
+        Auth(AuthArgs::Login(_)) | Completion { .. } => unreachable!("was already handled"),
         User(UserArgs::Info(args)) => info_user(args, &client).await,
         Repo(RepoArgs::Info(args)) => info_repo(args, &client).await,
         Repo(RepoArgs::Assignees(args)) => assignees_repo(args, &client).await,
