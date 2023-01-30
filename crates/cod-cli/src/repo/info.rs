@@ -1,14 +1,5 @@
 use clap::Parser;
 
 #[derive(Parser, Debug)]
-#[command(
-    author,
-    version,
-    about,
-    before_help = None,
-    after_help = None,
-    long_about = None,
-    before_long_help = None,
-    after_long_help = None
-)]
+#[command(about = "Display a short summary of the current repository")]
 pub struct RepoInfoArgs {}

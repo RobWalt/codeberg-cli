@@ -1,17 +1,13 @@
 use clap::Parser;
 
 #[derive(Parser, Debug)]
-#[command(
-    author,
-    version,
-    about,
-    before_help = None,
-    after_help = None,
-    long_about = None,
-    before_long_help = None,
-    after_long_help = None
-)]
+#[command(about = "List all labels of the current repository")]
 pub struct ListLabelsArgs {
-    #[arg(short, long, default_value_t = 5)]
+    #[arg(
+        short,
+        long,
+        default_value_t = 5,
+        help = "The amount of issues that is displayed"
+    )]
     pub count: usize,
 }

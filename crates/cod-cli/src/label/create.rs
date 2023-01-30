@@ -1,17 +1,8 @@
 use clap::Parser;
 
 #[derive(Parser, Debug)]
-#[command(
-    author,
-    version,
-    about,
-    before_help = None,
-    after_help = None,
-    long_about = None,
-    before_long_help = None,
-    after_long_help = None
-)]
+#[command(about = "Create a label")]
 pub struct CreateLabelArgs {
-    #[arg(short, long, required = true)]
+    #[arg(short, long, required = true, help = "Name of the label")]
     pub name: String,
 }
