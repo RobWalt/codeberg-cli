@@ -14,7 +14,7 @@ pub fn generate_completion(shell: Shell, bin_name: &str) {
 }
 
 #[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
+#[command(name = "cod", about = "Codeberg CLI app", version)]
 pub enum MainArgs {
     #[command(subcommand)]
     Auth(auth::AuthArgs),

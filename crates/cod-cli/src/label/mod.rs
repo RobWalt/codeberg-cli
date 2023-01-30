@@ -5,7 +5,7 @@ pub mod list;
 use clap::Subcommand;
 
 #[derive(Subcommand, Debug)]
-#[command(author, version, about = "Label commands", long_about = None)]
+#[command(about = "Label subcommands")]
 pub enum LabelArgs {
     List(list::ListLabelsArgs),
     Create(create::CreateLabelArgs),

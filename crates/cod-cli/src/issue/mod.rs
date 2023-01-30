@@ -7,7 +7,7 @@ pub mod view;
 use clap::Subcommand;
 
 #[derive(Subcommand, Debug)]
-#[command(author, version, about = "Issue commands", long_about = None)]
+#[command(about = "Issue subcommands")]
 pub enum IssueArgs {
     List(list::ListIssueArgs),
     Create(create::CreateIssueArgs),
