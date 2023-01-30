@@ -4,11 +4,14 @@ use cod_render::spinner::spin_until_ready;
 use cod_render::ui::fuzzy_select_with_key;
 use cod_types::api::issue::Issue;
 
+use crate::text_manipulation::select_prompt_for;
+
 pub async fn view_issue(args: ViewIssueArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let issues_list = spin_until_ready(client.get_repo_issues(Some(args.state), None)).await?;
 
     let selected_issue = fuzzy_select_with_key(
         issues_list,
+        select_prompt_for("issue"),
         |issue: &Issue| format!("#{} {}", issue.number, issue.title),
         |issue| issue,
     )?;

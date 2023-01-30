@@ -6,6 +6,8 @@ use cod_types::api::create_pull_request_option::CreatePullRequestOption;
 use cod_types::api::pull_request::PullRequest;
 use strum::Display;
 
+use crate::text_manipulation::select_prompt_for;
+
 pub async fn create_pull(
     args: CreatePullRequestArgs,
     client: &CodebergClient,
@@ -54,6 +56,7 @@ async fn select_head(
 
         fuzzy_select_with_key(
             branches,
+            select_prompt_for("source branch"),
             |branch| branch.name.to_owned(),
             |branch| branch.name,
         )
@@ -91,6 +94,7 @@ async fn fill_in_optional_values(
 
     let selected_options = multi_fuzzy_select_with_key(
         missing_options,
+        select_prompt_for("options"),
         |&missing_option| missing_option,
         |missing_option| missing_option,
         |_| false,
@@ -108,6 +112,7 @@ async fn fill_in_optional_values(
         let assignees_list = client.get_repo_assignees().await?;
         let selected_assignees = multi_fuzzy_select_with_key(
             assignees_list,
+            select_prompt_for("assignees"),
             |assignee| assignee.username.to_owned(),
             |assignee| assignee.username,
             |_| false,
@@ -121,6 +126,7 @@ async fn fill_in_optional_values(
 
         let selected_labels = multi_fuzzy_select_with_key(
             labels_list,
+            select_prompt_for("labels"),
             |label| label.name.to_owned(),
             |label| label.id,
             |_| false,

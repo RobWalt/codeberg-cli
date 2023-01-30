@@ -2,6 +2,7 @@ use anyhow::Context;
 
 pub fn multi_fuzzy_select_with_key<T, K, V>(
     items: Vec<T>,
+    prompt: impl Into<String>,
     select_by: impl Fn(&T) -> K,
     return_map: impl Fn(T) -> V,
     is_selected: impl Fn(&T) -> bool,
@@ -12,6 +13,7 @@ where
     let items_keys = items.iter().map(select_by).collect::<Vec<_>>();
     let already_selected = items.iter().map(is_selected).collect::<Vec<_>>();
     let selected_items = dialoguer::MultiFuzzySelect::new()
+        .with_prompt(prompt)
         .items(&items_keys)
         .defaults(&already_selected)
         .interact()
@@ -29,6 +31,7 @@ where
 
 pub fn fuzzy_select_with_key<T, K, V>(
     items: Vec<T>,
+    prompt: impl Into<String>,
     select_by: impl Fn(&T) -> K,
     return_map: impl Fn(T) -> V,
 ) -> anyhow::Result<Option<V>>
@@ -41,6 +44,7 @@ where
 
     let items_keys = items.iter().map(select_by).collect::<Vec<_>>();
     let selected_item = dialoguer::FuzzySelect::new()
+        .with_prompt(prompt)
         .items(&items_keys)
         .interact()
         .map_err(anyhow::Error::from)
