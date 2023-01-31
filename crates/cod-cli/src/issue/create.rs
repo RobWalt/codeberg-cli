@@ -7,7 +7,6 @@ pub struct CreateIssueArgs {
     #[arg(short, long)]
     pub title: Option<String>,
 
-    // TODO: ??? why ids here, change to names
     /// List of label ids
     #[arg(short, long)]
     pub labels: Option<Vec<String>>,
