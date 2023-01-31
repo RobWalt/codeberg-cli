@@ -2,7 +2,7 @@
 [<img alt="crates.io" src="https://img.shields.io/crates/v/codeberg-cli.svg?style=for-the-badge&color=fc8d62&logo=rust" height="20">](https://crates.io/crates/codeberg-cli)
 
 <p align="center">
-  <img alt="codeberg-cli logo" src="https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/logo.png" width="500" height="500">
+  <img alt="codeberg-cli logo" src="https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/logo.png" width="500">
 </p>
 
 # cod-rs
