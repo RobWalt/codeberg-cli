@@ -1,5 +1,5 @@
 use clap::Parser;
 
+/// Add a comment to selected issue
 #[derive(Parser, Debug)]
-#[command(about = "Add a comment to a selected issue")]
 pub struct CommentIssueArgs {}

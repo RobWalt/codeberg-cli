@@ -1,22 +1,14 @@
 use clap::Parser;
 use cod_types::api::state_type::StateType;
 
+/// List pull requests
 #[derive(Parser, Debug)]
-#[command(about = "List all pull requests of the current repository")]
 pub struct ListPullRequestArgs {
-    #[arg(
-        short,
-        long,
-        default_value_t = 5,
-        help = "The amount of pull requests that is displayed"
-    )]
+    /// Number of pull requests to be displayed
+    #[arg(short, long, value_name = "N", default_value_t = 5)]
     pub count: usize,
 
-    #[arg(
-        short,
-        long,
-        default_value_t = StateType::All,
-        help = "Only list pull request with chosen state"
-    )]
+    /// Filter pull requests with the chosen state
+    #[arg(short, long, default_value_t = StateType::All)]
     pub state: StateType,
 }

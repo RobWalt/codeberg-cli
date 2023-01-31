@@ -2,8 +2,8 @@ pub mod info;
 
 use clap::Subcommand;
 
+/// User subcommands
 #[derive(Subcommand, Debug)]
-#[command(about = "User subcommands")]
 pub enum UserArgs {
     Info(info::UserInfoArgs),
 }

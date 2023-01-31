@@ -1,18 +1,22 @@
 use clap::Parser;
 
+/// Create an issue
 #[derive(Parser, Debug)]
-#[command(about = "Create an issue")]
 pub struct CreateIssueArgs {
-    #[arg(short, long, help = "Title or summary")]
+    /// Title or summary
+    #[arg(short, long)]
     pub title: Option<String>,
 
     // TODO: ??? why ids here, change to names
-    #[arg(short, long, help = "List of label ids")]
+    /// List of label ids
+    #[arg(short, long)]
     pub labels: Option<Vec<usize>>,
 
-    #[arg(id = "description", short, long, help = "Main description of issue")]
+    /// Main description of issue
+    #[arg(id = "description", short, long)]
     pub body: Option<String>,
 
-    #[arg(short, long, help = "List of the names of assignees")]
+    /// List of assignee names
+    #[arg(short, long)]
     pub assignees: Option<Vec<String>>,
 }

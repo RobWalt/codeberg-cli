@@ -1,5 +1,5 @@
 use clap::Parser;
 
+/// Add comment to selected pull request
 #[derive(Parser, Debug)]
-#[command(about = "Add a comment to a selected pull request")]
 pub struct CommentPullRequestArgs {}

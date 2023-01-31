@@ -13,8 +13,9 @@ pub fn generate_completion(shell: Shell, bin_name: &str) {
     clap_complete::generate(shell, cmd, bin_name, &mut std::io::stdout());
 }
 
+/// Codeberg CLI app
 #[derive(Parser, Debug)]
-#[command(name = "cod", about = "Codeberg CLI app", version)]
+#[command(name = "cod", version)]
 pub enum MainArgs {
     #[command(subcommand)]
     Auth(auth::AuthArgs),

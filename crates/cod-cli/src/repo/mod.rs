@@ -6,8 +6,8 @@ pub mod info;
 
 use clap::Subcommand;
 
+/// Repository subcommands
 #[derive(Subcommand, Debug)]
-#[command(about = "Repository subcommands")]
 pub enum RepoArgs {
     Create(create::RepoCreateArgs),
     Clone(clone::RepoCloneArgs),

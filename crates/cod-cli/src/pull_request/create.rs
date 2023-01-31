@@ -1,23 +1,29 @@
 use clap::Parser;
 
+/// Create a pull request
 #[derive(Parser, Debug)]
-#[command(about = "Create a pull request")]
 pub struct CreatePullRequestArgs {
-    #[arg(short, long, help = "List of the names of assignees")]
+    /// List of assignee names
+    #[arg(short, long)]
     pub assignees: Option<Vec<String>>,
 
-    #[arg(short, long, help = "The target branch of the pull request")]
+    /// Target branch for the pull request
+    #[arg(short, long)]
     pub base: Option<String>,
 
-    #[arg(id = "description", short, long, help = "Main description of issue")]
+    /// Main description of the pull request
+    #[arg(id = "description", short, long)]
     pub body: Option<String>,
 
-    #[arg(short, long, help = "The source branch of the pull request")]
+    /// Source branch of the pull request
+    #[arg(short, long)]
     pub head: Option<String>,
 
-    #[arg(short, long, help = "List of labels")]
+    /// List of labels
+    #[arg(short, long)]
     pub labels: Option<Vec<String>>,
 
-    #[arg(short, long, help = "Title or summary")]
+    /// Title or summary
+    #[arg(short, long)]
     pub title: Option<String>,
 }
