@@ -8,34 +8,35 @@ use strum::Display;
 
 use crate::text_manipulation::select_prompt_for;
 
-pub async fn create_issue(
-    mut args: CreateIssueArgs,
-    client: &CodebergClient,
-) -> anyhow::Result<()> {
-    args = fill_in_mandatory_values(args)?;
-    args = fill_in_optional_values(args, client).await?;
-    let body = create_body(args);
+pub async fn create_issue(args: CreateIssueArgs, client: &CodebergClient) -> anyhow::Result<()> {
+    let options = fill_in_mandatory_values(&args)?;
+    let options = fill_in_optional_values(options, args, client).await?;
     let api_endpoint = EndpointGenerator::repo_issues()?;
-    let response: Issue = client.post_body(api_endpoint, body).await?;
+    let response: Issue = client.post_body(api_endpoint, options).await?;
     tracing::debug!("{response:?}");
     Ok(())
 }
 
-fn fill_in_mandatory_values(mut args: CreateIssueArgs) -> anyhow::Result<CreateIssueArgs> {
-    if args.title.is_none() {
-        args.title.replace(
-            dialoguer::Input::new()
-                .with_prompt("Issue Title")
-                .interact()?,
-        );
-    }
-    Ok(args)
+fn fill_in_mandatory_values(args: &CreateIssueArgs) -> anyhow::Result<CreateIssueOption> {
+    let title = match args.title.clone() {
+        Some(title) => title,
+        None => dialoguer::Input::new()
+            .with_prompt("Issue Title")
+            .interact()?,
+    };
+    Ok(CreateIssueOption::new(title))
 }
 
 async fn fill_in_optional_values(
-    mut args: CreateIssueArgs,
+    mut options: CreateIssueOption,
+    args: CreateIssueArgs,
     client: &CodebergClient,
-) -> anyhow::Result<CreateIssueArgs> {
+) -> anyhow::Result<CreateIssueOption> {
+    options = options
+        .with_body(args.body.clone().unwrap_or_default())
+        .with_labels(id_for_labels(client, args.labels.as_ref()).await?)
+        .with_assignees(args.assignees.clone().unwrap_or_default());
+
     #[derive(Debug, Clone, Copy, Display, PartialEq, Eq)]
     enum PossiblyMissing {
         Description,
@@ -53,7 +54,7 @@ async fn fill_in_optional_values(
     .collect::<Vec<_>>();
 
     if missing_options.is_empty() {
-        return Ok(args);
+        return Ok(options);
     }
 
     let selected_options = multi_fuzzy_select_with_key(
@@ -65,7 +66,10 @@ async fn fill_in_optional_values(
     )?;
 
     if selected_options.contains(&Description) {
-        args.body = dialoguer::Editor::new().edit("Enter a issue description")?;
+        let new_body = dialoguer::Editor::new()
+            .edit("Enter a issue description")?
+            .ok_or_else(|| anyhow::anyhow!("Closed the editor. Aborting."))?;
+        options = options.with_body(new_body);
     }
 
     if selected_options.contains(&Assignees) {
@@ -78,7 +82,7 @@ async fn fill_in_optional_values(
             |_| false,
         )?;
 
-        args.assignees.replace(selected_assignees);
+        options = options.with_assignees(selected_assignees);
     }
 
     if selected_options.contains(&Labels) {
@@ -88,19 +92,34 @@ async fn fill_in_optional_values(
             labels_list,
             select_prompt_for("labels"),
             |label| label.name.to_owned(),
-            |label| label.id,
+            |label| label.name,
             |_| false,
         )?;
 
-        args.labels.replace(selected_labels);
+        options = options.with_labels(id_for_labels(client, Some(selected_labels.as_ref())).await?);
     }
 
-    Ok(args)
+    Ok(options)
 }
 
-fn create_body(args: CreateIssueArgs) -> CreateIssueOption {
-    CreateIssueOption::new(args.title.unwrap_or_default())
-        .with_body(args.body.unwrap_or_default())
-        .with_assignees(args.assignees.unwrap_or_default())
-        .with_labels(args.labels.unwrap_or_default())
+async fn id_for_labels(
+    client: &CodebergClient,
+    labels: Option<&Vec<String>>,
+) -> anyhow::Result<Vec<usize>> {
+    let labels = match labels {
+        Some(labels) => {
+            let labels_list = client.get_repo_labels(None).await?;
+            labels
+                .iter()
+                .filter_map(|label_name| {
+                    labels_list
+                        .iter()
+                        .find(|label| label.name.as_str() == label_name.as_str())
+                        .map(|label| label.id)
+                })
+                .collect::<Vec<_>>()
+        }
+        None => vec![],
+    };
+    Ok(labels)
 }

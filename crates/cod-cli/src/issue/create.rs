@@ -10,7 +10,7 @@ pub struct CreateIssueArgs {
     // TODO: ??? why ids here, change to names
     /// List of label ids
     #[arg(short, long)]
-    pub labels: Option<Vec<usize>>,
+    pub labels: Option<Vec<String>>,
 
     /// Main description of issue
     #[arg(id = "description", short, long)]
