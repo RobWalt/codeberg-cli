@@ -1,5 +1,5 @@
 use clap::Parser;
 
+/// Login via generating authentication token
 #[derive(Parser, Debug)]
-#[command(about = "Login via generating authentication TOKEN")]
 pub struct LoginArgs {}

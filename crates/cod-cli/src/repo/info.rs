@@ -1,5 +1,5 @@
 use clap::Parser;
 
+/// Display short summary of the current repository
 #[derive(Parser, Debug)]
-#[command(about = "Display a short summary of the current repository")]
 pub struct RepoInfoArgs {}

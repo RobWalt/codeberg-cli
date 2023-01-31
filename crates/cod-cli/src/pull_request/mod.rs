@@ -6,8 +6,8 @@ pub mod view;
 
 use clap::Subcommand;
 
+/// Pull request subcommands
 #[derive(Subcommand, Debug)]
-#[command(about = "Pull request subcommands")]
 pub enum PullRequestArgs {
     List(list::ListPullRequestArgs),
     Create(create::CreatePullRequestArgs),

@@ -1,5 +1,5 @@
 use clap::Parser;
 
+/// Edit selected issue
 #[derive(Parser, Debug)]
-#[command(about = "Edit properties of an existing issue")]
 pub struct EditIssueArgs {}

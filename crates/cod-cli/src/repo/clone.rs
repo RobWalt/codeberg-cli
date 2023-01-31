@@ -1,8 +1,9 @@
 use clap::Parser;
 
+/// Clone a repository
 #[derive(Parser, Debug)]
-#[command(about = "Clone a repository")]
 pub struct RepoCloneArgs {
-    #[arg(id = "OWNER/REPO", help = "The repository given in OWNER/REPO format")]
+    /// Repository to be cloned
+    #[arg(value_name = "OWNER/REPO")]
     pub owner_and_repo: String,
 }

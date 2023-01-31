@@ -1,8 +1,9 @@
 use clap::Parser;
 
+/// Fork a repository
 #[derive(Parser, Debug)]
-#[command(about = "Fork a repository")]
 pub struct RepoForkArgs {
-    #[arg(id = "OWNER/REPO", help = "The repository given in OWNER/REPO format")]
+    /// Repository to be forked
+    #[arg(value_name = "OWNER/REPO")]
     pub owner_and_repo: String,
 }

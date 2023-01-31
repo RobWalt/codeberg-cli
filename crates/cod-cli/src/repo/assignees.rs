@@ -1,5 +1,5 @@
 use clap::Parser;
 
+/// List available assignee candidates
 #[derive(Parser, Debug)]
-#[command(about = "List available assignee candidates")]
 pub struct RepoAssigneesArgs {}

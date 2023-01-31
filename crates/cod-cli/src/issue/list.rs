@@ -1,13 +1,9 @@
 use clap::Parser;
 
+/// List all issues in the current repository
 #[derive(Parser, Debug)]
-#[command(about = "List all issues of the current repository")]
 pub struct ListIssueArgs {
-    #[arg(
-        short,
-        long,
-        default_value_t = 5,
-        help = "The amount of issues that is displayed"
-    )]
+    /// Number of issues to be displayed
+    #[arg(short, long, value_name = "N", default_value_t = 5)]
     pub count: usize,
 }

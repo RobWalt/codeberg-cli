@@ -1,5 +1,5 @@
 use clap::Parser;
 
+/// Logout. Delete currently stored authentication token
 #[derive(Parser, Debug)]
-#[command(about = "Logout. This deletes the current authentication TOKEN")]
 pub struct LogoutArgs {}
