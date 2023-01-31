@@ -81,7 +81,6 @@ fn fill_in_optional_values(mut args: RepoCreateArgs) -> anyhow::Result<RepoCreat
     }
 
     if selected_options.contains(&Private) {
-        // TODO make selection required
         let selected_privacy = fuzzy_select_with_key(
             Privacy::VARIANTS.to_vec(),
             select_prompt_for("visibility"),
