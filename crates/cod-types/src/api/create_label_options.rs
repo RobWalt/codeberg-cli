@@ -10,7 +10,6 @@ pub struct CreateLabelOption {
 impl CreateLabelOption {
     pub fn new(name: String) -> Self {
         Self {
-            // TODO: Use color crate
             color: String::from("#000000"),
             description: String::from("No description"),
             name,
