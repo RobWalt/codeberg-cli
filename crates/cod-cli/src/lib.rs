@@ -1,6 +1,7 @@
 pub mod auth;
 pub mod issue;
 pub mod label;
+pub mod logo;
 pub mod pull_request;
 pub mod repo;
 pub mod user;
@@ -15,7 +16,7 @@ pub fn generate_completion(shell: Shell, bin_name: &str) {
 
 /// Codeberg CLI app
 #[derive(Parser, Debug)]
-#[command(name = "cod", version)]
+#[command(name = "cod", version, before_long_help = logo::LOGO)]
 pub enum MainArgs {
     #[command(subcommand)]
     Auth(auth::AuthArgs),
