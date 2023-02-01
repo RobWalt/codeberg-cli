@@ -1,5 +1,4 @@
 use term_table::row::Row;
-use term_table::table_cell::TableCell;
 use term_table::{TableBuilder, TableStyle};
 
 use crate::table::def::CodTable;
