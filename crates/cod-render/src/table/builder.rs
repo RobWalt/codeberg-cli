@@ -1,7 +1,10 @@
 use term_table::row::Row;
+use term_table::table_cell::TableCell;
 use term_table::{TableBuilder, TableStyle};
 
-use crate::table::CodTable;
+use crate::table::def::CodTable;
+use crate::table::text::wrap_text_for_table;
+use crate::table::MAXIMUM_TABLE_WIDTH;
 
 #[derive(Debug, Clone, Default)]
 pub struct CodTableBuilder<'a> {
@@ -25,16 +28,31 @@ impl<'a> CodTableBuilder<'a> {
         self
     }
 
-    pub fn add_row(mut self, row: Row<'a>) -> Self {
-        self.rows.push(row);
-        self
+    pub fn add_row(self, row: Row<'a>) -> Self {
+        self.add_rows([row])
+    }
+
+    fn table_wrap_width(&self) -> usize {
+        self.max_column_width
+            .unwrap_or(MAXIMUM_TABLE_WIDTH)
+            // subtract 4, because
+            // - 2 for border characters
+            // - 2 for inner margin between text and border
+            .saturating_sub(4)
     }
 
     pub fn add_rows<RI>(mut self, rows: RI) -> Self
     where
         RI: IntoIterator<Item = Row<'a>>,
     {
-        self.rows.extend(rows);
+        let wrap_width = self.table_wrap_width();
+        let wrapped_rows = rows.into_iter().map(|mut row| {
+            row.cells.iter_mut().for_each(|mut cell| {
+                cell.data = wrap_text_for_table(cell.data.as_ref(), wrap_width).into();
+            });
+            row
+        });
+        self.rows.extend(wrapped_rows);
         self
     }
 
@@ -47,7 +65,7 @@ impl<'a> CodTableBuilder<'a> {
 
         CodTable {
             table: TableBuilder::new()
-                .max_column_width(max_column_width.unwrap_or(40))
+                .max_column_width(max_column_width.unwrap_or(MAXIMUM_TABLE_WIDTH))
                 .style(style.unwrap_or_else(TableStyle::elegant))
                 .rows(rows)
                 .build(),

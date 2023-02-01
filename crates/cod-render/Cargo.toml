@@ -18,3 +18,4 @@ term-table = { git = "https://github.com/RobWalt/term-table-rs", branch = "fix/r
 tokio = "1.24.2"
 dialoguer = { git = "https://github.com/RobWalt/dialoguer", branch = "feat/multi-fuzz-selection", features = ["fuzzy-select"] }
 anyhow = "1.0.68"
+textwrap = "0.16.0"
