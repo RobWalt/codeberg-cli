@@ -3,8 +3,8 @@ use clap::Parser;
 /// Create a pull request
 #[derive(Parser, Debug)]
 pub struct CreatePullRequestArgs {
-    /// List of assignee names
-    #[arg(short, long)]
+    /// Comma-delimited list of assignee names
+    #[arg(short, long, value_name = "ASSIGNEE,...", value_delimiter = ',')]
     pub assignees: Option<Vec<String>>,
 
     /// Target branch for the pull request
@@ -19,8 +19,8 @@ pub struct CreatePullRequestArgs {
     #[arg(short, long)]
     pub head: Option<String>,
 
-    /// List of labels
-    #[arg(short, long)]
+    /// Comma-delimited list of labels
+    #[arg(short, long, value_name = "LABEL,...", value_delimiter = ',')]
     pub labels: Option<Vec<String>>,
 
     /// Title or summary

@@ -17,6 +17,6 @@ pub struct RepoCreateArgs {
     pub name: Option<String>,
 
     /// Repository visibility
-    #[arg(short, long)]
+    #[arg(short, long, value_enum, value_name = "VISIBILITY")]
     pub private: Option<Privacy>,
 }
