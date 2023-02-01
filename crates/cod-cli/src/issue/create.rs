@@ -7,15 +7,15 @@ pub struct CreateIssueArgs {
     #[arg(short, long)]
     pub title: Option<String>,
 
-    /// List of label ids
-    #[arg(short, long)]
+    /// Comma-delimited list of label ids
+    #[arg(short, long, value_name = "LABEL,...", value_delimiter = ',')]
     pub labels: Option<Vec<String>>,
 
     /// Main description of issue
     #[arg(id = "description", short, long)]
     pub body: Option<String>,
 
-    /// List of assignee names
-    #[arg(short, long)]
+    /// Comma-delimited list of assignee names
+    #[arg(short, long, value_name = "ASSIGNEE,...", value_delimiter = ',')]
     pub assignees: Option<Vec<String>>,
 }
