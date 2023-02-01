@@ -2,7 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use term_table::Table;
 
-use crate::builder::CodTableBuilder;
+use crate::prelude::CodTableBuilder;
 
 #[derive(Debug, Clone)]
 pub struct CodTable<'a> {
