@@ -82,10 +82,11 @@ async fn create_update_data(
     }
 
     if selected_update_fields.contains(&Description) {
-        let new_description = dialoguer::Editor::new().edit(selected_pull_request.body.as_str())?;
-        edit_pull_request_options
-            .body
-            .replace(new_description.unwrap_or_default());
+        if let Some(new_description) =
+            dialoguer::Editor::new().edit(selected_pull_request.body.as_str())?
+        {
+            edit_pull_request_options.body.replace(new_description);
+        }
     }
 
     if selected_update_fields.contains(&State) {

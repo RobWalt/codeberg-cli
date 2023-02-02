@@ -9,6 +9,7 @@ use cod_actions::issue::list::list_issue;
 use cod_actions::issue::view::view_issue;
 use cod_actions::label::create::create_label;
 use cod_actions::label::delete::delete_label;
+use cod_actions::label::edit::edit_label;
 use cod_actions::label::list::list_label;
 use cod_actions::pull_request::comment::comment_pull;
 use cod_actions::pull_request::create::create_pull;
@@ -91,5 +92,6 @@ async fn dispatch_args(main_args: MainArgs) -> anyhow::Result<()> {
         Label(LabelArgs::List(args)) => list_label(args, &client).await,
         Label(LabelArgs::Create(args)) => create_label(args, &client).await,
         Label(LabelArgs::Delete(args)) => delete_label(args, &client).await,
+        Label(LabelArgs::Edit(args)) => edit_label(args, &client).await,
     }
 }

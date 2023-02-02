@@ -1,5 +1,6 @@
 pub mod create;
 pub mod delete;
+pub mod edit;
 pub mod list;
 
 use clap::Subcommand;
@@ -10,4 +11,5 @@ pub enum LabelArgs {
     List(list::ListLabelsArgs),
     Create(create::CreateLabelArgs),
     Delete(delete::DeleteLabelArgs),
+    Edit(edit::EditLabelArgs),
 }
