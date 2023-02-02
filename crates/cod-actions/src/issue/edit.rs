@@ -31,7 +31,9 @@ pub async fn edit_issue(_args: EditIssueArgs, client: &CodebergClient) -> anyhow
         |issue: &Issue| format!("#{} {}", issue.number, issue.title),
         |issue| issue,
     )
-    .and_then(|maybe_issue| maybe_issue.ok_or_else(|| anyhow::anyhow!("No issues")))?;
+    .and_then(|maybe_issue| {
+        maybe_issue.ok_or_else(|| anyhow::anyhow!("Nothing selected. Aborting."))
+    })?;
 
     let selected_update_fields = multi_fuzzy_select_with_key(
         EditableFields::iter().collect::<Vec<_>>(),
@@ -82,10 +84,11 @@ async fn create_update_data(
     }
 
     if selected_update_fields.contains(&Description) {
-        let new_description = dialoguer::Editor::new().edit(selected_issue.body.as_str())?;
-        edit_issue_options
-            .body
-            .replace(new_description.unwrap_or_default());
+        if let Some(new_description) =
+            dialoguer::Editor::new().edit(selected_issue.body.as_str())?
+        {
+            edit_issue_options.body.replace(new_description);
+        }
     }
 
     if selected_update_fields.contains(&State) {
