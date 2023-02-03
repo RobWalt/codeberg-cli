@@ -43,7 +43,9 @@ async fn fill_in_optional_values(
         Assignees,
         Labels,
     }
+
     use PossiblyMissing::*;
+
     let missing_options = [
         args.body.is_none().then_some(Description),
         args.assignees.is_none().then_some(Assignees),
