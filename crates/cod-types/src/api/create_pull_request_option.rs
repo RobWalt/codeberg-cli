@@ -13,12 +13,12 @@ pub struct CreatePullRequestOption {
 impl CreatePullRequestOption {
     pub fn new(title: String, from: String, to: String) -> Self {
         Self {
-            assignees: Default::default(),
-            base: from,
-            body: Default::default(),
-            head: to,
-            labels: Default::default(),
             title,
+            head: from,
+            base: to,
+            assignees: Default::default(),
+            body: Default::default(),
+            labels: Default::default(),
         }
     }
 
