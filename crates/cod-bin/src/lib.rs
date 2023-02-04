@@ -11,6 +11,7 @@ use cod_actions::label::create::create_label;
 use cod_actions::label::delete::delete_label;
 use cod_actions::label::edit::edit_label;
 use cod_actions::label::list::list_label;
+use cod_actions::milestone::list::list_milestone;
 use cod_actions::pull_request::comment::comment_pull;
 use cod_actions::pull_request::create::create_pull;
 use cod_actions::pull_request::edit::edit_pull;
@@ -25,6 +26,7 @@ use cod_actions::user::info::info_user;
 use cod_cli::auth::AuthArgs;
 use cod_cli::issue::IssueArgs;
 use cod_cli::label::LabelArgs;
+use cod_cli::milestone::MilestoneArgs;
 use cod_cli::pull_request::PullRequestArgs;
 use cod_cli::repo::RepoArgs;
 use cod_cli::user::UserArgs;
@@ -93,5 +95,6 @@ async fn dispatch_args(main_args: MainArgs) -> anyhow::Result<()> {
         Label(LabelArgs::Create(args)) => create_label(args, &client).await,
         Label(LabelArgs::Delete(args)) => delete_label(args, &client).await,
         Label(LabelArgs::Edit(args)) => edit_label(args, &client).await,
+        Milestone(MilestoneArgs::List(args)) => list_milestone(args, &client).await,
     }
 }

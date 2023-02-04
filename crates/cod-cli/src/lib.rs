@@ -2,6 +2,7 @@ pub mod auth;
 pub mod issue;
 pub mod label;
 pub mod logo;
+pub mod milestone;
 pub mod pull_request;
 pub mod repo;
 pub mod user;
@@ -35,6 +36,9 @@ pub enum MainArgs {
 
     #[command(subcommand)]
     Repo(repo::RepoArgs),
+
+    #[command(subcommand)]
+    Milestone(milestone::MilestoneArgs),
 
     /// Print completion script
     Completion {

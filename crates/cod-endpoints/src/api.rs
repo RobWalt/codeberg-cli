@@ -18,6 +18,7 @@ pub const REPO_ISSUES: &str = "issues";
 pub const REPO_ISSUES_COMMENTS: &str = "comments";
 pub const REPO_PULLS: &str = "pulls";
 pub const REPO_LABELS: &str = "labels";
+pub const REPO_MILESTONES: &str = "milestones";
 pub const REPO_FORK: &str = "forks";
 pub const REPO_BRANCHES: &str = "branches";
 
