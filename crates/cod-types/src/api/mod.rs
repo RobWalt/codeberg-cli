@@ -13,6 +13,7 @@ pub mod followers_info;
 pub mod following_info;
 pub mod issue;
 pub mod label;
+pub mod milestone;
 pub mod privacy_type;
 pub mod pull_request;
 pub mod pull_request_meta;

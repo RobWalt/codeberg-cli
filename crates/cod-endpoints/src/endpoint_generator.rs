@@ -69,6 +69,11 @@ impl EndpointGenerator {
         Self::repos_owner_repo(REPO_LABELS)
     }
 
+    pub fn repo_milestones() -> anyhow::Result<Url> {
+        use crate::api::REPO_MILESTONES;
+        Self::repos_owner_repo(REPO_MILESTONES)
+    }
+
     pub fn repo_forks(ownername: &str, reponame: &str) -> anyhow::Result<Url> {
         use crate::api::REPO_FORK;
         use crate::api::REPO_OWNER_REPOS;

@@ -5,6 +5,7 @@ use cod_types::api::create_comment_option::CreateCommentOption;
 use cod_types::api::create_fork_option::CreateForkOption;
 use cod_types::api::issue::Issue;
 use cod_types::api::label::Label;
+use cod_types::api::milestone::Milestone;
 use cod_types::api::pull_request::PullRequest;
 use cod_types::api::repository::Repository;
 use cod_types::api::search_results::SearchResults;
@@ -53,6 +54,18 @@ impl CodebergClient {
 
     pub async fn get_repo_labels(&self, maybe_limit: Option<usize>) -> anyhow::Result<Vec<Label>> {
         let api = EndpointGenerator::repo_labels()?;
+        if let Some(limit) = maybe_limit {
+            self.get_query(api, [("limit", limit)]).await
+        } else {
+            self.get(api).await
+        }
+    }
+
+    pub async fn get_repo_milestones(
+        &self,
+        maybe_limit: Option<usize>,
+    ) -> anyhow::Result<Vec<Milestone>> {
+        let api = EndpointGenerator::repo_milestones()?;
         if let Some(limit) = maybe_limit {
             self.get_query(api, [("limit", limit)]).await
         } else {
