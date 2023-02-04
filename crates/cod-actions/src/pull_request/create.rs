@@ -28,35 +28,50 @@ async fn fill_in_mandatory_values(
         .with_prompt("Pull Request Title")
         .interact_text()?;
 
-    let base = args
-        .base
-        .as_ref()
-        .map(|base| Ok(base.to_owned()))
-        .unwrap_or_else(get_current_base)?;
+    let target_branch = select_branch(
+        None,
+        "target branch into which changes are merged",
+        args,
+        client,
+    )
+    .await?;
 
-    let head = select_head(base.as_str(), args, client).await?;
+    let source_branch = select_branch(
+        Some(target_branch.as_str()),
+        "source branch containing the changes",
+        args,
+        client,
+    )
+    .await?;
 
-    Ok(CreatePullRequestOption::new(title, base, head))
+    Ok(CreatePullRequestOption::new(
+        title,
+        source_branch,
+        target_branch,
+    ))
 }
 
-async fn select_head(
-    base: &str,
+async fn select_branch(
+    filter_branch_out: Option<&str>,
+    prompt_text: &str,
     args: &CreatePullRequestArgs,
     client: &CodebergClient,
 ) -> anyhow::Result<String> {
-    if let Some(head) = args.head.clone() {
-        Ok(head)
+    if let Some(target_branch) = args.target_branch.clone() {
+        Ok(target_branch)
     } else {
         let branches = client
             .get_repo_branches()
             .await?
             .into_iter()
-            .filter(|branch| branch.name != base)
+            .filter(|branch| {
+                filter_branch_out.map_or(true, |filter_name| branch.name.as_str() != filter_name)
+            })
             .collect::<Vec<_>>();
 
         fuzzy_select_with_key(
             branches,
-            select_prompt_for("source branch"),
+            select_prompt_for(prompt_text),
             |branch| branch.name.to_owned(),
             |branch| branch.name,
         )
@@ -136,14 +151,4 @@ async fn fill_in_optional_values(
     }
 
     Ok(options)
-}
-
-fn get_current_base() -> anyhow::Result<String> {
-    let output = std::process::Command::new("git")
-        .arg("branch")
-        .arg("--show-current")
-        .output()?;
-    String::from_utf8(output.stdout)
-        .map(|base| base.trim().to_owned())
-        .map_err(anyhow::Error::from)
 }

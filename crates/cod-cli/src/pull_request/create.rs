@@ -9,7 +9,7 @@ pub struct CreatePullRequestArgs {
 
     /// Target branch for the pull request
     #[arg(short, long)]
-    pub base: Option<String>,
+    pub target_branch: Option<String>,
 
     /// Main description of the pull request
     #[arg(id = "description", short, long)]
@@ -17,7 +17,7 @@ pub struct CreatePullRequestArgs {
 
     /// Source branch of the pull request
     #[arg(short, long)]
-    pub head: Option<String>,
+    pub source_branch: Option<String>,
 
     /// Comma-delimited list of labels
     #[arg(short, long, value_name = "LABEL,...", value_delimiter = ',')]
