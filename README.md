@@ -50,22 +50,25 @@ cod 0.1.0
 
 # Usage
 
-Run `cod --help` for a detailed help menu. Each subcommand also has it's own help menu (which might need better documentation)
+Run `cod -h` for the help menu. Each subcommand also has it's own help menu
 
 ```sh 
+Codeberg CLI app
+
 Usage: cod [COMMAND]
 
 Commands:
-  auth   Choose authentification subcommands
-  user   User information
-  issue  Issue commands
-  pull   Pull request commands
-  label  Label commands
-  repo   Repo commands
-  help   Print this message or the help of the given subcommand(s)
+  auth        Authentication subcommands
+  user        User subcommands
+  issue       Issue subcommands
+  pull        Pull request subcommands
+  label       Label subcommands
+  repo        Repository subcommands
+  completion  Print completion script
+  help        Print this message or the help of the given subcommand(s)
 
 Options:
-  -h, --help     Print help
+  -h, --help     Print help (see more with '--help')
   -V, --version  Print version
 ```
 
