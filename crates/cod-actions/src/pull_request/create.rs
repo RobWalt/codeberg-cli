@@ -57,7 +57,7 @@ async fn fill_in_mandatory_values(
 }
 
 async fn select_branch(
-    filter_branch_out: Option<&str>,
+    filter_branch: Option<&str>,
     prompt_text: &str,
     default_branch_names: Vec<&str>,
     args: &CreatePullRequestArgs,
@@ -71,9 +71,23 @@ async fn select_branch(
             .await?
             .into_iter()
             .filter(|branch| {
-                filter_branch_out.map_or(true, |filter_name| branch.name.as_str() != filter_name)
+                filter_branch.map_or(true, |filter_name| branch.name.as_str() != filter_name)
             })
             .collect::<Vec<_>>();
+
+        if branches.is_empty() {
+            anyhow::bail!("No branches except {filter_branch:?} found. Maybe the branch you want to merge doesn't exist on remote yet?");
+        }
+
+        tracing::debug!("branches:{branches:?}");
+
+        let default_index = default_branch_names.iter().find_map(|&default_name| {
+            branches
+                .iter()
+                .position(|branch| branch.name.as_str() == default_name)
+        });
+
+        tracing::debug!("default_idx:{default_index:?}");
 
         let default_index = default_branch_names.iter().find_map(|&default_name| {
             branches
@@ -89,7 +103,7 @@ async fn select_branch(
             default_index,
         )
         .and_then(|maybe_selection| {
-            maybe_selection.ok_or_else(|| anyhow::anyhow!("No valid target selected. Aborting."))
+            maybe_selection.ok_or_else(|| anyhow::anyhow!("No valid target selected. Maybe the branch doesn't exist on remote yet. Aborting."))
         })
         .map_err(anyhow::Error::from)
     }
