@@ -8,6 +8,7 @@ pub struct CreatePullRequestOption {
     head: String,
     labels: Vec<usize>,
     title: String,
+    milestone: Option<usize>,
 }
 
 impl CreatePullRequestOption {
@@ -19,6 +20,7 @@ impl CreatePullRequestOption {
             assignees: Default::default(),
             body: Default::default(),
             labels: Default::default(),
+            milestone: Default::default(),
         }
     }
 
@@ -34,6 +36,11 @@ impl CreatePullRequestOption {
 
     pub fn with_labels(mut self, labels: Vec<usize>) -> Self {
         self.labels = labels;
+        self
+    }
+
+    pub fn with_milestone(mut self, milestone_id: usize) -> Self {
+        self.milestone.replace(milestone_id);
         self
     }
 }

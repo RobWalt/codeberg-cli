@@ -18,4 +18,8 @@ pub struct CreateIssueArgs {
     /// Comma-delimited list of assignee names
     #[arg(short, long, value_name = "ASSIGNEE,...", value_delimiter = ',')]
     pub assignees: Option<Vec<String>>,
+
+    /// Name of the milestone the issue is related to
+    #[arg(short, long)]
+    pub milestone: Option<String>,
 }
