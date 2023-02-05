@@ -24,7 +24,7 @@ pub struct CreatePullRequestArgs {
     pub labels: Option<Vec<String>>,
 
     /// Title or summary
-    #[arg(short, long)]
+    #[arg(long)]
     pub title: Option<String>,
 
     /// Name of the milestone the pull request is related to
