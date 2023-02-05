@@ -1,7 +1,9 @@
 use cod_cli::pull_request::create::CreatePullRequestArgs;
 use cod_client::CodebergClient;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
-use cod_render::ui::{fuzzy_select_with_key, multi_fuzzy_select_with_key};
+use cod_render::ui::{
+    fuzzy_select_with_key, fuzzy_select_with_key_with_default, multi_fuzzy_select_with_key,
+};
 use cod_types::api::create_pull_request_option::CreatePullRequestOption;
 use cod_types::api::pull_request::PullRequest;
 use strum::Display;
@@ -31,14 +33,17 @@ async fn fill_in_mandatory_values(
     let target_branch = select_branch(
         None,
         "target branch into which changes are merged",
+        vec!["main", "master"],
         args,
         client,
     )
     .await?;
 
+    let current_checkout = get_current_checkout()?;
     let source_branch = select_branch(
         Some(target_branch.as_str()),
         "source branch containing the changes",
+        vec![current_checkout.as_str()],
         args,
         client,
     )
@@ -54,6 +59,7 @@ async fn fill_in_mandatory_values(
 async fn select_branch(
     filter_branch_out: Option<&str>,
     prompt_text: &str,
+    default_branch_names: Vec<&str>,
     args: &CreatePullRequestArgs,
     client: &CodebergClient,
 ) -> anyhow::Result<String> {
@@ -69,11 +75,18 @@ async fn select_branch(
             })
             .collect::<Vec<_>>();
 
-        fuzzy_select_with_key(
+        let default_index = default_branch_names.iter().find_map(|&default_name| {
+            branches
+                .iter()
+                .position(|branch| branch.name.as_str() == default_name)
+        });
+
+        fuzzy_select_with_key_with_default(
             branches,
             select_prompt_for(prompt_text),
             |branch| branch.name.to_owned(),
             |branch| branch.name,
+            default_index,
         )
         .and_then(|maybe_selection| {
             maybe_selection.ok_or_else(|| anyhow::anyhow!("No valid target selected. Aborting."))
@@ -214,4 +227,14 @@ async fn id_for_milestone(
         .find(|milestone| milestone.title == milestone_name)
         .map(|milestone| milestone.id);
     Ok(maybe_milestone_id)
+}
+
+fn get_current_checkout() -> anyhow::Result<String> {
+    let output = std::process::Command::new("git")
+        .arg("branch")
+        .arg("--show-current")
+        .output()?;
+    String::from_utf8(output.stdout)
+        .map(|base| base.trim().to_owned())
+        .map_err(anyhow::Error::from)
 }
