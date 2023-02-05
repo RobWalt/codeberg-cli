@@ -26,4 +26,8 @@ pub struct CreatePullRequestArgs {
     /// Title or summary
     #[arg(short, long)]
     pub title: Option<String>,
+
+    /// Name of the milestone the pull request is related to
+    #[arg(short, long)]
+    pub milestone: Option<String>,
 }

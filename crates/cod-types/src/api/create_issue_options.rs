@@ -6,6 +6,7 @@ pub struct CreateIssueOption {
     body: String,
     assignees: Vec<String>,
     labels: Vec<usize>,
+    milestone: Option<usize>,
 }
 
 impl CreateIssueOption {
@@ -15,6 +16,7 @@ impl CreateIssueOption {
             body: Default::default(),
             assignees: Default::default(),
             labels: Default::default(),
+            milestone: Default::default(),
         }
     }
 
@@ -30,6 +32,11 @@ impl CreateIssueOption {
 
     pub fn with_labels(mut self, labels: Vec<usize>) -> Self {
         self.labels = labels;
+        self
+    }
+
+    pub fn with_milestone(mut self, milestone_id: usize) -> Self {
+        self.milestone.replace(milestone_id);
         self
     }
 }

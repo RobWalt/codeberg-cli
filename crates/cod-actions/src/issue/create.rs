@@ -1,7 +1,7 @@
 use cod_cli::issue::create::CreateIssueArgs;
 use cod_client::CodebergClient;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
-use cod_render::ui::multi_fuzzy_select_with_key;
+use cod_render::ui::{fuzzy_select_with_key, multi_fuzzy_select_with_key};
 use cod_types::api::create_issue_options::CreateIssueOption;
 use cod_types::api::issue::Issue;
 use strum::Display;
@@ -37,11 +37,20 @@ async fn fill_in_optional_values(
         .with_labels(id_for_labels(client, args.labels.as_ref()).await?)
         .with_assignees(args.assignees.clone().unwrap_or_default());
 
+    // set milestone if given as a CLI option
+    if let Some(ref milestone_name) = args.milestone {
+        let milestone_id = id_for_milestone(client, milestone_name)
+            .await?
+            .ok_or_else(|| anyhow::anyhow!("Couldn't find milestone with name {milestone_name}"))?;
+        options = options.with_milestone(milestone_id);
+    }
+
     #[derive(Debug, Clone, Copy, Display, PartialEq, Eq)]
     enum PossiblyMissing {
         Description,
         Assignees,
         Labels,
+        Milestone,
     }
 
     use PossiblyMissing::*;
@@ -50,6 +59,7 @@ async fn fill_in_optional_values(
         args.body.is_none().then_some(Description),
         args.assignees.is_none().then_some(Assignees),
         args.labels.is_none().then_some(Labels),
+        args.milestone.is_none().then_some(Milestone),
     ]
     .into_iter()
     .flatten()
@@ -94,11 +104,25 @@ async fn fill_in_optional_values(
             labels_list,
             select_prompt_for("labels"),
             |label| label.name.to_owned(),
-            |label| label.name,
+            |label| label.id,
             |_| false,
         )?;
 
-        options = options.with_labels(id_for_labels(client, Some(selected_labels.as_ref())).await?);
+        options = options.with_labels(selected_labels);
+    }
+
+    if selected_options.contains(&Milestone) {
+        let milstones_list = client.get_repo_milestones(None).await?;
+
+        let selected_milestone = fuzzy_select_with_key(
+            milstones_list,
+            select_prompt_for("milestone"),
+            |milestone| milestone.title.to_owned(),
+            |milestone| milestone.id,
+        )?
+        .ok_or_else(|| anyhow::anyhow!("No milestone selected. Aborting."))?;
+
+        options = options.with_milestone(selected_milestone);
     }
 
     Ok(options)
@@ -124,4 +148,16 @@ async fn id_for_labels(
         None => vec![],
     };
     Ok(labels)
+}
+
+async fn id_for_milestone(
+    client: &CodebergClient,
+    milestone_name: &str,
+) -> anyhow::Result<Option<usize>> {
+    let milestone_list = client.get_repo_milestones(None).await?;
+    let maybe_milestone_id = milestone_list
+        .into_iter()
+        .find(|milestone| milestone.title == milestone_name)
+        .map(|milestone| milestone.id);
+    Ok(maybe_milestone_id)
 }
