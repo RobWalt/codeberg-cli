@@ -42,11 +42,16 @@ pub async fn cod_main() {
     let app_result = run(cli).await;
 
     if let Err(e) = app_result.or_else(|(mut cli, app_error)| {
-        cli.print_long_help()
+        cli.print_help()
             .context(format!("{app_error:?}"))
             .and_then(|_| anyhow::bail!("{app_error:?}"))
     }) {
-        println!("Error: {e:?}");
+        let error_msg = format!("Error: {e:?}");
+        let border = "=".repeat(error_msg.len().min(80));
+        println!("\n");
+        println!("{border}\n");
+        println!("{error_msg}");
+        println!("\n{border}");
     }
 }
 
