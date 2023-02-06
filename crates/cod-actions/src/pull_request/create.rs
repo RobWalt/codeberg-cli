@@ -6,6 +6,7 @@ use cod_render::ui::{
 };
 use cod_types::api::create_pull_request_option::CreatePullRequestOption;
 use cod_types::api::pull_request::PullRequest;
+use cod_types::api::state_type::StateType;
 use strum::Display;
 
 use crate::text_manipulation::select_prompt_for;
@@ -193,7 +194,9 @@ async fn fill_in_optional_values(
     }
 
     if selected_options.contains(&Milestone) {
-        let milstones_list = client.get_repo_milestones(None).await?;
+        let milstones_list = client
+            .get_repo_milestones(Some(StateType::Open), None)
+            .await?;
 
         let selected_milestone = fuzzy_select_with_key(
             milstones_list,
@@ -235,7 +238,9 @@ async fn id_for_milestone(
     client: &CodebergClient,
     milestone_name: &str,
 ) -> anyhow::Result<Option<usize>> {
-    let milestone_list = client.get_repo_milestones(None).await?;
+    let milestone_list = client
+        .get_repo_milestones(Some(StateType::Open), None)
+        .await?;
     let maybe_milestone_id = milestone_list
         .into_iter()
         .find(|milestone| milestone.title == milestone_name)

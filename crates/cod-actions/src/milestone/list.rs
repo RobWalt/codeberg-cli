@@ -8,7 +8,8 @@ pub async fn list_milestone(
     args: ListMilestonesArgs,
     client: &CodebergClient,
 ) -> anyhow::Result<()> {
-    let milestones_list = spin_until_ready(client.get_repo_milestones(Some(args.count))).await?;
+    let milestones_list =
+        spin_until_ready(client.get_repo_milestones(None, Some(args.count))).await?;
 
     present_milestones_list(milestones_list);
 

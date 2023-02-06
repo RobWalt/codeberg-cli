@@ -16,4 +16,12 @@ impl StateType {
         use StateType::*;
         [Closed, Open]
     }
+
+    pub fn is_done(&self) -> bool {
+        match self {
+            StateType::Closed => true,
+            StateType::Open => false,
+            StateType::All => false,
+        }
+    }
 }
