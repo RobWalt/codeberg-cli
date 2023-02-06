@@ -1,6 +1,7 @@
 use serde::Deserialize;
 
 use crate::api::label::Label;
+use crate::api::milestone::Milestone;
 use crate::api::state_type::StateType;
 use crate::api::user::User;
 
@@ -12,4 +13,5 @@ pub struct PullRequest {
     pub labels: Vec<Label>,
     pub state: StateType,
     pub assignees: Option<Vec<User>>,
+    pub milestone: Option<Milestone>,
 }

@@ -11,6 +11,9 @@ use cod_types::api::repository::Repository;
 use cod_types::api::search_results::SearchResults;
 use cod_types::api::state_type::StateType;
 use cod_types::api::user::User;
+use reqwest::Url;
+use serde::de::DeserializeOwned;
+use std::fmt::Debug;
 
 use crate::CodebergClient;
 
@@ -30,28 +33,6 @@ impl CodebergClient {
         self.get(api).await
     }
 
-    pub async fn get_repo_prs(
-        &self,
-        maybe_state: Option<StateType>,
-        maybe_limit: Option<usize>,
-    ) -> anyhow::Result<Vec<PullRequest>> {
-        let api = EndpointGenerator::repo_pull_requests()?;
-        let query_args = maybe_limit
-            .map(|limit| ("limit", limit.to_string()))
-            .into_iter()
-            .chain(
-                maybe_state
-                    .map(|state| ("state", state.to_string()))
-                    .into_iter(),
-            )
-            .collect::<Vec<_>>();
-        if query_args.is_empty() {
-            self.get(api).await
-        } else {
-            self.get_query(api, query_args).await
-        }
-    }
-
     pub async fn get_repo_labels(&self, maybe_limit: Option<usize>) -> anyhow::Result<Vec<Label>> {
         let api = EndpointGenerator::repo_labels()?;
         if let Some(limit) = maybe_limit {
@@ -61,24 +42,15 @@ impl CodebergClient {
         }
     }
 
-    pub async fn get_repo_milestones(
-        &self,
-        maybe_limit: Option<usize>,
-    ) -> anyhow::Result<Vec<Milestone>> {
-        let api = EndpointGenerator::repo_milestones()?;
-        if let Some(limit) = maybe_limit {
-            self.get_query(api, [("limit", limit)]).await
-        } else {
-            self.get(api).await
-        }
-    }
-
-    pub async fn get_repo_issues(
+    pub async fn get_state_limit_list<T>(
         &self,
         maybe_state: Option<StateType>,
         maybe_limit: Option<usize>,
-    ) -> anyhow::Result<Vec<Issue>> {
-        let api = EndpointGenerator::repo_issues()?;
+        api: Url,
+    ) -> anyhow::Result<T>
+    where
+        T: DeserializeOwned + Debug,
+    {
         let query_args = maybe_limit
             .map(|limit| ("limit", limit.to_string()))
             .into_iter()
@@ -93,6 +65,36 @@ impl CodebergClient {
         } else {
             self.get_query(api, query_args).await
         }
+    }
+
+    pub async fn get_repo_milestones(
+        &self,
+        maybe_state: Option<StateType>,
+        maybe_limit: Option<usize>,
+    ) -> anyhow::Result<Vec<Milestone>> {
+        let api = EndpointGenerator::repo_milestones()?;
+        self.get_state_limit_list(maybe_state, maybe_limit, api)
+            .await
+    }
+
+    pub async fn get_repo_issues(
+        &self,
+        maybe_state: Option<StateType>,
+        maybe_limit: Option<usize>,
+    ) -> anyhow::Result<Vec<Issue>> {
+        let api = EndpointGenerator::repo_issues()?;
+        self.get_state_limit_list(maybe_state, maybe_limit, api)
+            .await
+    }
+
+    pub async fn get_repo_prs(
+        &self,
+        maybe_state: Option<StateType>,
+        maybe_limit: Option<usize>,
+    ) -> anyhow::Result<Vec<PullRequest>> {
+        let api = EndpointGenerator::repo_pull_requests()?;
+        self.get_state_limit_list(maybe_state, maybe_limit, api)
+            .await
     }
 
     pub async fn get_repo_assignees(&self) -> anyhow::Result<Vec<User>> {
