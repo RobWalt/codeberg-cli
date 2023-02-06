@@ -1,7 +1,6 @@
 pub mod auth;
 pub mod issue;
 pub mod label;
-pub mod logo;
 pub mod milestone;
 pub mod pull_request;
 pub mod repo;
@@ -10,6 +9,8 @@ pub mod user;
 use clap::{CommandFactory, Parser};
 use clap_complete::Shell;
 
+pub const LOGO: &str = include_str!("logo.txt");
+
 pub fn generate_completion(shell: Shell, bin_name: &str) {
     let cmd = &mut MainArgs::command();
     clap_complete::generate(shell, cmd, bin_name, &mut std::io::stdout());
@@ -17,7 +18,7 @@ pub fn generate_completion(shell: Shell, bin_name: &str) {
 
 /// Codeberg CLI app
 #[derive(Parser, Debug)]
-#[command(name = "cod", version, before_long_help = logo::LOGO)]
+#[command(name = "cod", version, before_long_help = LOGO)]
 pub enum MainArgs {
     #[command(subcommand)]
     Auth(auth::AuthArgs),
