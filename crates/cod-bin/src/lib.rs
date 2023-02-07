@@ -12,6 +12,7 @@ use cod_actions::label::delete::delete_label;
 use cod_actions::label::edit::edit_label;
 use cod_actions::label::list::list_label;
 use cod_actions::milestone::create::create_milestone;
+use cod_actions::milestone::edit::edit_milestone;
 use cod_actions::milestone::list::list_milestone;
 use cod_actions::milestone::view::view_milestone;
 use cod_actions::pull_request::comment::comment_pull;
@@ -105,5 +106,6 @@ async fn dispatch_args(main_args: MainArgs) -> anyhow::Result<()> {
         Milestone(MilestoneArgs::List(args)) => list_milestone(args, &client).await,
         Milestone(MilestoneArgs::View(args)) => view_milestone(args, &client).await,
         Milestone(MilestoneArgs::Create(args)) => create_milestone(args, &client).await,
+        Milestone(MilestoneArgs::Edit(args)) => edit_milestone(args, &client).await,
     }
 }
