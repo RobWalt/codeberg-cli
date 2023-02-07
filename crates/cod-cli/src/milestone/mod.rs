@@ -1,4 +1,5 @@
 pub mod create;
+pub mod edit;
 pub mod list;
 pub mod view;
 
@@ -10,4 +11,5 @@ pub enum MilestoneArgs {
     List(list::ListMilestonesArgs),
     View(view::ViewMilestonesArgs),
     Create(create::CreateMilestoneArgs),
+    Edit(edit::EditMilestoneArgs),
 }

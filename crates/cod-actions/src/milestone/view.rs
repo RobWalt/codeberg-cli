@@ -68,6 +68,12 @@ async fn present_milestone_overview(
         TableCell::new_with_alignment("Status", 1, Alignment::Center),
         TableCell::new_with_alignment(milestone.state, 1, Alignment::Left),
     ]))
+    .chain(milestone.description.iter().map(|description| {
+        [
+            TableCell::new_with_alignment("Description", 1, Alignment::Center),
+            TableCell::new_with_alignment(description, 1, Alignment::Left),
+        ]
+    }))
     .chain(once([
         TableCell::new_with_alignment("Related issues", 1, Alignment::Center),
         TableCell::new_with_alignment(milestone_issues.join(", "), 1, Alignment::Left),
