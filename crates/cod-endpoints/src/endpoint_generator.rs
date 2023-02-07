@@ -59,6 +59,11 @@ impl EndpointGenerator {
         Self::repos_owner_repo(format!("{REPO_ISSUES}/{issue_idx}"))
     }
 
+    pub fn repo_update_milestone(milestone_idx: usize) -> anyhow::Result<Url> {
+        use crate::api::REPO_MILESTONES;
+        Self::repos_owner_repo(format!("{REPO_MILESTONES}/{milestone_idx}"))
+    }
+
     pub fn repo_pull_requests() -> anyhow::Result<Url> {
         use crate::api::REPO_PULLS;
         Self::repos_owner_repo(REPO_PULLS)

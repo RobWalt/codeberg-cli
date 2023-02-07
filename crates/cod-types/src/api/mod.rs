@@ -9,6 +9,7 @@ pub mod create_pull_request_option;
 pub mod create_repo_options;
 pub mod edit_issue_option;
 pub mod edit_label_option;
+pub mod edit_milestone_option;
 pub mod edit_pull_request_option;
 pub mod followers_info;
 pub mod following_info;

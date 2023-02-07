@@ -10,4 +10,5 @@ pub struct Milestone {
     pub state: StateType,
     pub open_issues: usize,
     pub closed_issues: usize,
+    pub description: Option<String>,
 }
