@@ -51,15 +51,18 @@ impl CodebergClient {
     where
         T: DeserializeOwned + Debug,
     {
-        let query_args = maybe_limit
-            .map(|limit| ("limit", limit.to_string()))
-            .into_iter()
-            .chain(
-                maybe_state
-                    .map(|state| ("state", state.to_string()))
-                    .into_iter(),
-            )
-            .collect::<Vec<_>>();
+        use std::iter::once;
+
+        let query_args = once((
+            "limit",
+            maybe_limit.map_or_else(|| usize::MAX.to_string(), |limit| limit.to_string()),
+        ))
+        .chain(
+            maybe_state
+                .map(|state| ("state", state.to_string()))
+                .into_iter(),
+        )
+        .collect::<Vec<_>>();
         if query_args.is_empty() {
             self.get(api).await
         } else {

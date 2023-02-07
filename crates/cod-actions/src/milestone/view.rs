@@ -35,10 +35,9 @@ async fn present_milestone_overview(
     use cod_render::prelude::*;
     use std::iter::once;
 
-    let issues_list = client.get_repo_issues(Some(state), None).await?;
-    let pulls_list = client.get_repo_prs(Some(state), None).await?;
+    let issues_list = spin_until_ready(client.get_repo_issues(Some(state), None)).await?;
 
-    let milestone_issues = issues_list
+    let mut milestone_issues = issues_list
         .iter()
         .filter(|&issue| {
             issue
@@ -50,26 +49,16 @@ async fn present_milestone_overview(
             format!(
                 "#{}{}",
                 issue.number,
-                issue.state.is_done().then_some("✓ ").unwrap_or_default()
+                if issue.state.is_done() {
+                    "✓ "
+                } else {
+                    "○ "
+                }
             )
         })
-        .chain(
-            pulls_list
-                .iter()
-                .filter(|&pull| {
-                    pull.milestone
-                        .as_ref()
-                        .map_or(false, |pull_milestone| pull_milestone.id == milestone.id)
-                })
-                .map(|pull| {
-                    format!(
-                        "#{}{}",
-                        pull.number,
-                        pull.state.is_done().then_some("✓ ").unwrap_or_default()
-                    )
-                }),
-        )
         .collect::<Vec<_>>();
+
+    milestone_issues.sort();
 
     let rows = once([
         TableCell::new_with_alignment("Name", 1, Alignment::Center),
