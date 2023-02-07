@@ -4,7 +4,7 @@ use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_render::ui::{
     fuzzy_select_with_key, fuzzy_select_with_key_with_default, multi_fuzzy_select_with_key,
 };
-use cod_types::api::create_pull_request_option::CreatePullRequestOption;
+use cod_types::api::create_options::create_pull_request_option::CreatePullRequestOption;
 use cod_types::api::pull_request::PullRequest;
 use cod_types::api::state_type::StateType;
 use strum::Display;

@@ -1,8 +1,8 @@
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_types::api::branch::Branch;
 use cod_types::api::comment::Comment;
-use cod_types::api::create_comment_option::CreateCommentOption;
-use cod_types::api::create_fork_option::CreateForkOption;
+use cod_types::api::create_options::create_comment_option::CreateCommentOption;
+use cod_types::api::create_options::create_fork_option::CreateForkOption;
 use cod_types::api::issue::Issue;
 use cod_types::api::label::Label;
 use cod_types::api::milestone::Milestone;
@@ -57,11 +57,10 @@ impl CodebergClient {
             "limit",
             maybe_limit.map_or_else(|| usize::MAX.to_string(), |limit| limit.to_string()),
         ))
-        .chain(
-            maybe_state
-                .map(|state| ("state", state.to_string()))
-                .into_iter(),
-        )
+        .chain(once((
+            "state",
+            maybe_state.unwrap_or(StateType::All).to_string(),
+        )))
         .collect::<Vec<_>>();
         if query_args.is_empty() {
             self.get(api).await

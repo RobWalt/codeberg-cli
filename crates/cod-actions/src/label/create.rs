@@ -1,7 +1,7 @@
 use cod_cli::label::create::CreateLabelArgs;
 use cod_client::CodebergClient;
 use cod_render::ui::multi_fuzzy_select_with_key;
-use cod_types::api::create_label_options::CreateLabelOption;
+use cod_types::api::create_options::create_label_options::CreateLabelOption;
 
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_types::api::label::Label;

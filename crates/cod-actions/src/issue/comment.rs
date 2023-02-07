@@ -2,7 +2,7 @@ use cod_cli::issue::comment::CommentIssueArgs;
 use cod_client::CodebergClient;
 use cod_render::spinner::spin_until_ready;
 use cod_render::ui::fuzzy_select_with_key;
-use cod_types::api::create_comment_option::CreateCommentOption;
+use cod_types::api::create_options::create_comment_option::CreateCommentOption;
 use cod_types::api::issue::Issue;
 
 use crate::text_manipulation::select_prompt_for;
