@@ -2,7 +2,7 @@ use cod_cli::pull_request::edit::EditPullRequestArgs;
 use cod_client::CodebergClient;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_render::ui::{fuzzy_select_with_key, multi_fuzzy_select_with_key};
-use cod_types::api::edit_pull_request_option::EditPullRequestOption;
+use cod_types::api::edit_options::edit_pull_request_option::EditPullRequestOption;
 use cod_types::api::pull_request::PullRequest;
 use cod_types::api::state_type::StateType;
 use strum::{Display, EnumIter, IntoEnumIterator};

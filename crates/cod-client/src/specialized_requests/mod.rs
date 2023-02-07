@@ -1,8 +1,8 @@
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_types::api::branch::Branch;
 use cod_types::api::comment::Comment;
-use cod_types::api::create_comment_option::CreateCommentOption;
-use cod_types::api::create_fork_option::CreateForkOption;
+use cod_types::api::create_options::create_comment_option::CreateCommentOption;
+use cod_types::api::create_options::create_fork_option::CreateForkOption;
 use cod_types::api::issue::Issue;
 use cod_types::api::label::Label;
 use cod_types::api::milestone::Milestone;

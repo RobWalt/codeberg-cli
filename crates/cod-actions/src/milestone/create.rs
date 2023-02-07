@@ -1,7 +1,7 @@
 use cod_cli::milestone::create::CreateMilestoneArgs;
 use cod_client::CodebergClient;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
-use cod_types::api::create_milestone_option::CreateMilestoneOption;
+use cod_types::api::create_options::create_milestone_option::CreateMilestoneOption;
 use cod_types::api::milestone::Milestone;
 use strum::Display;
 
