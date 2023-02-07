@@ -57,11 +57,10 @@ impl CodebergClient {
             "limit",
             maybe_limit.map_or_else(|| usize::MAX.to_string(), |limit| limit.to_string()),
         ))
-        .chain(
-            maybe_state
-                .map(|state| ("state", state.to_string()))
-                .into_iter(),
-        )
+        .chain(once((
+            "state",
+            maybe_state.unwrap_or(StateType::All).to_string(),
+        )))
         .collect::<Vec<_>>();
         if query_args.is_empty() {
             self.get(api).await
