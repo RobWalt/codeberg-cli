@@ -2,7 +2,7 @@ use cod_cli::repo::create::RepoCreateArgs;
 use cod_client::CodebergClient;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_render::ui::{fuzzy_select_with_key, multi_fuzzy_select_with_key};
-use cod_types::api::create_repo_options::CreateRepoOption;
+use cod_types::api::create_options::create_repo_options::CreateRepoOption;
 use cod_types::api::privacy_type::Privacy;
 use cod_types::api::repository::Repository;
 use strum::{Display, VariantNames};

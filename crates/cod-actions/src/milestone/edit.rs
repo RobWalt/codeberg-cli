@@ -4,7 +4,7 @@ use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_render::spinner::spin_until_ready;
 use cod_render::ui::fuzzy_select_with_key;
 use cod_render::ui::multi_fuzzy_select_with_key;
-use cod_types::api::edit_milestone_option::EditMilestoneOption;
+use cod_types::api::edit_options::edit_milestone_option::EditMilestoneOption;
 use cod_types::api::milestone::Milestone;
 use cod_types::api::state_type::StateType;
 use strum::IntoEnumIterator;
@@ -63,15 +63,18 @@ pub async fn edit_milestone(
 fn create_update_data(
     selected_update_fields: Vec<EditableFields>,
     selected_milestone: &Milestone,
-) -> anyhow::Result<EditMilestoneOption> { 
+) -> anyhow::Result<EditMilestoneOption> {
     use EditableFields::*;
 
     let mut edit_milestone_options = EditMilestoneOption::from_milestone(selected_milestone);
 
     if selected_update_fields.contains(&Description) {
-        if let Some(new_description) =
-            dialoguer::Editor::new().edit(selected_milestone.description.as_deref().unwrap_or_default())?
-        {
+        if let Some(new_description) = dialoguer::Editor::new().edit(
+            selected_milestone
+                .description
+                .as_deref()
+                .unwrap_or_default(),
+        )? {
             edit_milestone_options.description.replace(new_description);
         }
     }

@@ -64,7 +64,7 @@ fn present_user_info(user_data: UserData) {
                 user_data
                     .top_repos
                     .into_iter()
-                    .map(|repo| format!("- {} ({}⭐)", repo.name, repo.stars_count))
+                    .map(|repo| format!("- {} ({}★ )", repo.name, repo.stars_count))
                     .collect::<Vec<_>>()
                     .join("\n"),
                 1,

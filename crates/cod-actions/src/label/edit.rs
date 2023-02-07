@@ -3,7 +3,7 @@ use cod_client::CodebergClient;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_render::spinner::spin_until_ready;
 use cod_render::ui::{fuzzy_select_with_key, multi_fuzzy_select_with_key};
-use cod_types::api::edit_label_option::EditLabelOption;
+use cod_types::api::edit_options::edit_label_option::EditLabelOption;
 use cod_types::api::label::Label;
 use strum::{Display, EnumIter, IntoEnumIterator};
 
