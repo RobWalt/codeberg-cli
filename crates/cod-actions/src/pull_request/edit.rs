@@ -7,7 +7,7 @@ use cod_types::api::pull_request::PullRequest;
 use cod_types::api::state_type::StateType;
 use strum::{Display, EnumIter, IntoEnumIterator};
 
-use crate::text_manipulation::select_prompt_for;
+use crate::text_manipulation::{edit_prompt_for, select_prompt_for};
 
 #[derive(Display, EnumIter, PartialEq, Eq)]
 enum EditableFields {
@@ -78,11 +78,10 @@ async fn create_update_data(
     }
 
     if selected_update_fields.contains(&Description) {
-        if let Some(new_description) =
-            dialoguer::Editor::new().edit(selected_pull_request.body.as_str())?
-        {
-            edit_pull_request_options.body.replace(new_description);
-        }
+        let new_description = inquire::Editor::new(edit_prompt_for("a description").as_str())
+            .with_predefined_text(selected_pull_request.body.as_str())
+            .prompt()?;
+        edit_pull_request_options.body.replace(new_description);
     }
 
     if selected_update_fields.contains(&State) {
@@ -96,10 +95,9 @@ async fn create_update_data(
     }
 
     if selected_update_fields.contains(&Title) {
-        let new_title = dialoguer::Input::new()
-            .default(selected_pull_request.title.to_owned())
-            .with_prompt("Choose a new issue title")
-            .interact_text()?;
+        let new_title = inquire::Text::new("Choose a new issue title")
+            .with_default(selected_pull_request.title.as_str())
+            .prompt()?;
         edit_pull_request_options.title.replace(new_title);
     }
 

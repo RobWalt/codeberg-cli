@@ -7,7 +7,7 @@ use cod_types::api::issue::Issue;
 use cod_types::api::state_type::StateType;
 use strum::Display;
 
-use crate::text_manipulation::select_prompt_for;
+use crate::text_manipulation::{edit_prompt_for, select_prompt_for};
 
 pub async fn create_issue(args: CreateIssueArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let options = fill_in_mandatory_values(&args)?;
@@ -21,9 +21,7 @@ pub async fn create_issue(args: CreateIssueArgs, client: &CodebergClient) -> any
 fn fill_in_mandatory_values(args: &CreateIssueArgs) -> anyhow::Result<CreateIssueOption> {
     let title = match args.title.clone() {
         Some(title) => title,
-        None => dialoguer::Input::new()
-            .with_prompt("Issue Title")
-            .interact()?,
+        None => inquire::Text::new("Issue Title").prompt()?,
     };
     Ok(CreateIssueOption::new(title))
 }
@@ -74,9 +72,9 @@ async fn fill_in_optional_values(
         multi_fuzzy_select_with_key(missing_options, "Add additional information for", |_| false)?;
 
     if selected_options.contains(&Description) {
-        let new_body = dialoguer::Editor::new()
-            .edit("Enter a issue description")?
-            .ok_or_else(|| anyhow::anyhow!("Closed the editor. Aborting."))?;
+        let new_body = inquire::Editor::new(edit_prompt_for("a description").as_str())
+            .with_predefined_text("Enter a issue description")
+            .prompt()?;
         options = options.with_body(new_body);
     }
 

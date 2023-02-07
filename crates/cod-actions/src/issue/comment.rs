@@ -4,7 +4,7 @@ use cod_render::spinner::spin_until_ready;
 use cod_render::ui::fuzzy_select_with_key;
 use cod_types::api::create_options::create_comment_option::CreateCommentOption;
 
-use crate::text_manipulation::select_prompt_for;
+use crate::text_manipulation::{edit_prompt_for, select_prompt_for};
 
 pub async fn comment_issue(_args: CommentIssueArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let issues_list = spin_until_ready(client.get_repo_issues(None, None)).await?;
@@ -22,8 +22,8 @@ pub async fn comment_issue(_args: CommentIssueArgs, client: &CodebergClient) -> 
 }
 
 fn get_comment_input(issue_title: &str) -> anyhow::Result<CreateCommentOption> {
-    dialoguer::Editor::new()
-        .edit(format!("Write a comment for issue \"{}\"", issue_title).as_str())?
-        .map(CreateCommentOption::new)
-        .ok_or_else(|| anyhow::anyhow!("Aborted submitting a comment."))
+    let new_comment = inquire::Editor::new(edit_prompt_for("a comment").as_str())
+        .with_predefined_text(format!("Write a comment for issue \"{}\"", issue_title).as_str())
+        .prompt()?;
+    Ok(CreateCommentOption::new(new_comment))
 }

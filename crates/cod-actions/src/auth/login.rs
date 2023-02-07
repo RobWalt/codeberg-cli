@@ -8,14 +8,15 @@ use cod_paths::token_directory;
 use cod_render::spinner::spin_until_ready;
 use cod_types::api::user::User;
 use cod_types::token::Token;
+use inquire::validator::Validation;
+use inquire::CustomUserError;
 
 const TOKEN_GENERATION_URL: &str = "https://codeberg.org/user/settings/applications";
 
 pub async fn login_user(_args: LoginArgs) -> anyhow::Result<()> {
     // ask for usage of browser
-    if dialoguer::Confirm::new()
-        .with_prompt("Authenticating. Open Browser to generate token for codeberg-cli?")
-        .interact()?
+    if inquire::Confirm::new("Authenticating. Open Browser to generate token for codeberg-cli?")
+        .prompt()?
     {
         println!("\nOpening Browser...\n");
         webbrowser::open(TOKEN_GENERATION_URL)?;
@@ -79,41 +80,51 @@ fn create_token_storage_path() -> anyhow::Result<PathBuf> {
     })
 }
 
-fn validate_token<T: ToString>(input: &T) -> anyhow::Result<()> {
-    validate_word_count(input.to_string().as_str()).and_then(validate_token_length)
+fn validate_token(input: &str) -> Result<Validation, CustomUserError> {
+    let v = validate_word_count(input);
+    if let Validation::Invalid(_) = v {
+        return Ok(v);
+    }
+    Ok(validate_token_length(input))
 }
 
-fn validate_word_count(input: &str) -> anyhow::Result<&str> {
+fn validate_word_count(input: &str) -> Validation {
     let words = input.split_whitespace().collect::<Vec<_>>();
     if words.len() != 1 {
-        anyhow::bail!(
-            "Token is just one word. Your input words were\n{}",
-            words
-                .iter()
-                .map(|word| format!("  - {word}"))
-                .collect::<Vec<_>>()
-                .join("\n")
-        );
+        Validation::Invalid(
+            format!(
+                "Token is just one word. Your input words were\n{}",
+                words
+                    .iter()
+                    .map(|word| format!("  - {word}"))
+                    .collect::<Vec<_>>()
+                    .join("\n")
+            )
+            .into(),
+        )
+    } else {
+        Validation::Valid
     }
-    Ok(words[0])
 }
 
-fn validate_token_length(token: &str) -> anyhow::Result<()> {
+fn validate_token_length(token: &str) -> Validation {
     if token.len() != 40 {
-        anyhow::bail!(
-            "Usual token length is 40. Token\n\n\t{token:?}\n\nhas length {}",
-            token.len()
-        );
+        Validation::Invalid(
+            format!(
+                "Usual token length is 40. Token\n\n\t{token:?}\n\nhas length {}",
+                token.len()
+            )
+            .into(),
+        )
+    } else {
+        Validation::Valid
     }
-    Ok(())
 }
 
 fn ask_for_token() -> anyhow::Result<Token> {
-    dialoguer::Input::<String>::new()
-        .with_prompt("Token")
-        .allow_empty(false)
-        .validate_with(validate_token)
-        .interact()
+    inquire::Text::new("Token")
+        .with_validator(validate_token)
+        .prompt()
         .map(Token::new)
         .map_err(anyhow::Error::from)
 }

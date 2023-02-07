@@ -10,6 +10,7 @@ use cod_types::api::state_type::StateType;
 use strum::IntoEnumIterator;
 use strum::{Display, EnumIter};
 
+use crate::text_manipulation::edit_prompt_for;
 use crate::text_manipulation::select_prompt_for;
 
 #[derive(Display, EnumIter, PartialEq, Eq)]
@@ -63,14 +64,16 @@ fn create_update_data(
     let mut edit_milestone_options = EditMilestoneOption::from_milestone(selected_milestone);
 
     if selected_update_fields.contains(&Description) {
-        if let Some(new_description) = dialoguer::Editor::new().edit(
-            selected_milestone
-                .description
-                .as_deref()
-                .unwrap_or_default(),
-        )? {
-            edit_milestone_options.description.replace(new_description);
-        }
+        let new_description =
+            inquire::Editor::new(edit_prompt_for("a milestone description").as_str())
+                .with_predefined_text(
+                    selected_milestone
+                        .description
+                        .as_deref()
+                        .unwrap_or_default(),
+                )
+                .prompt()?;
+        edit_milestone_options.description.replace(new_description);
     }
 
     if selected_update_fields.contains(&State) {
@@ -84,10 +87,9 @@ fn create_update_data(
     }
 
     if selected_update_fields.contains(&Title) {
-        let new_title = dialoguer::Input::new()
-            .default(selected_milestone.title.to_owned())
-            .with_prompt("Choose a new milestone title")
-            .interact_text()?;
+        let new_title = inquire::Text::new("Choose a new milestone title")
+            .with_default(selected_milestone.title.as_str())
+            .prompt()?;
         edit_milestone_options.title.replace(new_title);
     }
 

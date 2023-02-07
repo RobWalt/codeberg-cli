@@ -9,7 +9,7 @@ use cod_types::api::pull_request::PullRequest;
 use cod_types::api::state_type::StateType;
 use strum::Display;
 
-use crate::text_manipulation::select_prompt_for;
+use crate::text_manipulation::{edit_prompt_for, select_prompt_for};
 
 pub async fn create_pull(
     args: CreatePullRequestArgs,
@@ -27,9 +27,7 @@ async fn fill_in_mandatory_values(
     args: &CreatePullRequestArgs,
     client: &CodebergClient,
 ) -> anyhow::Result<CreatePullRequestOption> {
-    let title = dialoguer::Input::new()
-        .with_prompt("Pull Request Title")
-        .interact_text()?;
+    let title = inquire::Text::new("Pull Request Title").prompt()?;
 
     let target_branch = select_branch(
         None,
@@ -153,9 +151,9 @@ async fn fill_in_optional_values(
 
     if selected_options.contains(&Description) {
         options = options.with_description(
-            dialoguer::Editor::new()
-                .edit("Enter a pull request description")?
-                .unwrap_or_default(),
+            inquire::Editor::new(edit_prompt_for("a description").as_str())
+                .with_predefined_text("Enter a pull request description")
+                .prompt()?,
         );
     }
 

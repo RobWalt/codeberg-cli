@@ -4,7 +4,7 @@ use cod_render::spinner::spin_until_ready;
 use cod_render::ui::fuzzy_select_with_key;
 use cod_types::api::create_options::create_comment_option::CreateCommentOption;
 
-use crate::text_manipulation::select_prompt_for;
+use crate::text_manipulation::{edit_prompt_for, select_prompt_for};
 
 pub async fn comment_pull(
     _args: CommentPullRequestArgs,
@@ -28,14 +28,14 @@ pub async fn comment_pull(
 }
 
 fn get_comment_input(pull_request_title: &str) -> anyhow::Result<CreateCommentOption> {
-    dialoguer::Editor::new()
-        .edit(
+    let comment = inquire::Editor::new(edit_prompt_for("a comment").as_str())
+        .with_predefined_text(
             format!(
                 "Write a comment for pull_request \"{}\"",
                 pull_request_title
             )
             .as_str(),
-        )?
-        .map(CreateCommentOption::new)
-        .ok_or_else(|| anyhow::anyhow!("Aborted submitting a comment."))
+        )
+        .prompt()?;
+    Ok(CreateCommentOption::new(comment))
 }
