@@ -20,21 +20,16 @@ enum EditableFields {
 pub async fn edit_pull(_args: EditPullRequestArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let list_pull_requests = client.get_repo_prs(None, None).await?;
 
-    let selected_pull_request = fuzzy_select_with_key(
-        list_pull_requests,
-        select_prompt_for("pull request"),
-        |pr| format!("#{} {}", pr.number, pr.title),
-        |pr| pr,
-    )
-    .and_then(|maybe_selected| {
-        maybe_selected.ok_or_else(|| anyhow::anyhow!("Nothing selected. Aborting."))
-    })?;
+    let selected_pull_request =
+        fuzzy_select_with_key(list_pull_requests, select_prompt_for("pull request")).and_then(
+            |maybe_selected| {
+                maybe_selected.ok_or_else(|| anyhow::anyhow!("Nothing selected. Aborting."))
+            },
+        )?;
 
     let selected_update_fields = multi_fuzzy_select_with_key(
         EditableFields::iter().collect::<Vec<_>>(),
         select_prompt_for("option"),
-        |option| option.to_string(),
-        |option| option,
         |_| false,
     )?;
 
@@ -67,8 +62,6 @@ async fn create_update_data(
         let selected_assignees = multi_fuzzy_select_with_key(
             assignees_list,
             select_prompt_for("assignees"),
-            |assignee| assignee.username.to_owned(),
-            |assignee| assignee.username,
             |assignee| {
                 selected_pull_request
                     .assignees
@@ -76,9 +69,12 @@ async fn create_update_data(
                     .map_or(false, |assignees| assignees.contains(assignee))
             },
         )?;
-        edit_pull_request_options
-            .assignees
-            .replace(selected_assignees);
+        edit_pull_request_options.assignees.replace(
+            selected_assignees
+                .into_iter()
+                .map(|assignee| assignee.username)
+                .collect::<Vec<_>>(),
+        );
     }
 
     if selected_update_fields.contains(&Description) {
@@ -93,10 +89,7 @@ async fn create_update_data(
         let new_state = fuzzy_select_with_key(
             StateType::available_for_choosing().to_vec(),
             select_prompt_for("state"),
-            |state| state.to_owned(),
-            StateType::try_from,
-        )?
-        .and_then(|state_result| state_result.ok());
+        )?;
         edit_pull_request_options
             .state
             .replace(new_state.unwrap_or(selected_pull_request.state));

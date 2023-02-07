@@ -25,21 +25,14 @@ pub async fn edit_issue(_args: EditIssueArgs, client: &CodebergClient) -> anyhow
         println!("No issues found in this repository");
     }
 
-    let selected_issue = fuzzy_select_with_key(
-        issues_list,
-        select_prompt_for("issue"),
-        |issue: &Issue| format!("#{} {}", issue.number, issue.title),
-        |issue| issue,
-    )
-    .and_then(|maybe_issue| {
-        maybe_issue.ok_or_else(|| anyhow::anyhow!("Nothing selected. Aborting."))
-    })?;
+    let selected_issue =
+        fuzzy_select_with_key(issues_list, select_prompt_for("issue")).and_then(|maybe_issue| {
+            maybe_issue.ok_or_else(|| anyhow::anyhow!("Nothing selected. Aborting."))
+        })?;
 
     let selected_update_fields = multi_fuzzy_select_with_key(
         EditableFields::iter().collect::<Vec<_>>(),
         select_prompt_for("options"),
-        |option| option.to_string(),
-        |option| option,
         |_| false,
     )?;
 
@@ -71,8 +64,6 @@ async fn create_update_data(
         let selected_assignees = multi_fuzzy_select_with_key(
             assignees_list,
             select_prompt_for("assignees"),
-            |assignee| assignee.username.to_owned(),
-            |assignee| assignee.username,
             |assignee| {
                 selected_issue
                     .assignees
@@ -80,7 +71,12 @@ async fn create_update_data(
                     .map_or(false, |assignees| assignees.contains(assignee))
             },
         )?;
-        edit_issue_options.assignees.replace(selected_assignees);
+        edit_issue_options.assignees.replace(
+            selected_assignees
+                .into_iter()
+                .map(|assignee| assignee.username)
+                .collect::<Vec<_>>(),
+        );
     }
 
     if selected_update_fields.contains(&Description) {
@@ -95,10 +91,7 @@ async fn create_update_data(
         let new_state = fuzzy_select_with_key(
             StateType::available_for_choosing().to_vec(),
             select_prompt_for("state"),
-            |state| state.to_owned(),
-            StateType::try_from,
-        )?
-        .and_then(|state_result| state_result.ok());
+        )?;
         edit_issue_options
             .state
             .replace(new_state.unwrap_or(selected_issue.state));

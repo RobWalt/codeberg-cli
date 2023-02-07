@@ -70,13 +70,8 @@ async fn fill_in_optional_values(
         return Ok(options);
     }
 
-    let selected_options = multi_fuzzy_select_with_key(
-        missing_options,
-        "Add additional information for",
-        |&missing_option| missing_option,
-        |missing_option| missing_option,
-        |_| false,
-    )?;
+    let selected_options =
+        multi_fuzzy_select_with_key(missing_options, "Add additional information for", |_| false)?;
 
     if selected_options.contains(&Description) {
         let new_body = dialoguer::Editor::new()
@@ -87,29 +82,29 @@ async fn fill_in_optional_values(
 
     if selected_options.contains(&Assignees) {
         let assignees_list = client.get_repo_assignees().await?;
-        let selected_assignees = multi_fuzzy_select_with_key(
-            assignees_list,
-            select_prompt_for("assignees"),
-            |assignee| assignee.username.to_owned(),
-            |assignee| assignee.username,
-            |_| false,
-        )?;
+        let selected_assignees =
+            multi_fuzzy_select_with_key(assignees_list, select_prompt_for("assignees"), |_| false)?;
 
-        options = options.with_assignees(selected_assignees);
+        options = options.with_assignees(
+            selected_assignees
+                .into_iter()
+                .map(|user| user.username)
+                .collect::<Vec<_>>(),
+        );
     }
 
     if selected_options.contains(&Labels) {
         let labels_list = client.get_repo_labels(None).await?;
 
-        let selected_labels = multi_fuzzy_select_with_key(
-            labels_list,
-            select_prompt_for("labels"),
-            |label| label.name.to_owned(),
-            |label| label.id,
-            |_| false,
-        )?;
+        let selected_labels =
+            multi_fuzzy_select_with_key(labels_list, select_prompt_for("labels"), |_| false)?;
 
-        options = options.with_labels(selected_labels);
+        options = options.with_labels(
+            selected_labels
+                .into_iter()
+                .map(|label| label.id)
+                .collect::<Vec<_>>(),
+        );
     }
 
     if selected_options.contains(&Milestone) {
@@ -117,15 +112,11 @@ async fn fill_in_optional_values(
             .get_repo_milestones(Some(StateType::Open), None)
             .await?;
 
-        let selected_milestone = fuzzy_select_with_key(
-            milstones_list,
-            select_prompt_for("milestone"),
-            |milestone| milestone.title.to_owned(),
-            |milestone| milestone.id,
-        )?
-        .ok_or_else(|| anyhow::anyhow!("No milestone selected. Aborting."))?;
+        let selected_milestone =
+            fuzzy_select_with_key(milstones_list, select_prompt_for("milestone"))?
+                .ok_or_else(|| anyhow::anyhow!("No milestone selected. Aborting."))?;
 
-        options = options.with_milestone(selected_milestone);
+        options = options.with_milestone(selected_milestone.id);
     }
 
     Ok(options)

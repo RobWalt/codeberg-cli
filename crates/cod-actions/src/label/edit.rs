@@ -23,21 +23,14 @@ pub async fn edit_label(_args: EditLabelArgs, client: &CodebergClient) -> anyhow
         println!("No labels found in this repository");
     }
 
-    let selected_label = fuzzy_select_with_key(
-        labels_list,
-        select_prompt_for("label"),
-        |label: &Label| label.name.to_string(),
-        |label| label,
-    )
-    .and_then(|maybe_label| {
-        maybe_label.ok_or_else(|| anyhow::anyhow!("Nothing selected. Aborting."))
-    })?;
+    let selected_label =
+        fuzzy_select_with_key(labels_list, select_prompt_for("label")).and_then(|maybe_label| {
+            maybe_label.ok_or_else(|| anyhow::anyhow!("Nothing selected. Aborting."))
+        })?;
 
     let selected_update_fields = multi_fuzzy_select_with_key(
         EditableFields::iter().collect::<Vec<_>>(),
         select_prompt_for("options"),
-        |option| option.to_string(),
-        |option| option,
         |_| false,
     )?;
 

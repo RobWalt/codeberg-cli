@@ -58,13 +58,8 @@ fn fill_in_optional_values(
         return Ok(options);
     }
 
-    let selected_options = multi_fuzzy_select_with_key(
-        missing_options,
-        "Add additional information for",
-        |&missing_option| missing_option,
-        |missing_option| missing_option,
-        |_| false,
-    )?;
+    let selected_options =
+        multi_fuzzy_select_with_key(missing_options, "Add additional information for", |_| false)?;
 
     if selected_options.contains(&Description) {
         let new_description = dialoguer::Editor::new()

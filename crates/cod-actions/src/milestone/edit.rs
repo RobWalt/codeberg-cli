@@ -29,19 +29,13 @@ pub async fn edit_milestone(
         println!("No milestones found in this repository");
     }
 
-    let selected_milestone = fuzzy_select_with_key(
-        milestones_list,
-        select_prompt_for("milestone"),
-        |milestone: &Milestone| milestone.title.clone(),
-        |milestone| milestone,
-    )?
-    .ok_or_else(|| anyhow::anyhow!("Nothing selected. Aborting."))?;
+    let selected_milestone =
+        fuzzy_select_with_key(milestones_list, select_prompt_for("milestone"))?
+            .ok_or_else(|| anyhow::anyhow!("Nothing selected. Aborting."))?;
 
     let selected_update_fields = multi_fuzzy_select_with_key(
         EditableFields::iter().collect::<Vec<_>>(),
         select_prompt_for("options"),
-        |option| option.to_string(),
-        |option| option,
         |_| false,
     )?;
 
@@ -83,10 +77,7 @@ fn create_update_data(
         let new_state = fuzzy_select_with_key(
             StateType::available_for_choosing().to_vec(),
             select_prompt_for("state"),
-            |state| state.to_owned(),
-            StateType::try_from,
-        )?
-        .and_then(|state_result| state_result.ok());
+        )?;
         edit_milestone_options
             .state
             .replace(new_state.unwrap_or(selected_milestone.state));

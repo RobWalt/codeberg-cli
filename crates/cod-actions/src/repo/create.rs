@@ -5,7 +5,7 @@ use cod_render::ui::{fuzzy_select_with_key, multi_fuzzy_select_with_key};
 use cod_types::api::create_options::create_repo_options::CreateRepoOption;
 use cod_types::api::privacy_type::Privacy;
 use cod_types::api::repository::Repository;
-use strum::{Display, VariantNames};
+use strum::{Display, IntoEnumIterator};
 
 use crate::text_manipulation::select_prompt_for;
 
@@ -59,13 +59,8 @@ fn fill_in_optional_values(mut args: RepoCreateArgs) -> anyhow::Result<RepoCreat
         return Ok(args);
     }
 
-    let selected_options = multi_fuzzy_select_with_key(
-        missing_options,
-        select_prompt_for("option"),
-        |&missing_option| missing_option,
-        |missing_option| missing_option,
-        |_| false,
-    )?;
+    let selected_options =
+        multi_fuzzy_select_with_key(missing_options, select_prompt_for("option"), |_| false)?;
 
     if selected_options.contains(&DefaultBranch) {
         args.default_branch.replace(
@@ -81,16 +76,9 @@ fn fill_in_optional_values(mut args: RepoCreateArgs) -> anyhow::Result<RepoCreat
     }
 
     if selected_options.contains(&Private) {
-        let selected_privacy = fuzzy_select_with_key(
-            Privacy::VARIANTS.to_vec(),
-            select_prompt_for("visibility"),
-            |privacy| privacy.to_string(),
-            Privacy::try_from,
-        )
-        .and_then(|result| match result {
-            Some(res) => res.map_err(anyhow::Error::from),
-            None => anyhow::bail!("Nothing selected even though it was required"),
-        })?;
+        let selected_privacy =
+            fuzzy_select_with_key(Privacy::iter().collect(), select_prompt_for("visibility"))?
+                .ok_or_else(|| anyhow::anyhow!("Nothing selected even though it was required"))?;
 
         args.private.replace(selected_privacy);
     }
