@@ -16,6 +16,7 @@ pub struct PullRequest {
     pub state: StateType,
     pub assignees: Option<Vec<User>>,
     pub milestone: Option<Milestone>,
+    pub merged: bool,
 }
 
 impl Display for PullRequest {

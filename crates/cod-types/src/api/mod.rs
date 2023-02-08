@@ -5,6 +5,7 @@ pub mod edit_options;
 pub mod followers_info;
 pub mod following_info;
 pub mod issue;
+pub mod issue_labels_option;
 pub mod label;
 pub mod milestone;
 pub mod privacy_type;

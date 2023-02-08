@@ -9,6 +9,7 @@ pub struct EditPullRequestOption {
     pub body: Option<String>,
     pub state: Option<StateType>,
     pub title: Option<String>,
+    pub labels: Option<Vec<usize>>,
 }
 
 impl EditPullRequestOption {
@@ -21,8 +22,9 @@ impl EditPullRequestOption {
                     .collect::<Vec<_>>()
             }),
             body: Some(pr.body.clone()),
-            state: Some(pr.state),
+            state: (!pr.merged).then_some(pr.state),
             title: Some(pr.title.clone()),
+            labels: Some(pr.labels.iter().map(|label| label.id).collect::<Vec<_>>()),
         }
     }
 }
