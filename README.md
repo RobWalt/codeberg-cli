@@ -20,7 +20,7 @@ CLI Tool for [Codeberg](https://codeberg.org/) similar to `gh` and `glab`.
 
 The easiest way to install the `cod` command is using cargo. (If you haven't installed rust/cargo yet, take a look [here](https://doc.rust-lang.org/cargo/getting-started/installation.html))
 
-### I.I. Cargo Build 
+### I.I. Cargo Build (from source)
 
 Clone the repo and install `cod` with 
 
@@ -28,11 +28,7 @@ Clone the repo and install `cod` with
 cargo install --path .
 ```
 
-### I.II. Cargo Crates.io (Not working at the moment)
-
-I can't publish the crate at the moment since all dependencies of this crate must be available on crates.io. However, some of my dependencies are forks that include fixes / new features and this prevents me from triggering the release workflow.
-
----
+### I.II. Cargo Crates.io
 
 Anywhere, just run 
 
@@ -64,12 +60,14 @@ Commands:
   pull        Pull request subcommands
   label       Label subcommands
   repo        Repository subcommands
+  milestone   Milestone subcommands
   completion  Print completion script
   help        Print this message or the help of the given subcommand(s)
 
 Options:
   -h, --help     Print help (see more with '--help')
   -V, --version  Print version
+
 ```
 
 # Development 
