@@ -14,13 +14,9 @@ pub async fn view_milestone(
     let milestones_list =
         spin_until_ready(client.get_repo_milestones(Some(args.state), None)).await?;
 
-    let selected_milestone = fuzzy_select_with_key(
-        milestones_list,
-        select_prompt_for("milestone"),
-        |milestone: &Milestone| milestone.title.to_owned(),
-        |milestone| milestone,
-    )?
-    .ok_or_else(|| anyhow::anyhow!("No milestone chosen. Aborting."))?;
+    let selected_milestone =
+        fuzzy_select_with_key(milestones_list, select_prompt_for("milestone"))?
+            .ok_or_else(|| anyhow::anyhow!("No milestone chosen. Aborting."))?;
 
     present_milestone_overview(selected_milestone, client, args.state).await?;
 

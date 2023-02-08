@@ -16,6 +16,6 @@ readme = "README.md"
 indicatif = "0.17.3"
 term-table = { git = "https://github.com/RobWalt/term-table-rs", branch = "fix/render-fail" }
 tokio = "1.24.2"
-dialoguer = { git = "https://github.com/RobWalt/dialoguer", branch = "feat/multi-fuzz-selection", features = ["fuzzy-select"] }
 anyhow = "1.0.68"
 textwrap = "0.16.0"
+inquire = { version = "0.5.3", features = ["editor", "date"] }

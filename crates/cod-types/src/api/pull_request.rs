@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use serde::Deserialize;
 
 use crate::api::label::Label;
@@ -14,4 +16,10 @@ pub struct PullRequest {
     pub state: StateType,
     pub assignees: Option<Vec<User>>,
     pub milestone: Option<Milestone>,
+}
+
+impl Display for PullRequest {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "#{} {}", self.number, self.title)
+    }
 }

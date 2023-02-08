@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use serde::Deserialize;
 
 use crate::api::label::Label;
@@ -16,4 +18,10 @@ pub struct Issue {
     pub state: StateType,
     pub pull_request: Option<PullRequestMeta>,
     pub milestone: Option<Milestone>,
+}
+
+impl Display for Issue {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "#{} {}", self.number, self.title)
+    }
 }
