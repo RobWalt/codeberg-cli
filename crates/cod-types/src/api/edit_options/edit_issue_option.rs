@@ -21,7 +21,11 @@ impl EditIssueOption {
                     .collect::<Vec<_>>()
             }),
             body: Some(issue.body.clone()),
-            state: Some(issue.state),
+            state: issue
+                .pull_request
+                .as_ref()
+                .map(|pr_meta| (!pr_meta.merged).then_some(issue.state))
+                .unwrap_or(Some(issue.state)),
             title: Some(issue.title.clone()),
         }
     }
