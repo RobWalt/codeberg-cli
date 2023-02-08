@@ -2,7 +2,7 @@
 name = "codeberg-cli"
 version = "0.1.0"
 edition = "2021"
-license = "AGPL3"
+license = "AGPL-3.0-or-later"
 keywords = ["codeberg-cli", "cli", "codeberg", "api", "tool"]
 authors = ["Robert Walter <robwalter96@gmail.com>"]
 description = "CLI Tool for codeberg similar to gh and glab"
