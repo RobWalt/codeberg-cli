@@ -2,7 +2,7 @@
 name = "cod-git-info"
 version = "0.1.0"
 edition = "2021"
-license = "AGPL3"
+license = "AGPL-3.0-or-later"
 keywords = ["codeberg-cli"]
 authors = ["Robert Walter <robwalter96@gmail.com>"]
 description = "Provides information for the user repository"
