@@ -3,9 +3,8 @@ use cod_client::CodebergClient;
 use cod_render::spinner::spin_until_ready;
 use cod_render::ui::fuzzy_select_with_key;
 use cod_types::api::create_options::create_comment_option::CreateCommentOption;
-use cod_types::api::pull_request::PullRequest;
 
-use crate::text_manipulation::select_prompt_for;
+use crate::text_manipulation::{edit_prompt_for, select_prompt_for};
 
 pub async fn comment_pull(
     _args: CommentPullRequestArgs,
@@ -13,12 +12,8 @@ pub async fn comment_pull(
 ) -> anyhow::Result<()> {
     let pull_requests_list = spin_until_ready(client.get_repo_prs(None, None)).await?;
 
-    let selected_pull_request = fuzzy_select_with_key(
-        pull_requests_list,
-        select_prompt_for("pull request"),
-        |pull_request: &PullRequest| format!("#{} {}", pull_request.number, pull_request.title),
-        |pull_request| pull_request,
-    )?;
+    let selected_pull_request =
+        fuzzy_select_with_key(pull_requests_list, select_prompt_for("pull request"))?;
 
     if let Some(pull_request) = selected_pull_request {
         let body = get_comment_input(pull_request.title.as_str())?;
@@ -33,14 +28,14 @@ pub async fn comment_pull(
 }
 
 fn get_comment_input(pull_request_title: &str) -> anyhow::Result<CreateCommentOption> {
-    dialoguer::Editor::new()
-        .edit(
+    let comment = inquire::Editor::new(edit_prompt_for("a comment").as_str())
+        .with_predefined_text(
             format!(
                 "Write a comment for pull_request \"{}\"",
                 pull_request_title
             )
             .as_str(),
-        )?
-        .map(CreateCommentOption::new)
-        .ok_or_else(|| anyhow::anyhow!("Aborted submitting a comment."))
+        )
+        .prompt()?;
+    Ok(CreateCommentOption::new(comment))
 }

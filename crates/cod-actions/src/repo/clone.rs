@@ -37,17 +37,16 @@ async fn get_ssh_url(
 
 fn ask_confirm_clone(reponame: &str) -> anyhow::Result<()> {
     let current_path = std::env::current_dir()?;
-    dialoguer::Confirm::new()
-        .with_prompt(format!(
-            "Do you really to clone {reponame} into the directory {current_path:?}"
-        ))
-        .interact()
-        .map_err(anyhow::Error::from)
-        .and_then(|confirmed| {
-            confirmed
-                .then_some(())
-                .ok_or_else(|| anyhow::anyhow!("Abort cloning the repository."))
-        })
+    inquire::Confirm::new(
+        format!("Do you really to clone {reponame} into the directory {current_path:?}").as_str(),
+    )
+    .prompt()
+    .map_err(anyhow::Error::from)
+    .and_then(|confirmed| {
+        confirmed
+            .then_some(())
+            .ok_or_else(|| anyhow::anyhow!("Abort cloning the repository."))
+    })
 }
 
 fn start_clone_repo(ssh_url: String) -> anyhow::Result<()> {

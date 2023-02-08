@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use serde::{Deserialize, Serialize};
 
 use crate::api::state_type::StateType;
@@ -11,4 +13,10 @@ pub struct Milestone {
     pub open_issues: usize,
     pub closed_issues: usize,
     pub description: Option<String>,
+}
+
+impl Display for Milestone {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.title)
+    }
 }

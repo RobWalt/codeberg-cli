@@ -5,7 +5,10 @@ use cod_types::api::create_options::create_label_options::CreateLabelOption;
 
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_types::api::label::Label;
+use inquire::validator::Validation;
 use strum::Display;
+
+use crate::text_manipulation::edit_prompt_for;
 
 pub async fn create_label(args: CreateLabelArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let options = fill_in_mandatory_values(&args)?;
@@ -23,9 +26,7 @@ pub async fn create_label(args: CreateLabelArgs, client: &CodebergClient) -> any
 fn fill_in_mandatory_values(args: &CreateLabelArgs) -> anyhow::Result<CreateLabelOption> {
     let name = match args.name.clone() {
         Some(name) => name,
-        None => dialoguer::Input::new()
-            .with_prompt("Label Title")
-            .interact()?,
+        None => inquire::Text::new("Label Title").prompt()?,
     };
     Ok(CreateLabelOption::new(name))
 }
@@ -58,26 +59,20 @@ fn fill_in_optional_values(
         return Ok(options);
     }
 
-    let selected_options = multi_fuzzy_select_with_key(
-        missing_options,
-        "Add additional information for",
-        |&missing_option| missing_option,
-        |missing_option| missing_option,
-        |_| false,
-    )?;
+    let selected_options =
+        multi_fuzzy_select_with_key(missing_options, "Add additional information for", |_| false)?;
 
     if selected_options.contains(&Description) {
-        let new_description = dialoguer::Editor::new()
-            .edit("Enter a label description")?
-            .ok_or_else(|| anyhow::anyhow!("Closed the editor. Aborting."))?;
+        let new_description = inquire::Editor::new(edit_prompt_for("a label description").as_str())
+            .with_predefined_text("Enter a label description")
+            .prompt()?;
         options = options.with_description(new_description);
     }
 
     if selected_options.contains(&Color) {
-        let new_color = dialoguer::Input::new()
-            .with_prompt("Enter a color")
-            .validate_with(|color: &String| {
-                (color.len() == 7
+        let new_color = inquire::Text::new("Enter a color")
+            .with_validator(|color: &str| {
+                Ok((color.len() == 7
                     && color.starts_with('#')
                     && color
                         .chars()
@@ -86,10 +81,10 @@ fn fill_in_optional_values(
                         .filter(|digit| digit.is_ascii_hexdigit())
                         .count()
                         == 6)
-                    .then_some(())
-                    .ok_or("Not a color: format <#XXXXXX>")
+                    .then_some(Validation::Valid)
+                    .unwrap_or_else(|| Validation::Invalid("Not a color: format <#XXXXXX>".into())))
             })
-            .interact()?;
+            .prompt()?;
 
         options = options.with_color(new_color);
     }
