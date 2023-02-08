@@ -5,6 +5,8 @@ use cod_types::api::create_options::create_milestone_option::CreateMilestoneOpti
 use cod_types::api::milestone::Milestone;
 use strum::Display;
 
+use crate::text_manipulation::edit_prompt_for;
+
 pub async fn create_milestone(
     args: CreateMilestoneArgs,
     client: &CodebergClient,
@@ -20,9 +22,7 @@ pub async fn create_milestone(
 fn fill_in_mandatory_values(args: &CreateMilestoneArgs) -> anyhow::Result<CreateMilestoneOption> {
     let title = match args.title.clone() {
         Some(title) => title,
-        None => dialoguer::Input::new()
-            .with_prompt("Milestone Title")
-            .interact()?,
+        None => inquire::Text::new("Milestone Title").prompt()?,
     };
     Ok(CreateMilestoneOption::new(title))
 }
@@ -50,9 +50,8 @@ fn fill_in_optional_values(
     }
 
     if missing_options.contains(&Description) {
-        let new_description = dialoguer::Editor::new()
-            .edit("Enter a milestone description")?
-            .ok_or_else(|| anyhow::anyhow!("Closed the editor. Aborting"))?;
+        let new_description =
+            inquire::Editor::new(edit_prompt_for("a milestone description").as_str()).prompt()?;
         options = options.with_description(new_description);
     }
 

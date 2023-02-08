@@ -9,7 +9,7 @@ use cod_types::api::pull_request::PullRequest;
 use cod_types::api::state_type::StateType;
 use strum::Display;
 
-use crate::text_manipulation::select_prompt_for;
+use crate::text_manipulation::{edit_prompt_for, select_prompt_for};
 
 pub async fn create_pull(
     args: CreatePullRequestArgs,
@@ -27,9 +27,7 @@ async fn fill_in_mandatory_values(
     args: &CreatePullRequestArgs,
     client: &CodebergClient,
 ) -> anyhow::Result<CreatePullRequestOption> {
-    let title = dialoguer::Input::new()
-        .with_prompt("Pull Request Title")
-        .interact_text()?;
+    let title = inquire::Text::new("Pull Request Title").prompt()?;
 
     let target_branch = select_branch(
         None,
@@ -99,13 +97,11 @@ async fn select_branch(
         fuzzy_select_with_key_with_default(
             branches,
             select_prompt_for(prompt_text),
-            |branch| branch.name.to_owned(),
-            |branch| branch.name,
             default_index,
         )
         .and_then(|maybe_selection| {
             maybe_selection.ok_or_else(|| anyhow::anyhow!("No valid target selected. Maybe the branch doesn't exist on remote yet. Aborting."))
-        })
+        }).map(|branch| branch.name)
         .map_err(anyhow::Error::from)
     }
 }
@@ -150,47 +146,42 @@ async fn fill_in_optional_values(
         return Ok(options);
     }
 
-    let selected_options = multi_fuzzy_select_with_key(
-        missing_options,
-        select_prompt_for("options"),
-        |&missing_option| missing_option,
-        |missing_option| missing_option,
-        |_| false,
-    )?;
+    let selected_options =
+        multi_fuzzy_select_with_key(missing_options, select_prompt_for("options"), |_| false)?;
 
     if selected_options.contains(&Description) {
         options = options.with_description(
-            dialoguer::Editor::new()
-                .edit("Enter a pull request description")?
-                .unwrap_or_default(),
+            inquire::Editor::new(edit_prompt_for("a description").as_str())
+                .with_predefined_text("Enter a pull request description")
+                .prompt()?,
         );
     }
 
     if selected_options.contains(&Assignees) {
         let assignees_list = client.get_repo_assignees().await?;
-        let selected_assignees = multi_fuzzy_select_with_key(
-            assignees_list,
-            select_prompt_for("assignees"),
-            |assignee| assignee.username.to_owned(),
-            |assignee| assignee.username,
-            |_| false,
-        )?;
+        let selected_assignees =
+            multi_fuzzy_select_with_key(assignees_list, select_prompt_for("assignees"), |_| false)?;
 
-        options = options.with_assignees(selected_assignees);
+        options = options.with_assignees(
+            selected_assignees
+                .into_iter()
+                .map(|assignee| assignee.username)
+                .collect::<Vec<_>>(),
+        );
     }
 
     if selected_options.contains(&Labels) {
         let labels_list = client.get_repo_labels(None).await?;
 
-        let selected_labels = multi_fuzzy_select_with_key(
-            labels_list,
-            select_prompt_for("labels"),
-            |label| label.name.to_owned(),
-            |label| label.id,
-            |_| false,
-        )?;
+        let selected_labels =
+            multi_fuzzy_select_with_key(labels_list, select_prompt_for("labels"), |_| false)?;
 
-        options = options.with_labels(selected_labels);
+        options = options.with_labels(
+            selected_labels
+                .into_iter()
+                .map(|label| label.id)
+                .collect::<Vec<_>>(),
+        );
     }
 
     if selected_options.contains(&Milestone) {
@@ -198,15 +189,11 @@ async fn fill_in_optional_values(
             .get_repo_milestones(Some(StateType::Open), None)
             .await?;
 
-        let selected_milestone = fuzzy_select_with_key(
-            milstones_list,
-            select_prompt_for("milestone"),
-            |milestone| milestone.title.to_owned(),
-            |milestone| milestone.id,
-        )?
-        .ok_or_else(|| anyhow::anyhow!("No milestone selected. Aborting."))?;
+        let selected_milestone =
+            fuzzy_select_with_key(milstones_list, select_prompt_for("milestone"))?
+                .ok_or_else(|| anyhow::anyhow!("No milestone selected. Aborting."))?;
 
-        options = options.with_milestone(selected_milestone);
+        options = options.with_milestone(selected_milestone.id);
     }
 
     Ok(options)

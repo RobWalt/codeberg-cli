@@ -7,7 +7,7 @@ use cod_types::api::pull_request::PullRequest;
 use cod_types::api::state_type::StateType;
 use strum::{Display, EnumIter, IntoEnumIterator};
 
-use crate::text_manipulation::select_prompt_for;
+use crate::text_manipulation::{edit_prompt_for, select_prompt_for};
 
 #[derive(Display, EnumIter, PartialEq, Eq)]
 enum EditableFields {
@@ -20,21 +20,16 @@ enum EditableFields {
 pub async fn edit_pull(_args: EditPullRequestArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let list_pull_requests = client.get_repo_prs(None, None).await?;
 
-    let selected_pull_request = fuzzy_select_with_key(
-        list_pull_requests,
-        select_prompt_for("pull request"),
-        |pr| format!("#{} {}", pr.number, pr.title),
-        |pr| pr,
-    )
-    .and_then(|maybe_selected| {
-        maybe_selected.ok_or_else(|| anyhow::anyhow!("Nothing selected. Aborting."))
-    })?;
+    let selected_pull_request =
+        fuzzy_select_with_key(list_pull_requests, select_prompt_for("pull request")).and_then(
+            |maybe_selected| {
+                maybe_selected.ok_or_else(|| anyhow::anyhow!("Nothing selected. Aborting."))
+            },
+        )?;
 
     let selected_update_fields = multi_fuzzy_select_with_key(
         EditableFields::iter().collect::<Vec<_>>(),
         select_prompt_for("option"),
-        |option| option.to_string(),
-        |option| option,
         |_| false,
     )?;
 
@@ -67,8 +62,6 @@ async fn create_update_data(
         let selected_assignees = multi_fuzzy_select_with_key(
             assignees_list,
             select_prompt_for("assignees"),
-            |assignee| assignee.username.to_owned(),
-            |assignee| assignee.username,
             |assignee| {
                 selected_pull_request
                     .assignees
@@ -76,37 +69,35 @@ async fn create_update_data(
                     .map_or(false, |assignees| assignees.contains(assignee))
             },
         )?;
-        edit_pull_request_options
-            .assignees
-            .replace(selected_assignees);
+        edit_pull_request_options.assignees.replace(
+            selected_assignees
+                .into_iter()
+                .map(|assignee| assignee.username)
+                .collect::<Vec<_>>(),
+        );
     }
 
     if selected_update_fields.contains(&Description) {
-        if let Some(new_description) =
-            dialoguer::Editor::new().edit(selected_pull_request.body.as_str())?
-        {
-            edit_pull_request_options.body.replace(new_description);
-        }
+        let new_description = inquire::Editor::new(edit_prompt_for("a description").as_str())
+            .with_predefined_text(selected_pull_request.body.as_str())
+            .prompt()?;
+        edit_pull_request_options.body.replace(new_description);
     }
 
     if selected_update_fields.contains(&State) {
         let new_state = fuzzy_select_with_key(
             StateType::available_for_choosing().to_vec(),
             select_prompt_for("state"),
-            |state| state.to_owned(),
-            StateType::try_from,
-        )?
-        .and_then(|state_result| state_result.ok());
+        )?;
         edit_pull_request_options
             .state
             .replace(new_state.unwrap_or(selected_pull_request.state));
     }
 
     if selected_update_fields.contains(&Title) {
-        let new_title = dialoguer::Input::new()
-            .default(selected_pull_request.title.to_owned())
-            .with_prompt("Choose a new issue title")
-            .interact_text()?;
+        let new_title = inquire::Text::new("Choose a new issue title")
+            .with_default(selected_pull_request.title.as_str())
+            .prompt()?;
         edit_pull_request_options.title.replace(new_title);
     }
 

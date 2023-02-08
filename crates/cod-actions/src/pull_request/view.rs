@@ -9,12 +9,8 @@ use crate::text_manipulation::select_prompt_for;
 pub async fn view_pull(args: ViewPullRequestsArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let pull_requests_list = spin_until_ready(client.get_repo_prs(Some(args.state), None)).await?;
 
-    let selected_pull_request = fuzzy_select_with_key(
-        pull_requests_list,
-        select_prompt_for("pull request"),
-        |pull_request: &PullRequest| format!("#{} {}", pull_request.number, pull_request.title),
-        |issue| issue,
-    )?;
+    let selected_pull_request =
+        fuzzy_select_with_key(pull_requests_list, select_prompt_for("pull request"))?;
 
     if args.comments {
         spin_until_ready(present_pull_request_comments(client, selected_pull_request)).await?;

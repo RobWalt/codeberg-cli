@@ -5,9 +5,10 @@ use cod_render::ui::{fuzzy_select_with_key, multi_fuzzy_select_with_key};
 use cod_types::api::create_options::create_repo_options::CreateRepoOption;
 use cod_types::api::privacy_type::Privacy;
 use cod_types::api::repository::Repository;
-use strum::{Display, VariantNames};
+use inquire::validator::Validation;
+use strum::{Display, IntoEnumIterator};
 
-use crate::text_manipulation::select_prompt_for;
+use crate::text_manipulation::{edit_prompt_for, select_prompt_for};
 
 pub async fn create_repo(mut args: RepoCreateArgs, client: &CodebergClient) -> anyhow::Result<()> {
     args = fill_in_mandatory_values(args)?;
@@ -22,16 +23,17 @@ pub async fn create_repo(mut args: RepoCreateArgs, client: &CodebergClient) -> a
 fn fill_in_mandatory_values(mut args: RepoCreateArgs) -> anyhow::Result<RepoCreateArgs> {
     if args.name.is_none() {
         args.name.replace(
-            dialoguer::Input::new()
-                .with_prompt("Repository Name")
-                .validate_with(|input: &String| {
+            inquire::Text::new("Repository Name")
+                .with_validator(|input: &str| {
                     if input.chars().any(|char| char.is_whitespace()) {
-                        anyhow::bail!("Whitespace not allowed in repository name.");
+                        Ok(Validation::Invalid(
+                            "Whitespace not allowed in repository name.".into(),
+                        ))
                     } else {
-                        Ok(())
+                        Ok(Validation::Valid)
                     }
                 })
-                .interact()?,
+                .prompt()?,
         );
     }
     Ok(args)
@@ -59,38 +61,28 @@ fn fill_in_optional_values(mut args: RepoCreateArgs) -> anyhow::Result<RepoCreat
         return Ok(args);
     }
 
-    let selected_options = multi_fuzzy_select_with_key(
-        missing_options,
-        select_prompt_for("option"),
-        |&missing_option| missing_option,
-        |missing_option| missing_option,
-        |_| false,
-    )?;
+    let selected_options =
+        multi_fuzzy_select_with_key(missing_options, select_prompt_for("option"), |_| false)?;
 
     if selected_options.contains(&DefaultBranch) {
         args.default_branch.replace(
-            dialoguer::Input::new()
-                .with_prompt("Repository default branch")
-                .with_initial_text("main")
-                .interact_text()?,
+            inquire::Text::new("Repository default branch")
+                .with_default("main")
+                .prompt()?,
         );
     }
 
     if selected_options.contains(&Description) {
-        args.description = dialoguer::Editor::new().edit("Enter a repository description")?;
+        let new_description = inquire::Editor::new(edit_prompt_for("a description").as_str())
+            .with_predefined_text("Enter a repository description")
+            .prompt()?;
+        args.description.replace(new_description);
     }
 
     if selected_options.contains(&Private) {
-        let selected_privacy = fuzzy_select_with_key(
-            Privacy::VARIANTS.to_vec(),
-            select_prompt_for("visibility"),
-            |privacy| privacy.to_string(),
-            Privacy::try_from,
-        )
-        .and_then(|result| match result {
-            Some(res) => res.map_err(anyhow::Error::from),
-            None => anyhow::bail!("Nothing selected even though it was required"),
-        })?;
+        let selected_privacy =
+            fuzzy_select_with_key(Privacy::iter().collect(), select_prompt_for("visibility"))?
+                .ok_or_else(|| anyhow::anyhow!("Nothing selected even though it was required"))?;
 
         args.private.replace(selected_privacy);
     }

@@ -1,9 +1,7 @@
 use clap::ValueEnum;
-use strum::{Display, EnumString, EnumVariantNames};
+use strum::{Display, EnumIter, EnumString};
 
-#[derive(
-    Debug, Clone, Copy, Default, PartialEq, Eq, Display, EnumVariantNames, EnumString, ValueEnum,
-)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Display, EnumString, ValueEnum, EnumIter)]
 pub enum Privacy {
     #[default]
     Private,
