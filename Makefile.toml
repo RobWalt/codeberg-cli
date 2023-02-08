@@ -1,0 +1,45 @@
+[tasks.publish-dry]
+dependencies = ["publish-bin-dry"]
+
+[tasks.publish-bin-dry]
+command = "cargo"
+args = ["publish", "-p", "cod-bin", "--dry-run"]
+dependencies = ["publish-actions-dry"]
+
+[tasks.publish-actions-dry]
+command = "cargo"
+args = ["publish", "-p", "cod-actions", "--dry-run"]
+dependencies = ["publish-cli-dry", "publish-client-dry"]
+
+[tasks.publish-client-dry]
+command = "cargo"
+args = ["publish", "-p", "cod-client", "--dry-run"]
+dependencies = ["publish-types-dry", "publish-endpoints-dry"]
+
+[tasks.publish-cli-dry]
+command = "cargo"
+args = ["publish", "-p", "cod-cli", "--dry-run"]
+dependencies = ["publish-types-dry"]
+
+[tasks.publish-types-dry]
+command = "cargo"
+args = ["publish", "-p", "cod-types", "--dry-run"]
+dependencies = ["publish-paths-dry"]
+
+[tasks.publish-endpoints-dry]
+command = "cargo"
+args = ["publish", "-p", "cod-endpoints", "--dry-run", ]
+dependencies = ["publish-git-info-dry"]
+
+[tasks.publish-paths-dry]
+command = "cargo"
+args = ["publish", "-p", "cod-paths", "--dry-run", ]
+
+[tasks.publish-git-info-dry]
+command = "cargo"
+args = ["publish", "-p", "cod-git-info", "--dry-run", ]
+
+[tasks.publish-render-dry]
+command = "cargo"
+args = ["publish", "-p", "cod-render", "--dry-run", ]
+
