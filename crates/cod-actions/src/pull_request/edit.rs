@@ -14,6 +14,7 @@ enum EditableFields {
     Assignees,
     Description,
     State,
+    Labels,
     Title,
 }
 
@@ -36,13 +37,15 @@ pub async fn edit_pull(_args: EditPullRequestArgs, client: &CodebergClient) -> a
     let edit_pull_request_options =
         create_update_data(client, selected_update_fields, &selected_pull_request).await?;
 
-    let api_endpoint = EndpointGenerator::repo_update_issue(selected_pull_request.number)?;
+    let api_endpoint = EndpointGenerator::repo_update_pull_request(selected_pull_request.number)?;
 
     let updated_pull_request: PullRequest = client
         .patch_body(api_endpoint, edit_pull_request_options)
         .await?;
 
     tracing::debug!("{updated_pull_request:?}");
+
+    println!("Successfully updated pull request");
 
     Ok(())
 }
@@ -73,6 +76,20 @@ async fn create_update_data(
             selected_assignees
                 .into_iter()
                 .map(|assignee| assignee.username)
+                .collect::<Vec<_>>(),
+        );
+    }
+
+    if selected_update_fields.contains(&Labels) {
+        let labels_list = client.get_repo_labels(None).await?;
+        let selected_labels =
+            multi_fuzzy_select_with_key(labels_list, select_prompt_for("labels"), |label| {
+                selected_pull_request.labels.contains(label)
+            })?;
+        edit_pull_request_options.labels.replace(
+            selected_labels
+                .into_iter()
+                .map(|label| label.id)
                 .collect::<Vec<_>>(),
         );
     }

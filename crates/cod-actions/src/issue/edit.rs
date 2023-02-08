@@ -5,6 +5,8 @@ use cod_render::spinner::spin_until_ready;
 use cod_render::ui::{fuzzy_select_with_key, multi_fuzzy_select_with_key};
 use cod_types::api::edit_options::edit_issue_option::EditIssueOption;
 use cod_types::api::issue::Issue;
+use cod_types::api::issue_labels_option::IssueLabelsOption;
+use cod_types::api::label::Label;
 use cod_types::api::state_type::StateType;
 use strum::{Display, EnumIter, IntoEnumIterator};
 
@@ -16,6 +18,7 @@ enum EditableFields {
     Description,
     State,
     Title,
+    Labels,
 }
 
 pub async fn edit_issue(_args: EditIssueArgs, client: &CodebergClient) -> anyhow::Result<()> {
@@ -36,13 +39,20 @@ pub async fn edit_issue(_args: EditIssueArgs, client: &CodebergClient) -> anyhow
         |_| false,
     )?;
 
-    let edit_issue_options =
+    let (edit_issue_options, issue_labels_option) =
         create_update_data(client, selected_update_fields, &selected_issue).await?;
+
+    if let Some(options) = issue_labels_option {
+        tracing::debug!("{options:?}");
+        let replaced_labels: Vec<Label> = client
+            .replace_labels(selected_issue.number, options)
+            .await?;
+        tracing::debug!("{replaced_labels:?}");
+    }
 
     tracing::debug!("{edit_issue_options:?}");
 
     let api_endpoint = EndpointGenerator::repo_update_issue(selected_issue.number)?;
-
     let updated_issue: Issue = client.patch_body(api_endpoint, edit_issue_options).await?;
 
     tracing::debug!("{updated_issue:?}");
@@ -54,7 +64,7 @@ async fn create_update_data(
     client: &CodebergClient,
     selected_update_fields: Vec<EditableFields>,
     selected_issue: &Issue,
-) -> anyhow::Result<EditIssueOption> {
+) -> anyhow::Result<(EditIssueOption, Option<IssueLabelsOption>)> {
     use EditableFields::*;
 
     let mut edit_issue_options = EditIssueOption::from_issue(selected_issue);
@@ -78,6 +88,22 @@ async fn create_update_data(
                 .collect::<Vec<_>>(),
         );
     }
+
+    let issue_labels_option = if selected_update_fields.contains(&Labels) {
+        let labels_list = client.get_repo_labels(None).await?;
+        let selected_labels =
+            multi_fuzzy_select_with_key(labels_list, select_prompt_for("labels"), |label| {
+                selected_issue.labels.contains(label)
+            })?;
+        Some(IssueLabelsOption {
+            labels: selected_labels
+                .into_iter()
+                .map(|label| label.id)
+                .collect::<Vec<_>>(),
+        })
+    } else {
+        None
+    };
 
     if selected_update_fields.contains(&Description) {
         let new_description =
@@ -104,5 +130,5 @@ async fn create_update_data(
         edit_issue_options.title.replace(new_title);
     }
 
-    Ok(edit_issue_options)
+    Ok((edit_issue_options, issue_labels_option))
 }

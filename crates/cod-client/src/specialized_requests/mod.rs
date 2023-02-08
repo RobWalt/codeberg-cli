@@ -4,6 +4,7 @@ use cod_types::api::comment::Comment;
 use cod_types::api::create_options::create_comment_option::CreateCommentOption;
 use cod_types::api::create_options::create_fork_option::CreateForkOption;
 use cod_types::api::issue::Issue;
+use cod_types::api::issue_labels_option::IssueLabelsOption;
 use cod_types::api::label::Label;
 use cod_types::api::milestone::Milestone;
 use cod_types::api::pull_request::PullRequest;
@@ -170,5 +171,14 @@ impl CodebergClient {
         self.get_org_repos(name.clone())
             .await
             .or(self.get_user_repos(name).await)
+    }
+
+    pub async fn replace_labels(
+        &self,
+        issue_id: usize,
+        issue_labels_option: IssueLabelsOption,
+    ) -> anyhow::Result<Vec<Label>> {
+        let api = EndpointGenerator::repo_put_issue_labels(issue_id)?;
+        self.put_body(api, issue_labels_option).await
     }
 }
