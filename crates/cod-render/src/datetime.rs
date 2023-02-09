@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc};
 
-pub fn info_days_passed_since(datetime: DateTime<Utc>) -> String {
+pub fn render_datetime_and_info(datetime: DateTime<Utc>) -> String {
     let days_passed = (Utc::now() - datetime).num_days();
     let at_least_one_day_passed = days_passed > 0;
 

@@ -1,7 +1,7 @@
 use cod_cli::issue::view::ViewIssueArgs;
 use cod_client::CodebergClient;
 use cod_render::comment::render_comment;
-use cod_render::datetime::info_days_passed_since;
+use cod_render::datetime::render_datetime_and_info;
 use cod_render::spinner::spin_until_ready;
 use cod_render::ui::fuzzy_select_with_key;
 use cod_types::api::issue::Issue;
@@ -28,7 +28,7 @@ fn present_issue_overview(selected_issue: Option<Issue>) {
 
     let days_passed_since_creation = selected_issue
         .as_ref()
-        .map(|issue| info_days_passed_since(issue.created_at));
+        .map(|issue| render_datetime_and_info(issue.created_at));
 
     let rows = once(Some(Row::new([TableCell::new_with_alignment(
         selected_issue
