@@ -1,5 +1,6 @@
 use std::fmt::Display;
 
+use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
 use crate::api::label::Label;
@@ -17,6 +18,11 @@ pub struct PullRequest {
     pub assignees: Option<Vec<User>>,
     pub milestone: Option<Milestone>,
     pub merged: bool,
+    pub closed_at: Option<DateTime<Utc>>,
+    pub created_at: DateTime<Utc>,
+    pub due_date: Option<DateTime<Utc>>,
+    pub merged_at: Option<DateTime<Utc>>,
+    pub updated_at: DateTime<Utc>,
 }
 
 impl Display for PullRequest {
