@@ -1,5 +1,6 @@
 use std::fmt::Display;
 
+use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
 use crate::api::label::Label;
@@ -18,6 +19,10 @@ pub struct Issue {
     pub state: StateType,
     pub pull_request: Option<PullRequestMeta>,
     pub milestone: Option<Milestone>,
+    pub closed_at: Option<DateTime<Utc>>,
+    pub created_at: DateTime<Utc>,
+    pub due_date: Option<DateTime<Utc>>,
+    pub updated_at: DateTime<Utc>,
 }
 
 impl Display for Issue {
