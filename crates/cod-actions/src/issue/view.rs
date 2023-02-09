@@ -96,13 +96,15 @@ async fn present_issue_comments(
     )]))
     .chain(comments.into_iter().map(|comment| {
         tracing::debug!("comment:{comment:?}");
+        let create_date_time = comment.created_at.format("%d.%m.%Y - %H:%M").to_string();
         Row::new([TableCell::new_with_alignment(
             format!(
                 "{}\n({}):\n{}\n\n{}",
                 comment.user.username,
-                comment.created_at,
-                "=".repeat(comment.created_at.len() + 3),
+                create_date_time,
+                "=".repeat(create_date_time.len() + 3),
                 CodTableBuilder::new()
+                    .with_max_column_width(36)
                     .add_row(Row::new(vec![TableCell::new(comment.body.as_str())]))
                     .build()
                     .render()
