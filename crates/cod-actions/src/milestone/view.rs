@@ -70,10 +70,27 @@ async fn present_milestone_overview(
             TableCell::new_with_alignment(description, 1, Alignment::Left),
         ]
     }))
-    .chain(once([
-        TableCell::new_with_alignment("Related issues", 1, Alignment::Center),
-        TableCell::new_with_alignment(milestone_issues.join(", "), 1, Alignment::Left),
-    ]))
+    .chain(
+        once(if milestone_issues.is_empty() {
+            None
+        } else {
+            Some([
+                TableCell::new_with_alignment("Related issues", 1, Alignment::Center),
+                TableCell::new_with_alignment(milestone_issues.join(", "), 1, Alignment::Left),
+            ])
+        })
+        .flatten(),
+    )
+    .chain(milestone.due_on.iter().map(|due_date| {
+        [
+            TableCell::new_with_alignment("Due on", 1, Alignment::Center),
+            TableCell::new_with_alignment(
+                due_date.format("%d. %b %Y - %H:%M").to_string(),
+                1,
+                Alignment::Left,
+            ),
+        ]
+    }))
     .chain(once([
         TableCell::new_with_alignment("Progress", 1, Alignment::Center),
         TableCell::new_with_alignment(

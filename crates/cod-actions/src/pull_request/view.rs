@@ -1,5 +1,7 @@
 use cod_cli::pull_request::view::ViewPullRequestsArgs;
 use cod_client::CodebergClient;
+use cod_render::comment::render_comment;
+use cod_render::datetime::render_datetime_and_info;
 use cod_render::spinner::spin_until_ready;
 use cod_render::ui::fuzzy_select_with_key;
 use cod_types::api::pull_request::PullRequest;
@@ -25,6 +27,10 @@ fn present_pull_request_overview(selected_pull_request: Option<PullRequest>) {
     use cod_render::prelude::*;
     use std::iter::once;
 
+    let rendered_datetime = selected_pull_request
+        .as_ref()
+        .map(|pull_request| render_datetime_and_info(pull_request.created_at));
+
     let rows = once(Some(Row::new([TableCell::new_with_alignment(
         selected_pull_request
             .as_ref()
@@ -39,6 +45,12 @@ fn present_pull_request_overview(selected_pull_request: Option<PullRequest>) {
             TableCell::new_with_alignment(pull_request.title.as_str(), 1, Alignment::Left),
         ])
     })))
+    .chain(rendered_datetime.into_iter().map(|creation_time| {
+        Some(Row::new([
+            TableCell::new_with_alignment("Created", 1, Alignment::Center),
+            TableCell::new_with_alignment(creation_time, 1, Alignment::Left),
+        ]))
+    }))
     .chain(once(selected_pull_request.as_ref().map(|pull_request| {
         Row::new([
             TableCell::new_with_alignment("Labels", 1, Alignment::Center),
@@ -98,15 +110,11 @@ async fn present_pull_request_comments(
     .chain(comments.into_iter().map(|comment| {
         tracing::debug!("comment:{comment:?}");
         Row::new([TableCell::new_with_alignment(
-            format!(
-                "{}\n({}):\n{}\n\n{}",
-                comment.user.username,
+            render_comment(
+                comment.user.username.as_str(),
                 comment.created_at,
-                "=".repeat(comment.created_at.len() + 3),
-                CodTableBuilder::new()
-                    .add_row(Row::new(vec![TableCell::new(comment.body.as_str())]))
-                    .build()
-                    .render()
+                comment.body.as_str(),
+                50,
             ),
             1,
             Alignment::Left,

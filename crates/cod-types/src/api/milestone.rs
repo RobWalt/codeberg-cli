@@ -1,5 +1,6 @@
 use std::fmt::Display;
 
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
 use crate::api::state_type::StateType;
@@ -8,7 +9,7 @@ use crate::api::state_type::StateType;
 pub struct Milestone {
     pub id: usize,
     pub title: String,
-    pub due_on: Option<String>,
+    pub due_on: Option<DateTime<Utc>>,
     pub state: StateType,
     pub open_issues: usize,
     pub closed_issues: usize,

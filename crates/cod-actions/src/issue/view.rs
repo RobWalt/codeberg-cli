@@ -1,5 +1,7 @@
 use cod_cli::issue::view::ViewIssueArgs;
 use cod_client::CodebergClient;
+use cod_render::comment::render_comment;
+use cod_render::datetime::render_datetime_and_info;
 use cod_render::spinner::spin_until_ready;
 use cod_render::ui::fuzzy_select_with_key;
 use cod_types::api::issue::Issue;
@@ -24,6 +26,10 @@ fn present_issue_overview(selected_issue: Option<Issue>) {
     use cod_render::prelude::*;
     use std::iter::once;
 
+    let days_passed_since_creation = selected_issue
+        .as_ref()
+        .map(|issue| render_datetime_and_info(issue.created_at));
+
     let rows = once(Some(Row::new([TableCell::new_with_alignment(
         selected_issue
             .as_ref()
@@ -38,6 +44,12 @@ fn present_issue_overview(selected_issue: Option<Issue>) {
             TableCell::new_with_alignment(issue.title.as_str(), 1, Alignment::Left),
         ])
     })))
+    .chain(days_passed_since_creation.into_iter().map(|creation_time| {
+        Some(Row::new([
+            TableCell::new_with_alignment("Created", 1, Alignment::Center),
+            TableCell::new_with_alignment(creation_time, 1, Alignment::Left),
+        ]))
+    }))
     .chain(once(selected_issue.as_ref().map(|issue| {
         Row::new([
             TableCell::new_with_alignment("Labels", 1, Alignment::Center),
@@ -97,15 +109,11 @@ async fn present_issue_comments(
     .chain(comments.into_iter().map(|comment| {
         tracing::debug!("comment:{comment:?}");
         Row::new([TableCell::new_with_alignment(
-            format!(
-                "{}\n({}):\n{}\n\n{}",
-                comment.user.username,
+            render_comment(
+                comment.user.username.as_str(),
                 comment.created_at,
-                "=".repeat(comment.created_at.len() + 3),
-                CodTableBuilder::new()
-                    .add_row(Row::new(vec![TableCell::new(comment.body.as_str())]))
-                    .build()
-                    .render()
+                comment.body.as_str(),
+                50,
             ),
             1,
             Alignment::Left,

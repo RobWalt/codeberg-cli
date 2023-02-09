@@ -14,6 +14,7 @@ readme = "README.md"
 
 [dependencies]
 anyhow = "1.0.68"
+chrono = { version = "0.4.23", features = ["serde"] }
 clap = { version = "4.1.4", features = ["derive"] }
 cod-paths = {path = "../cod-paths", version = "0.1.0"}
 derive-new = "0.5.9"

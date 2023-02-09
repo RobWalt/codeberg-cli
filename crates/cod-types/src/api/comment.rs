@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
 use crate::api::user::User;
@@ -5,7 +6,8 @@ use crate::api::user::User;
 #[derive(Debug, Deserialize)]
 pub struct Comment {
     pub body: String,
-    pub created_at: String,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
     pub id: usize,
     pub user: User,
 }

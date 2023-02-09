@@ -95,6 +95,7 @@ dependencies = [
  "js-sys",
  "num-integer",
  "num-traits",
+ "serde",
  "time",
  "wasm-bindgen",
  "winapi",
@@ -230,6 +231,7 @@ name = "cod-render"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "chrono",
  "indicatif",
  "inquire",
  "term-table",
@@ -242,6 +244,7 @@ name = "cod-types"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "chrono",
  "clap",
  "cod-paths",
  "derive-new",
