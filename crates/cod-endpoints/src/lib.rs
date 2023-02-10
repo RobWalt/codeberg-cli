@@ -1,2 +1,2 @@
-pub mod endpoint_generator;
 mod api;
+pub mod endpoint_generator;
