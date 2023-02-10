@@ -1,0 +1,8 @@
+branches: main
+
+pipeline:
+  test:
+    image: rust
+    commands:
+      - rustup default stable
+      - cargo test
