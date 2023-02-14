@@ -10,6 +10,7 @@ pub enum NotificationStateType {
     Read,
     Pinned,
 }
+
 impl NotificationStateType {
     pub fn available_for_choosing() -> [Self; 3] {
         use NotificationStateType::*;
