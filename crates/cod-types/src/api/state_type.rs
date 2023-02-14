@@ -12,16 +12,17 @@ pub enum StateType {
 }
 
 impl StateType {
-    pub fn available_for_choosing() -> [StateType; 2] {
+    pub fn available_for_choosing() -> [Self; 2] {
         use StateType::*;
         [Closed, Open]
     }
 
     pub fn is_done(&self) -> bool {
+        use StateType::*;
         match self {
-            StateType::Closed => true,
-            StateType::Open => false,
-            StateType::All => false,
+            Closed => true,
+            Open => false,
+            All => false,
         }
     }
 }
