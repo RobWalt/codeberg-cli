@@ -6,7 +6,7 @@ pub struct ListNotificationArgs {
     #[arg(short, long, default_value_t = false)]
     all: bool,
 
-    #[arg(short, long, default_value = "[unread,pinned]")]
+    #[arg(short, long, default_values_t = vec![NotificationStateType::Unread, NotificationStateType::Pinned])]
     status_types: Vec<NotificationStateType>,
 
     since: Option<String>,
