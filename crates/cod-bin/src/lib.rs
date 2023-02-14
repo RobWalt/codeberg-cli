@@ -30,6 +30,7 @@ use cod_cli::auth::AuthArgs;
 use cod_cli::issue::IssueArgs;
 use cod_cli::label::LabelArgs;
 use cod_cli::milestone::MilestoneArgs;
+use cod_cli::notification::NotificationArgs;
 use cod_cli::pull_request::PullRequestArgs;
 use cod_cli::repo::RepoArgs;
 use cod_cli::user::UserArgs;
@@ -107,5 +108,7 @@ async fn dispatch_args(main_args: MainArgs) -> anyhow::Result<()> {
         Milestone(MilestoneArgs::View(args)) => view_milestone(args, &client).await,
         Milestone(MilestoneArgs::Create(args)) => create_milestone(args, &client).await,
         Milestone(MilestoneArgs::Edit(args)) => edit_milestone(args, &client).await,
+        Notification(NotificationArgs::List(args)) => Ok(()),
+        Notification(NotificationArgs::View(args)) => Ok(()),
     }
 }
