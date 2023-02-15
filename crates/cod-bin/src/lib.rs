@@ -15,6 +15,8 @@ use cod_actions::milestone::create::create_milestone;
 use cod_actions::milestone::edit::edit_milestone;
 use cod_actions::milestone::list::list_milestone;
 use cod_actions::milestone::view::view_milestone;
+use cod_actions::notification::list::list_notifications;
+use cod_actions::notification::view::view_notifications;
 use cod_actions::pull_request::comment::comment_pull;
 use cod_actions::pull_request::create::create_pull;
 use cod_actions::pull_request::edit::edit_pull;
@@ -108,7 +110,7 @@ async fn dispatch_args(main_args: MainArgs) -> anyhow::Result<()> {
         Milestone(MilestoneArgs::View(args)) => view_milestone(args, &client).await,
         Milestone(MilestoneArgs::Create(args)) => create_milestone(args, &client).await,
         Milestone(MilestoneArgs::Edit(args)) => edit_milestone(args, &client).await,
-        Notification(NotificationArgs::List(args)) => Ok(()),
-        Notification(NotificationArgs::View(args)) => Ok(()),
+        Notification(NotificationArgs::List(args)) => list_notifications(args, &client).await,
+        Notification(NotificationArgs::View(args)) => view_notifications(args, &client).await,
     }
 }

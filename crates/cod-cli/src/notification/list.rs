@@ -4,18 +4,18 @@ use cod_types::api::notification::notification_state_type::NotificationStateType
 #[derive(Debug, Parser)]
 pub struct ListNotificationArgs {
     #[arg(short, long, default_value_t = false)]
-    all: bool,
+    pub all: bool,
 
     #[arg(short, long, default_values_t = vec![NotificationStateType::Unread, NotificationStateType::Pinned])]
-    status_types: Vec<NotificationStateType>,
+    pub status_types: Vec<NotificationStateType>,
 
-    since: Option<String>,
+    pub since: Option<String>,
 
-    before: Option<String>,
+    pub before: Option<String>,
 
     #[arg(short, long, default_value_t = 1)]
-    page: usize,
+    pub page: usize,
 
     #[arg(short, long, default_value_t = usize::MAX)]
-    limit: usize,
+    pub limit: usize,
 }

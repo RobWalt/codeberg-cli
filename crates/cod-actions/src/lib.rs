@@ -1,5 +1,6 @@
 pub mod auth;
 pub mod issue;
+pub mod notification;
 pub mod label;
 pub mod milestone;
 pub mod pull_request;
