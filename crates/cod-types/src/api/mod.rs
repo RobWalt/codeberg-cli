@@ -8,6 +8,7 @@ pub mod issue;
 pub mod issue_labels_option;
 pub mod label;
 pub mod milestone;
+pub mod notification;
 pub mod privacy_type;
 pub mod pull_request;
 pub mod pull_request_meta;
