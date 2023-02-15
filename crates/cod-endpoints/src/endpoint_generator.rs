@@ -1,3 +1,4 @@
+use std::fmt::Display;
 use std::str::FromStr;
 
 use cod_git_info::repo_owner::{get_repo_owner, RepoAndOwner};
@@ -13,8 +14,20 @@ macro_rules! generator_method {
         impl EndpointGenerator {
             pub fn $method_name() -> anyhow::Result<Url> {
                 use crate::api::$endpoint;
-                let url = Url::from_str(CODEBERG_API_BASE)?.join($endpoint)?;
-                Ok(url)
+                Url::from_str(CODEBERG_API_BASE)?
+                    .join($endpoint)
+                    .map_err(anyhow::Error::from)
+            }
+        }
+    };
+}
+
+macro_rules! generator_owner_repo_method {
+    ($method_name:ident, $endpoint:ident) => {
+        impl EndpointGenerator {
+            pub fn $method_name() -> anyhow::Result<Url> {
+                use crate::api::$endpoint;
+                Self::repos_owner_repo($endpoint)
             }
         }
     };
@@ -27,94 +40,57 @@ generator_method!(user_following, USER_FOLLOWING);
 generator_method!(user_repos, USER_REPOS);
 generator_method!(user_search, USER_SEARCH);
 generator_method!(repo_search, REPO_SEARCH);
+generator_method!(all_notifications, NOTIFICATIONS);
+
+generator_owner_repo_method!(repo_infos, REPO_INFOS);
+generator_owner_repo_method!(repo_assignees, REPO_ASSIGNEES);
+generator_owner_repo_method!(repo_issues, REPO_ISSUES);
+generator_owner_repo_method!(repo_pull_requests, REPO_PULLS);
+generator_owner_repo_method!(repo_labels, REPO_LABELS);
+generator_owner_repo_method!(repo_milestones, REPO_MILESTONES);
+generator_owner_repo_method!(repo_branches, REPO_BRANCHES);
 
 impl EndpointGenerator {
-    fn repos_owner_repo(endpoint: impl ToString) -> anyhow::Result<Url> {
+    fn repos_owner_repo(endpoint: impl Display) -> anyhow::Result<Url> {
         use crate::api::REPO_OWNER_REPOS;
         let RepoAndOwner { repo, owner } = get_repo_owner()?;
-        let url = Url::from_str(CODEBERG_API_BASE)?
-            .join((REPO_OWNER_REPOS.to_owned() + "/").as_str())?
-            .join((owner + "/").as_str())?
-            .join((repo + "/").as_str())?
-            .join((endpoint.to_string()).as_str())?;
-        Ok(url)
+        Url::from_str(CODEBERG_API_BASE)?
+            .join(format!("{REPO_OWNER_REPOS}/{owner}/{repo}/{endpoint}").as_str())
+            .map_err(anyhow::Error::from)
     }
 
-    pub fn repo_assignees() -> anyhow::Result<Url> {
-        use crate::api::REPO_ASSIGNEES;
-        Self::repos_owner_repo(REPO_ASSIGNEES)
-    }
-
-    pub fn repo_infos() -> anyhow::Result<Url> {
-        Self::repos_owner_repo("")
-    }
-
-    pub fn repo_issues() -> anyhow::Result<Url> {
+    pub fn repo_update_issue(issue_id: usize) -> anyhow::Result<Url> {
         use crate::api::REPO_ISSUES;
-        Self::repos_owner_repo(REPO_ISSUES)
+        Self::repos_owner_repo(format!("{REPO_ISSUES}/{issue_id}"))
     }
 
-    pub fn repo_update_issue(issue_idx: usize) -> anyhow::Result<Url> {
-        use crate::api::REPO_ISSUES;
-        Self::repos_owner_repo(format!("{REPO_ISSUES}/{issue_idx}"))
-    }
-
-    pub fn repo_put_issue_labels(issue_idx: usize) -> anyhow::Result<Url> {
+    pub fn repo_put_issue_labels(issue_id: usize) -> anyhow::Result<Url> {
         use crate::api::REPO_ISSUES;
         use crate::api::REPO_LABELS;
-        Self::repos_owner_repo(format!("{REPO_ISSUES}/{issue_idx}/{REPO_LABELS}"))
+        Self::repos_owner_repo(format!("{REPO_ISSUES}/{issue_id}/{REPO_LABELS}"))
     }
 
-    pub fn repo_update_milestone(milestone_idx: usize) -> anyhow::Result<Url> {
+    pub fn repo_update_milestone(milestone_id: usize) -> anyhow::Result<Url> {
         use crate::api::REPO_MILESTONES;
-        Self::repos_owner_repo(format!("{REPO_MILESTONES}/{milestone_idx}"))
-    }
-
-    pub fn repo_pull_requests() -> anyhow::Result<Url> {
-        use crate::api::REPO_PULLS;
-        Self::repos_owner_repo(REPO_PULLS)
-    }
-
-    pub fn repo_labels() -> anyhow::Result<Url> {
-        use crate::api::REPO_LABELS;
-        Self::repos_owner_repo(REPO_LABELS)
-    }
-
-    pub fn repo_milestones() -> anyhow::Result<Url> {
-        use crate::api::REPO_MILESTONES;
-        Self::repos_owner_repo(REPO_MILESTONES)
+        Self::repos_owner_repo(format!("{REPO_MILESTONES}/{milestone_id}"))
     }
 
     pub fn repo_forks(ownername: &str, reponame: &str) -> anyhow::Result<Url> {
         use crate::api::REPO_FORK;
-        use crate::api::REPO_OWNER_REPOS;
-        let url = Url::from_str(CODEBERG_API_BASE)?
-            .join((REPO_OWNER_REPOS.to_owned() + "/").as_str())?
-            .join(format!("{ownername}/").as_str())?
-            .join(format!("{reponame}/").as_str())?
-            .join(REPO_FORK)?;
-        Ok(url)
+        Self::repos_owner_repo(format!("{ownername}/{reponame}/{REPO_FORK}"))
     }
 
     pub fn repo_comments_for_id(issue_or_pr_id: usize) -> anyhow::Result<Url> {
         use crate::api::REPO_ISSUES;
         use crate::api::REPO_ISSUES_COMMENTS;
-        Self::repos_owner_repo(format!("{REPO_ISSUES}/"))?
-            .join(format!("{issue_or_pr_id}/").as_str())?
-            .join(REPO_ISSUES_COMMENTS)
-            .map_err(anyhow::Error::from)
+        Self::repos_owner_repo(format!(
+            "{REPO_ISSUES}/{issue_or_pr_id}/{REPO_ISSUES_COMMENTS}"
+        ))
     }
 
     pub fn repo_labels_with_id(label_id: usize) -> anyhow::Result<Url> {
         use crate::api::REPO_LABELS;
-        Self::repos_owner_repo(format!("{REPO_LABELS}/"))?
-            .join(format!("{label_id}").as_str())
-            .map_err(anyhow::Error::from)
-    }
-
-    pub fn repo_branches() -> anyhow::Result<Url> {
-        use crate::api::REPO_BRANCHES;
-        Self::repos_owner_repo(REPO_BRANCHES)
+        Self::repos_owner_repo(format!("{REPO_LABELS}/{label_id}"))
     }
 
     pub fn repo_update_pull_request(pull_request_id: usize) -> anyhow::Result<Url> {
@@ -125,25 +101,14 @@ impl EndpointGenerator {
     pub fn get_user_repos(username: String) -> anyhow::Result<Url> {
         use crate::api::USERS_BASE;
         Url::from_str(CODEBERG_API_BASE)?
-            .join(format!("{USERS_BASE}/").as_str())?
-            .join(format!("{username}/").as_str())?
-            .join("repos")
+            .join(format!("{USERS_BASE}/{username}/repos").as_str())
             .map_err(anyhow::Error::from)
     }
 
     pub fn get_org_repos(orgname: String) -> anyhow::Result<Url> {
         use crate::api::ORG_BASE;
         Url::from_str(CODEBERG_API_BASE)?
-            .join(format!("{ORG_BASE}/").as_str())?
-            .join(format!("{orgname}/").as_str())?
-            .join("repos")
-            .map_err(anyhow::Error::from)
-    }
-
-    pub fn get_all_notifications() -> anyhow::Result<Url> {
-        use crate::api::NOTIFICATIONS;
-        Url::from_str(CODEBERG_API_BASE)?
-            .join(NOTIFICATIONS)
+            .join(format!("{ORG_BASE}/{orgname}/repos").as_str())
             .map_err(anyhow::Error::from)
     }
 

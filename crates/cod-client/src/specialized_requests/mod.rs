@@ -184,7 +184,7 @@ impl CodebergClient {
     }
 
     pub async fn get_all_notifications(&self) -> anyhow::Result<Vec<NotificationThread>> {
-        let api = EndpointGenerator::get_all_notifications()?;
+        let api = EndpointGenerator::all_notifications()?;
         self.get(api).await
     }
 

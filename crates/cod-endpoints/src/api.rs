@@ -13,6 +13,7 @@ pub const REPO_SEARCH: &str = "repos/search";
 
 pub const REPO_OWNER_REPOS: &str = "repos";
 
+pub const REPO_INFOS: &str = "";
 pub const REPO_ASSIGNEES: &str = "assignees";
 pub const REPO_ISSUES: &str = "issues";
 pub const REPO_ISSUES_COMMENTS: &str = "comments";
