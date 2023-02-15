@@ -5,11 +5,11 @@ use crate::api::notification::notification_type::NotifySubjectType;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct NotificationSubject {
-    html_url: String,
-    latest_comment_html_url: String,
-    latest_comment_url: String,
-    state: NotificationStateType,
-    title: String,
+    pub html_url: String,
+    pub latest_comment_html_url: String,
+    pub latest_comment_url: String,
+    pub state: NotificationStateType,
+    pub title: String,
     #[serde(rename = "type")]
-    notify_type: NotifySubjectType,
+    pub notify_type: NotifySubjectType,
 }
