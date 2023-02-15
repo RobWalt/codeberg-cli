@@ -139,4 +139,18 @@ impl EndpointGenerator {
             .join("repos")
             .map_err(anyhow::Error::from)
     }
+
+    pub fn get_all_notifications() -> anyhow::Result<Url> {
+        use crate::api::NOTIFICATIONS;
+        Url::from_str(CODEBERG_API_BASE)?
+            .join(NOTIFICATIONS)
+            .map_err(anyhow::Error::from)
+    }
+
+    pub fn get_notification_thread(thread_id: usize) -> anyhow::Result<Url> {
+        use crate::api::NOTIFICATIONS_INFO;
+        Url::from_str(CODEBERG_API_BASE)?
+            .join(format!("{NOTIFICATIONS_INFO}/{thread_id}").as_str())
+            .map_err(anyhow::Error::from)
+    }
 }

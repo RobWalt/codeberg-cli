@@ -7,6 +7,7 @@ use cod_types::api::issue::Issue;
 use cod_types::api::issue_labels_option::IssueLabelsOption;
 use cod_types::api::label::Label;
 use cod_types::api::milestone::Milestone;
+use cod_types::api::notification::notification_thread::NotificationThread;
 use cod_types::api::pull_request::PullRequest;
 use cod_types::api::repository::Repository;
 use cod_types::api::search_results::SearchResults;
@@ -180,5 +181,18 @@ impl CodebergClient {
     ) -> anyhow::Result<Vec<Label>> {
         let api = EndpointGenerator::repo_put_issue_labels(issue_id)?;
         self.put_body(api, issue_labels_option).await
+    }
+
+    pub async fn get_all_notifications(&self) -> anyhow::Result<Vec<NotificationThread>> {
+        let api = EndpointGenerator::get_all_notifications()?;
+        self.get(api).await
+    }
+
+    pub async fn get_notification_thread(
+        &self,
+        thread_id: usize,
+    ) -> anyhow::Result<NotificationThread> {
+        let api = EndpointGenerator::get_notification_thread(thread_id)?;
+        self.get(api).await
     }
 }

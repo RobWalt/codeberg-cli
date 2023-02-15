@@ -23,3 +23,6 @@ pub const REPO_FORK: &str = "forks";
 pub const REPO_BRANCHES: &str = "branches";
 
 pub const ORG_BASE: &str = "orgs";
+
+pub const NOTIFICATIONS: &str = "notifications";
+pub const NOTIFICATIONS_INFO: &str = "notifications/thread";
