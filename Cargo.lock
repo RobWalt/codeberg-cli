@@ -152,6 +152,7 @@ name = "cod-actions"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "chrono",
  "cod-cli",
  "cod-client",
  "cod-endpoints",
@@ -194,6 +195,7 @@ name = "cod-client"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "chrono",
  "cod-endpoints",
  "cod-types",
  "reqwest",

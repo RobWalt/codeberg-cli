@@ -1,3 +1,5 @@
+use chrono::DateTime;
+use chrono::Utc;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_types::api::branch::Branch;
 use cod_types::api::comment::Comment;
@@ -7,7 +9,9 @@ use cod_types::api::issue::Issue;
 use cod_types::api::issue_labels_option::IssueLabelsOption;
 use cod_types::api::label::Label;
 use cod_types::api::milestone::Milestone;
+use cod_types::api::notification::notification_state_type::NotificationStateType;
 use cod_types::api::notification::notification_thread::NotificationThread;
+use cod_types::api::notification::notification_type::NotificationSubjectType;
 use cod_types::api::pull_request::PullRequest;
 use cod_types::api::repository::Repository;
 use cod_types::api::search_results::SearchResults;
@@ -183,9 +187,53 @@ impl CodebergClient {
         self.put_body(api, issue_labels_option).await
     }
 
-    pub async fn get_all_notifications(&self) -> anyhow::Result<Vec<NotificationThread>> {
+    pub async fn get_all_notifications_unfiltered(
+        &self,
+        all: bool,
+    ) -> anyhow::Result<Vec<NotificationThread>> {
+        self.get_all_notifications_filtered(
+            all,
+            None,
+            None,
+            vec![NotificationStateType::Pinned, NotificationStateType::Unread],
+            None,
+            1,
+            100000,
+        )
+        .await
+    }
+
+    pub async fn get_all_notifications_filtered(
+        &self,
+        all: bool,
+        since: Option<DateTime<Utc>>,
+        before: Option<DateTime<Utc>>,
+        status_types: Vec<NotificationStateType>,
+        subject_type: Option<NotificationSubjectType>,
+        page: usize,
+        limit: usize,
+    ) -> anyhow::Result<Vec<NotificationThread>> {
+        use std::iter::once;
         let api = EndpointGenerator::all_notifications()?;
-        self.get(api).await
+        let query = since
+            .iter()
+            .map(|since| ("since", since.to_rfc3339()))
+            .chain(before.iter().map(|before| ("before", before.to_rfc3339())))
+            .chain(
+                status_types
+                    .iter()
+                    .map(|status_type| ("status-types", status_type.to_string())),
+            )
+            .chain(
+                subject_type
+                    .iter()
+                    .map(|subject_type| ("subject-type", subject_type.to_string())),
+            )
+            .chain(once(("page", page.to_string())))
+            .chain(once(("limit", limit.to_string())))
+            .chain(once(("all", all.to_string())))
+            .collect::<Vec<_>>();
+        self.get_query(api, query).await
     }
 
     pub async fn get_notification_thread(

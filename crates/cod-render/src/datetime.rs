@@ -1,3 +1,4 @@
+use anyhow::Context;
 use chrono::{DateTime, Utc};
 
 pub fn render_datetime_and_info(datetime: DateTime<Utc>) -> String {
@@ -12,4 +13,14 @@ pub fn render_datetime_and_info(datetime: DateTime<Utc>) -> String {
         })
         .unwrap_or_default();
     format!("{}{extra_info}", datetime.format("%d.%m.%Y"),)
+}
+
+pub fn ask_datetime(prompt: &str) -> anyhow::Result<DateTime<Utc>> {
+    let naive_date = inquire::DateSelect::new(prompt).prompt()?;
+    let naive_datetime = naive_date
+        // just use some random time
+        .and_hms_opt(12, 0, 0)
+        .context("couldn't convert NaiveDate to NaiveDateTime")?;
+
+    Ok(DateTime::from_utc(naive_datetime, Utc))
 }
