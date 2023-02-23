@@ -11,6 +11,7 @@ CLI Tool for [Codeberg](https://codeberg.org/) similar to `gh` and `glab`.
 
 <p align="center">
   <img alt="Shell running the issue view command" width="600" src="https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/dogfood.gif">
+  <img alt="Shell running the issue view command" width="600" src="https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/issueview.gif">
 </p>
 
 # Installation 
