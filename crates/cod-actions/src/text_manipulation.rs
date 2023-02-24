@@ -7,3 +7,7 @@ pub(crate) fn select_prompt_for(object: impl Display) -> String {
 pub(crate) fn edit_prompt_for(object: impl Display) -> String {
     format!("Open editor to write {object}")
 }
+
+pub fn input_prompt_for(prompt: &str) -> String {
+    format!("{prompt}: ")
+}

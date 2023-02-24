@@ -8,7 +8,7 @@ use cod_types::api::repository::Repository;
 use inquire::validator::Validation;
 use strum::{Display, IntoEnumIterator};
 
-use crate::text_manipulation::{edit_prompt_for, select_prompt_for};
+use crate::text_manipulation::{edit_prompt_for, input_prompt_for, select_prompt_for};
 
 pub async fn create_repo(mut args: RepoCreateArgs, client: &CodebergClient) -> anyhow::Result<()> {
     args = fill_in_mandatory_values(args)?;
@@ -23,7 +23,7 @@ pub async fn create_repo(mut args: RepoCreateArgs, client: &CodebergClient) -> a
 fn fill_in_mandatory_values(mut args: RepoCreateArgs) -> anyhow::Result<RepoCreateArgs> {
     if args.name.is_none() {
         args.name.replace(
-            inquire::Text::new("Repository Name")
+            inquire::Text::new(input_prompt_for("Repository Name").as_str())
                 .with_validator(|input: &str| {
                     if input.chars().any(|char| char.is_whitespace()) {
                         Ok(Validation::Invalid(
@@ -66,7 +66,7 @@ fn fill_in_optional_values(mut args: RepoCreateArgs) -> anyhow::Result<RepoCreat
 
     if selected_options.contains(&DefaultBranch) {
         args.default_branch.replace(
-            inquire::Text::new("Repository default branch")
+            inquire::Text::new(input_prompt_for("Repository default branch").as_str())
                 .with_default("main")
                 .prompt()?,
         );

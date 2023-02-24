@@ -6,18 +6,19 @@ use cod_client::CodebergClient;
 use cod_endpoints::endpoint_generator::EndpointGenerator;
 use cod_paths::token_directory;
 use cod_render::spinner::spin_until_ready;
+use cod_render::ui::confirm_with_prompt;
 use cod_types::api::user::User;
 use cod_types::token::Token;
 use inquire::validator::Validation;
 use inquire::CustomUserError;
 
+use crate::text_manipulation::input_prompt_for;
+
 const TOKEN_GENERATION_URL: &str = "https://codeberg.org/user/settings/applications";
 
 pub async fn login_user(_args: LoginArgs) -> anyhow::Result<()> {
     // ask for usage of browser
-    if inquire::Confirm::new("Authenticating. Open Browser to generate token for codeberg-cli?")
-        .prompt()?
-    {
+    if confirm_with_prompt("Authenticating. Open Browser to generate token for codeberg-cli?")? {
         println!("\nOpening Browser...\n");
         webbrowser::open(TOKEN_GENERATION_URL)?;
     } else {
@@ -122,7 +123,7 @@ fn validate_token_length(token: &str) -> Validation {
 }
 
 fn ask_for_token() -> anyhow::Result<Token> {
-    inquire::Text::new("Token")
+    inquire::Text::new(input_prompt_for("Token").as_str())
         .with_validator(validate_token)
         .prompt()
         .map(Token::new)

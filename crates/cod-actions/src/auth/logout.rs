@@ -1,10 +1,9 @@
 use cod_cli::auth::logout::LogoutArgs;
 use cod_paths::token_path;
+use cod_render::ui::confirm_with_prompt;
 
 pub fn logout_user(_args: LogoutArgs) -> anyhow::Result<()> {
-    if !inquire::Confirm::new("Logging out deletes your current token. Do you want to proceed?")
-        .prompt()?
-    {
+    if !confirm_with_prompt("Logging out deletes your current token. Do you want to proceed?")? {
         return Ok(());
     }
 
