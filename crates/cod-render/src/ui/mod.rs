@@ -53,3 +53,10 @@ where
 
     Ok(Some(selected_item))
 }
+
+pub fn confirm_with_prompt(prompt: &str) -> anyhow::Result<bool> {
+    inquire::Confirm::new(prompt)
+        .with_help_message("(y/n)?")
+        .prompt()
+        .map_err(anyhow::Error::from)
+}

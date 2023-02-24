@@ -11,6 +11,7 @@ use strum::IntoEnumIterator;
 use strum::{Display, EnumIter};
 
 use crate::text_manipulation::edit_prompt_for;
+use crate::text_manipulation::input_prompt_for;
 use crate::text_manipulation::select_prompt_for;
 
 #[derive(Display, EnumIter, PartialEq, Eq)]
@@ -87,9 +88,10 @@ fn create_update_data(
     }
 
     if selected_update_fields.contains(&Title) {
-        let new_title = inquire::Text::new("Choose a new milestone title")
-            .with_default(selected_milestone.title.as_str())
-            .prompt()?;
+        let new_title =
+            inquire::Text::new(input_prompt_for("Choose a new milestone title").as_str())
+                .with_default(selected_milestone.title.as_str())
+                .prompt()?;
         edit_milestone_options.title.replace(new_title);
     }
 

@@ -5,7 +5,7 @@ use cod_types::api::create_options::create_milestone_option::CreateMilestoneOpti
 use cod_types::api::milestone::Milestone;
 use strum::Display;
 
-use crate::text_manipulation::edit_prompt_for;
+use crate::text_manipulation::{edit_prompt_for, input_prompt_for};
 
 pub async fn create_milestone(
     args: CreateMilestoneArgs,
@@ -22,7 +22,7 @@ pub async fn create_milestone(
 fn fill_in_mandatory_values(args: &CreateMilestoneArgs) -> anyhow::Result<CreateMilestoneOption> {
     let title = match args.title.clone() {
         Some(title) => title,
-        None => inquire::Text::new("Milestone Title").prompt()?,
+        None => inquire::Text::new(input_prompt_for("Milestone Title").as_str()).prompt()?,
     };
     Ok(CreateMilestoneOption::new(title))
 }

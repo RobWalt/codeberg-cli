@@ -9,7 +9,7 @@ use cod_types::api::pull_request::PullRequest;
 use cod_types::api::state_type::StateType;
 use strum::Display;
 
-use crate::text_manipulation::{edit_prompt_for, select_prompt_for};
+use crate::text_manipulation::{edit_prompt_for, input_prompt_for, select_prompt_for};
 
 pub async fn create_pull(
     args: CreatePullRequestArgs,
@@ -27,7 +27,7 @@ async fn fill_in_mandatory_values(
     args: &CreatePullRequestArgs,
     client: &CodebergClient,
 ) -> anyhow::Result<CreatePullRequestOption> {
-    let title = inquire::Text::new("Pull Request Title").prompt()?;
+    let title = inquire::Text::new(input_prompt_for("Pull Request Title").as_str()).prompt()?;
 
     let target_branch = select_branch(
         None,

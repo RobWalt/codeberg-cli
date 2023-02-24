@@ -7,7 +7,7 @@ use cod_types::api::issue::Issue;
 use cod_types::api::state_type::StateType;
 use strum::Display;
 
-use crate::text_manipulation::{edit_prompt_for, select_prompt_for};
+use crate::text_manipulation::{edit_prompt_for, input_prompt_for, select_prompt_for};
 
 pub async fn create_issue(args: CreateIssueArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let options = fill_in_mandatory_values(&args)?;
@@ -21,7 +21,7 @@ pub async fn create_issue(args: CreateIssueArgs, client: &CodebergClient) -> any
 fn fill_in_mandatory_values(args: &CreateIssueArgs) -> anyhow::Result<CreateIssueOption> {
     let title = match args.title.clone() {
         Some(title) => title,
-        None => inquire::Text::new("Issue Title").prompt()?,
+        None => inquire::Text::new(input_prompt_for("Issue Title").as_str()).prompt()?,
     };
     Ok(CreateIssueOption::new(title))
 }

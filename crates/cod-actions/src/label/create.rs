@@ -8,7 +8,7 @@ use cod_types::api::label::Label;
 use inquire::validator::Validation;
 use strum::Display;
 
-use crate::text_manipulation::edit_prompt_for;
+use crate::text_manipulation::{edit_prompt_for, input_prompt_for};
 
 pub async fn create_label(args: CreateLabelArgs, client: &CodebergClient) -> anyhow::Result<()> {
     let options = fill_in_mandatory_values(&args)?;
@@ -26,7 +26,7 @@ pub async fn create_label(args: CreateLabelArgs, client: &CodebergClient) -> any
 fn fill_in_mandatory_values(args: &CreateLabelArgs) -> anyhow::Result<CreateLabelOption> {
     let name = match args.name.clone() {
         Some(name) => name,
-        None => inquire::Text::new("Label Title").prompt()?,
+        None => inquire::Text::new(input_prompt_for("Label Title").as_str()).prompt()?,
     };
     Ok(CreateLabelOption::new(name))
 }
@@ -70,7 +70,8 @@ fn fill_in_optional_values(
     }
 
     if selected_options.contains(&Color) {
-        let new_color = inquire::Text::new("Enter a color")
+        let new_color = inquire::Text::new(input_prompt_for("Enter a color").as_str())
+            .with_help_message("(format: #xxxxxx)")
             .with_validator(|color: &str| {
                 Ok((color.len() == 7
                     && color.starts_with('#')

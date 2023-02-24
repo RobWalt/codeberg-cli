@@ -1,3 +1,5 @@
+#![allow(clippy::too_many_arguments)]
+
 mod constructor;
 mod definition;
 mod general_requests;

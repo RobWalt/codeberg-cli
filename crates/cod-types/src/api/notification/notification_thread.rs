@@ -19,6 +19,11 @@ pub struct NotificationThread {
 
 impl Display for NotificationThread {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.subject.title.as_str())
+        f.write_str(if self.unread { "📕 " } else { "📖 " })?;
+        if self.pinned {
+            f.write_str("📌 ")?;
+        }
+        f.write_str(self.subject.title.as_str())?;
+        Ok(())
     }
 }

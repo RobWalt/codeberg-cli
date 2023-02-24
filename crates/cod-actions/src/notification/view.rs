@@ -1,5 +1,6 @@
 use cod_cli::notification::view::ViewNotificationArgs;
 use cod_client::CodebergClient;
+use cod_render::datetime::render_datetime_and_info;
 use cod_render::ui::fuzzy_select_with_key;
 use cod_types::api::notification::notification_thread::NotificationThread;
 
@@ -12,7 +13,7 @@ pub async fn view_notifications(
         tracing::debug!("{notification_thread:?}");
         notification_thread
     } else {
-        let notification_threads_list = client.get_all_notifications().await?;
+        let notification_threads_list = client.get_all_notifications_unfiltered(args.all).await?;
 
         let notification_thread =
             fuzzy_select_with_key(notification_threads_list, "notification thread")?
@@ -30,11 +31,6 @@ fn present_notification_thread_details(notification_thread: NotificationThread) 
     use cod_render::prelude::*;
     use std::iter::once;
 
-    let reponame = {
-        let repo = &notification_thread.repository;
-        format!("{}/{}", repo.owner, repo.name)
-    };
-
     let rows = once(Row::new([
         TableCell::new_with_alignment("Title", 1, Alignment::Center),
         TableCell::new_with_alignment(
@@ -44,8 +40,48 @@ fn present_notification_thread_details(notification_thread: NotificationThread) 
         ),
     ]))
     .chain(once(Row::new([
-        TableCell::new_with_alignment("Repository", 1, Alignment::Center),
-        TableCell::new_with_alignment(reponame, 1, Alignment::Left),
+        TableCell::new_with_alignment("URL", 1, Alignment::Center),
+        TableCell::new_with_alignment(notification_thread.subject.html_url, 1, Alignment::Left),
+    ])))
+    .chain(once(Row::new([
+        TableCell::new_with_alignment("Type", 1, Alignment::Center),
+        TableCell::new_with_alignment(notification_thread.subject.notify_type, 1, Alignment::Left),
+    ])))
+    .chain(once(Row::new([
+        TableCell::new_with_alignment("State", 1, Alignment::Center),
+        TableCell::new_with_alignment(notification_thread.subject.state, 1, Alignment::Left),
+    ])))
+    .chain(once(Row::new([
+        TableCell::new_with_alignment("Unread", 1, Alignment::Center),
+        TableCell::new_with_alignment(
+            if notification_thread.unread {
+                "Yes"
+            } else {
+                "No"
+            },
+            1,
+            Alignment::Left,
+        ),
+    ])))
+    .chain(once(Row::new([
+        TableCell::new_with_alignment("Pinned", 1, Alignment::Center),
+        TableCell::new_with_alignment(
+            if notification_thread.pinned {
+                "Yes"
+            } else {
+                "No"
+            },
+            1,
+            Alignment::Left,
+        ),
+    ])))
+    .chain(once(Row::new([
+        TableCell::new_with_alignment("Last updated", 1, Alignment::Center),
+        TableCell::new_with_alignment(
+            render_datetime_and_info(notification_thread.updated_at),
+            1,
+            Alignment::Left,
+        ),
     ])));
 
     let table = CodTableBuilder::new()

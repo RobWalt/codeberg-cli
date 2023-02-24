@@ -16,9 +16,10 @@ impl CodebergClient {
 
     pub async fn get_query<Q, T>(&self, api_endpoint: Url, query: Q) -> anyhow::Result<T>
     where
-        Q: Serialize,
+        Q: Serialize + Debug,
         T: DeserializeOwned + Debug,
     {
+        tracing::debug!("Query: {query:?}");
         let request = self.deref().get(api_endpoint.clone()).query(&query);
         tracing::debug!("Making GET call. Request: {:?}", request);
         let response = request.send().await?;

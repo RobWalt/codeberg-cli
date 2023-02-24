@@ -7,7 +7,7 @@ use cod_types::api::edit_options::edit_label_option::EditLabelOption;
 use cod_types::api::label::Label;
 use strum::{Display, EnumIter, IntoEnumIterator};
 
-use crate::text_manipulation::{edit_prompt_for, select_prompt_for};
+use crate::text_manipulation::{edit_prompt_for, input_prompt_for, select_prompt_for};
 
 #[derive(Display, EnumIter, PartialEq, Eq)]
 enum EditableFields {
@@ -55,14 +55,15 @@ fn create_update_data(
     let mut edit_label_options = EditLabelOption::from_label(selected_label);
 
     if selected_update_fields.contains(&Name) {
-        let new_title = inquire::Text::new("Choose a new label name")
+        let new_title = inquire::Text::new(input_prompt_for("Choose a new label name").as_str())
             .with_default(selected_label.name.as_str())
             .prompt()?;
         edit_label_options.name.replace(new_title);
     }
 
     if selected_update_fields.contains(&Color) {
-        let new_title = inquire::Text::new("Choose a new label color (format: #xxxxxx)")
+        let new_title = inquire::Text::new(input_prompt_for("Choose a new label color").as_str())
+            .with_help_message("(format: #xxxxxx)")
             .with_default(selected_label.color.as_str())
             .prompt()?;
         edit_label_options.color.replace(new_title);

@@ -7,7 +7,7 @@ use cod_types::api::pull_request::PullRequest;
 use cod_types::api::state_type::StateType;
 use strum::{Display, EnumIter, IntoEnumIterator};
 
-use crate::text_manipulation::{edit_prompt_for, select_prompt_for};
+use crate::text_manipulation::{edit_prompt_for, input_prompt_for, select_prompt_for};
 
 #[derive(Display, EnumIter, PartialEq, Eq)]
 enum EditableFields {
@@ -112,7 +112,7 @@ async fn create_update_data(
     }
 
     if selected_update_fields.contains(&Title) {
-        let new_title = inquire::Text::new("Choose a new issue title")
+        let new_title = inquire::Text::new(input_prompt_for("Choose a new issue title").as_str())
             .with_default(selected_pull_request.title.as_str())
             .prompt()?;
         edit_pull_request_options.title.replace(new_title);
