@@ -8,8 +8,9 @@ clone:
       - git remote add origin https://codeberg.org/RobWalt/codeberg-cli.git 
       - git fetch origin
       - env
-      - echo $FETCH_HEAD
-      - git checkout $CI_COMMIT_REF
+      - CURRENT_BRANCH="${DRONE_BRANCH}${DRONE_SOURCE_BRANCH}"
+      - echo $CURRENT_BRANCH
+      - git checkout $CURRENT_BRANCH
       - git log --oneline -n 10
 
 pipeline:
