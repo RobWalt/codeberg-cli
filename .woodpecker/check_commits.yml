@@ -9,9 +9,12 @@ clone:
       - git fetch origin
       - env
       - |
+        # current branch isn't main
         if [ -z "$DRONE_SOURCE_BRANCH" ]; then 
+          # choose main
           CURRENT_BRANCH=$DRONE_BRANCH
         else 
+          # choose PR branch
           CURRENT_BRANCH=$DRONE_SOURCE_BRANCH
         fi
       - echo $CURRENT_BRANCH
