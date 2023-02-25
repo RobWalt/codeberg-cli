@@ -9,7 +9,7 @@ clone:
       - git fetch origin
       - env
       - echo $FETCH_HEAD
-      - git checkout $CI_COMMIT_SOURCE_BRANCH
+      - git checkout $CI_COMMIT_REF
       - git log --oneline -n 10
 
 pipeline:
