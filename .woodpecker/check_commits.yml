@@ -8,10 +8,12 @@ clone:
       - git remote add origin https://codeberg.org/RobWalt/codeberg-cli.git 
       - git fetch origin
       - env
-      - export CURRENT_BRANCH=$DRONE_BRANCH$DRONE_SOURCE_BRANCH
+      - if [ -n "$DRONE_SOURCE_BRANCH" ]; then 
+          CURRENT_BRANCH=$DRONE_BRANCH
+        else
+          CURRENT_BRANCH=$DRONE_SOURCE_BRANCH
+        fi
       - echo $CURRENT_BRANCH
-      - echo $DRONE_SOURCE_BRANCH
-      - echo $DRONE_BRANCH
       - git checkout $CURRENT_BRANCH
       - git log --oneline -n 10
 
