@@ -8,7 +8,7 @@ clone:
       - git remote add origin https://codeberg.org/RobWalt/codeberg-cli.git 
       - git fetch origin
       - env
-      - if [[ -z "$DRONE_SOURCE_BRANCH" ]]; then 
+      - if [[ -z $DRONE_SOURCE_BRANCH ]]; then 
           CURRENT_BRANCH=$DRONE_BRANCH
         else
           CURRENT_BRANCH=$DRONE_SOURCE_BRANCH
