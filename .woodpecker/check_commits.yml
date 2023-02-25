@@ -7,7 +7,7 @@ clone:
       - git init -b main
       - git remote add origin https://codeberg.org/RobWalt/codeberg-cli.git 
       - git fetch origin
-      - env | grep will-delete
+      - env
       - git checkout $CI_COMMIT_SOURCE_BRANCH
       - git log --oneline -n 10
 
