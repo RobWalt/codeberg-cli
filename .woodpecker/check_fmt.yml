@@ -1,9 +1,0 @@
-branches: main
-
-pipeline:
-  check_fmt:
-    image: rust
-    commands:
-      - rustup default stable
-      - rustup component add rustfmt
-      - cargo fmt --check

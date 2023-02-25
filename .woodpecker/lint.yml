@@ -1,9 +1,0 @@
-branches: main
-
-pipeline:
-  lint:
-    image: rust
-    commands:
-      - rustup default stable
-      - rustup component add clippy
-      - cargo clippy -- --deny warnings
