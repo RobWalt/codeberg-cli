@@ -73,5 +73,4 @@ Options:
 
 # Development 
 
-- [Codeberg Gitea API Docs](https://codeberg.org/api/swagger) used by [forgejo](https://codeberg.org/forgejo/forgejo/src/branch/forgejo/docs/content/doc/developers/api-usage.en-us.md#api-guide) which is in turn used by codeberg.
-- We use [Woodpecker CI](https://codeberg.org/Codeberg-CI/woodpecker)
+Please take a look at [CONTRIBUTING.md](https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/CONTRIBUTING.md) before opening PRs. We can't accept PRs which don't stick to the guidelines.
