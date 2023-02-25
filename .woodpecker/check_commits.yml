@@ -11,6 +11,8 @@ clone:
       - |
         if [ -z "$DRONE_SOURCE_BRANCH" ]; then 
           CURRENT_BRANCH=$DRONE_BRANCH
+        else 
+          CURRENT_BRANCH=$DRONE_SOURCE_BRANCH
         fi
       - echo $CURRENT_BRANCH
       - git checkout $CURRENT_BRANCH
