@@ -1,0 +1,9 @@
+branches: main
+
+pipeline:
+  check_fmt:
+    image: rust
+    commands:
+      - rustup default stable
+      - cargo install cocogitto
+      - cog check
