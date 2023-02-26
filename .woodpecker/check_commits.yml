@@ -9,13 +9,7 @@ clone:
       - echo "+$CI_COMMIT_REF:"
       - git fetch --no-tags --filter=tree:0 origin "+$CI_COMMIT_REF:"
       - git log --oneline -n 10 FETCH_HEAD
-      - git log --oneline -n 10
-      - env 
-      - git branch
       - git checkout -qt FETCH_HEAD
-      - git submodule update --init --recursive
-      - git lfs fetch
-      - git lfs checkout
       - git log --oneline -n 10
 
 pipeline:
