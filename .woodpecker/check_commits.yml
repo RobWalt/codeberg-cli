@@ -10,7 +10,6 @@ clone:
       - git pull origin "+$CI_COMMIT_REF:"
       - git log --oneline -n 10 FETCH_HEAD
       - git branch
-      - git checkout -qt FETCH_HEAD
       - git log --oneline -n 10
 
 pipeline:
