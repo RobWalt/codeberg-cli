@@ -6,20 +6,7 @@ clone:
     commands: 
       - git init -b main
       - git remote add origin https://codeberg.org/RobWalt/codeberg-cli.git 
-      - git fetch origin
-      - env | grep DRONE
-      - |
-        # current branch isn't main
-        if [ -z "$DRONE_SOURCE_BRANCH" ]; then 
-          # choose main
-          CURRENT_BRANCH=$DRONE_BRANCH
-        else 
-          # choose PR branch
-          CURRENT_BRANCH=$DRONE_SOURCE_BRANCH
-        fi
-      - echo $CURRENT_BRANCH
-      - git checkout $CURRENT_BRANCH
-      - git log --oneline -n 10
+      - git pull origin "+$CI_COMMIT_REF:"
 
 pipeline:
   check_commits:
