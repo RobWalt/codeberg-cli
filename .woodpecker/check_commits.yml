@@ -4,15 +4,14 @@ clone:
   clone:
     image: woodpeckerci/plugin-git
     commands: 
-      - env
-      # - git init -b main
-      # - git remote add origin https://codeberg.org/RobWalt/codeberg-cli.git 
-      # - git fetch --no-tags --filter=tree:0 origin +refs/pull/69/head:
-      # - git checkout -qt FETCH_HEAD
-      # - git submodule update --init --recursive
-      # - git lfs fetch
-      # - git lfs checkout
-      # - git log --oneline -n 10
+      - git init -b main
+      - git remote add origin https://codeberg.org/RobWalt/codeberg-cli.git 
+      - git fetch --no-tags --filter=tree:0 origin "+$CI_COMMIT_REF:"
+      - git checkout -qt FETCH_HEAD
+      - git submodule update --init --recursive
+      - git lfs fetch
+      - git lfs checkout
+      - git log --oneline -n 10
 
 pipeline:
   check_commits:
