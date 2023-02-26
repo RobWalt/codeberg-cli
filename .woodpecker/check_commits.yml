@@ -7,8 +7,9 @@ clone:
       - git init -b main
       - git remote add origin https://codeberg.org/RobWalt/codeberg-cli.git 
       - echo "+$CI_COMMIT_REF:"
-      - git fetch --no-tags --filter=tree:0 origin "+$CI_COMMIT_REF:"
+      - git pull origin "+$CI_COMMIT_REF:"
       - git log --oneline -n 10 FETCH_HEAD
+      - git branch
       - git checkout -qt FETCH_HEAD
       - git log --oneline -n 10
 
