@@ -13,5 +13,5 @@ pipeline:
     image: rust
     commands:
       - rustup default stable
-      - cargo install cocogitto
+      - cargo install --locked cocogitto@^5.3
       - cog check
