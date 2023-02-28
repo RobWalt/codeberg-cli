@@ -15,7 +15,7 @@ name = "cod"
 path = "src/main.rs"
 
 [dependencies]
-cod-bin = { version = "0.1.0", path = "crates/cod-bin" }
+cod-bin = { version = "0.2.0", path = "crates/cod-bin" }
 tokio = { version = "1.24.2", features = ["full"] }
 
 [workspace]

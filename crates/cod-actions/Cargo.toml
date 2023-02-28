@@ -15,13 +15,13 @@ readme = "README.md"
 [dependencies]
 anyhow = "1.0.68"
 chrono = "0.4.23"
-cod-cli = { version = "0.1.0", path = "../cod-cli" }
-cod-client = { version = "0.1.0", path = "../cod-client" }
-cod-endpoints = { version = "0.1.0", path = "../cod-endpoints" }
-cod-git-info = { version = "0.1.0", path = "../cod-git-info" }
-cod-paths = { version = "0.1.0", path = "../cod-paths" }
-cod-render = { version = "0.1.0", path = "../cod-render" }
-cod-types = { version = "0.1.0", path = "../cod-types" }
+cod-cli = { version = "0.2.0", path = "../cod-cli" }
+cod-client = { version = "0.2.0", path = "../cod-client" }
+cod-endpoints = { version = "0.2.1", path = "../cod-endpoints" }
+cod-git-info = { version = "0.2.0", path = "../cod-git-info" }
+cod-paths = { version = "0.2.0", path = "../cod-paths" }
+cod-render = { version = "0.2.0", path = "../cod-render" }
+cod-types = { version = "0.2.1", path = "../cod-types" }
 inquire = { version = "0.5.3", features = ["editor", "date"] }
 reqwest = "0.11.14"
 strum = { version = "0.24.1", features = ["derive"] }

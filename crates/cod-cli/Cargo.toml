@@ -15,4 +15,4 @@ readme = "README.md"
 [dependencies]
 clap = { version = "4.1.1", features = ["derive", "cargo"] }
 clap_complete = "4.1.1"
-cod-types = { version = "0.1.0", path = "../cod-types" }
+cod-types = { version = "0.2.1", path = "../cod-types" }

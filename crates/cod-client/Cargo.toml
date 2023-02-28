@@ -15,8 +15,8 @@ readme = "README.md"
 [dependencies]
 anyhow = "1.0.68"
 chrono = "0.4.23"
-cod-endpoints = { version = "0.1.0", path = "../cod-endpoints" }
-cod-types = { version = "0.1.0", path = "../cod-types" }
+cod-endpoints = { version = "0.2.1", path = "../cod-endpoints" }
+cod-types = { version = "0.2.1", path = "../cod-types" }
 reqwest = "0.11.14"
 serde = "1.0.152"
 serde_json = "1.0.91"
