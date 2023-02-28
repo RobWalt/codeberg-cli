@@ -1,0 +1,54 @@
+## v0.2.0
+#### Bug Fixes
+- **(clone/fork)** make actions work with origanizations - (59b9aa7) - RobWalt
+- **(fork)** fix clone after fork action - (1eca52f) - RobWalt
+- **(render)** fix table rendering bug in own fork and use it - (e897bbd) - RobWalt
+#### Features
+- **(actions+refactor)** see details - (be0712c) - RobWalt
+- **(api-types)** add real types for deserialization - (a1761e5) - RobWalt
+- **(auth)** implement login workflow - (fa270b9) - RobWalt
+- **(bin)** update bin (see details) - (3e91387) - RobWalt
+- **(deps)** add `tracing` crate for logging - (73905e5) - RobWalt
+- **(endpoints)** implement endpoint generator - (8ee216d) - RobWalt
+- **(endpoints)** add new endpoint for user info - (4404704) - RobWalt
+- **(git-info)** add module to get git-info - (fa9de3e) - RobWalt
+- **(info)** polish user info action - (1a9bfb4) - RobWalt
+- **(init)** some initial modelling - (c3b3c33) - RobWalt
+- **(issue)** implement issue comment action - (78e17e0) - RobWalt
+- **(issue)** implement issue view comments action - (c1aa01d) - RobWalt
+- **(issue)** implement issue edit action - (95ea1b8) - RobWalt
+- **(issue)** finish view issue action - (10d15fe) - RobWalt
+- **(label)** implement label delete action - (090f0fd) - RobWalt
+- **(label)** implement create label action - (b7633e4) - RobWalt
+- **(label)** implement list labels action - (ec002ad) - RobWalt
+- **(login)** utilize new modules for login action - (621f7f5) - RobWalt
+- **(logout)** add new logout action - (9181609) - RobWalt
+- **(parse)** `serde_json::Value` instead of `JSONResponse` - (9929470) - RobWalt
+- **(paths)** add module for important paths - (e001bde) - RobWalt
+- **(pull)** implement pull view and pull comment action - (bfd3027) - RobWalt
+- **(pull)** implement pull edit action - (bc2052d) - RobWalt
+- **(pull)** implement pull create action - (910ba8a) - RobWalt
+- **(pulls)** implement list pulls/issues correctly - (568db2d) - RobWalt
+- **(render)** create crate for rendering output - (f865709) - RobWalt
+- **(repo)** implement repo fork action - (ed822cd) - RobWalt
+- **(repo)** implement repo clone action - (ddf450d) - RobWalt
+- **(repo)** implement repo create action - (193a14a) - RobWalt
+- **(scaffolding)** starting new with `clap` instead of `structopt` - (a258380) - RobWalt
+- **(types)** add module for important types - (f96676d) - RobWalt
+- **(userinfo)** add new user info action - (c0f355d) - RobWalt
+#### Miscellaneous Chores
+- **(README)** center logo and showcase gif - (da32e4d) - RobWalt
+- **(README)** update README for release - (cfa929f) - RobWalt
+- **(publish)** make workspace crates publish ready - (1e7d746) - RobWalt
+- **(publish)** prepare for publishing - (6d40a58) - RobWalt
+#### Refactoring
+- **(actions)** unify action naming scheme - (c089eda) - RobWalt
+- **(client)** factor specialized api calls out into client methods - (5e1bac5) - RobWalt
+- **(client)** factor out client in own crate - (4584d9a) - RobWalt
+- **(endpoints)** make endpoints ready for reuse - (d12f911) - RobWalt
+- **(fuzzy-select)** factoring out specialized multi-fuzzy-select - (0d4aa2f) - RobWalt
+- **(git-info)** modularize - (b9fe6ac) - RobWalt
+- **(logging)** use debug! instead of info! - (0c24730) - RobWalt
+- **(main)** reduce code repetition - (3767167) - RobWalt
+- **(spinner)** spinner now has its own module - (18759c5) - RobWalt
+- **(workspace)** refactor to use workspaces - (262b54e) - RobWalt
