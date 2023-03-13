@@ -5,7 +5,7 @@
   <img alt="codeberg-cli logo" src="https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/assets/logo.png" width="500">
 </p>
 
-# codeberg-cli
+# codeberg-cli (berg)
 
 CLI Tool for [Codeberg](https://codeberg.org/) similar to `gh` and `glab`.
 
