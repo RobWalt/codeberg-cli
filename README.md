@@ -2,7 +2,7 @@
 [<img alt="crates.io" src="https://img.shields.io/crates/v/codeberg-cli.svg?style=for-the-badge&color=fc8d62&logo=rust" height="20">](https://crates.io/crates/codeberg-cli)
 
 <p align="center">
-  <img alt="codeberg-cli logo" src="https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/logo.png" width="500">
+  <img alt="codeberg-cli logo" src="https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/assets/logo.png" width="500">
 </p>
 
 # codeberg-cli
@@ -10,8 +10,8 @@
 CLI Tool for [Codeberg](https://codeberg.org/) similar to `gh` and `glab`.
 
 <p align="center">
-  <img alt="Shell running the issue view command" width="600" src="https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/dogfood.gif">
-  <img alt="Shell running the issue view command" width="600" src="https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/issueview.gif">
+  <img alt="Shell running the issue view command" width="600" src="https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/assets/userinfo.gif">
+  <img alt="Shell running the issue view command" width="600" src="https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/assets/issueview.gif">
 </p>
 
 # Installation 
