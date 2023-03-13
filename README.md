@@ -2,16 +2,16 @@
 [<img alt="crates.io" src="https://img.shields.io/crates/v/codeberg-cli.svg?style=for-the-badge&color=fc8d62&logo=rust" height="20">](https://crates.io/crates/codeberg-cli)
 
 <p align="center">
-  <img alt="codeberg-cli logo" src="https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/logo.png" width="500">
+  <img alt="codeberg-cli logo" src="https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/assets/logo.png" width="500">
 </p>
 
-# cod-rs
+# codeberg-cli (berg)
 
 CLI Tool for [Codeberg](https://codeberg.org/) similar to `gh` and `glab`.
 
 <p align="center">
-  <img alt="Shell running the issue view command" width="600" src="https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/dogfood.gif">
-  <img alt="Shell running the issue view command" width="600" src="https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/issueview.gif">
+  <img alt="Shell running the issue view command" width="600" src="https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/assets/userinfo.gif">
+  <img alt="Shell running the issue view command" width="600" src="https://codeberg.org/RobWalt/codeberg-cli/raw/branch/main/assets/issueview.gif">
 </p>
 
 # Installation 
@@ -19,11 +19,11 @@ CLI Tool for [Codeberg](https://codeberg.org/) similar to `gh` and `glab`.
 
 ## I. Cargo
 
-The easiest way to install the `cod` command is using cargo. (If you haven't installed rust/cargo yet, take a look [here](https://doc.rust-lang.org/cargo/getting-started/installation.html))
+The easiest way to install the `berg` command is using cargo. (If you haven't installed rust/cargo yet, take a look [here](https://doc.rust-lang.org/cargo/getting-started/installation.html))
 
 ### I.I. Cargo Build (from source)
 
-Clone the repo and install `cod` with 
+Clone the repo and install `berg` with 
 
 ```sh 
 cargo install --path .
@@ -39,20 +39,20 @@ cargo install codeberg-cli
 
 ## II. Checking the installation
 
-After that, the `cod` command should be available for you. Check it with `cod -V`
+After that, the `berg` command should be available for you. Check it with `berg -V`
 
 ```sh
-cod 0.1.0
+berg 1.0.0
 ```
 
 # Usage
 
-Run `cod -h` for the help menu. Each subcommand also has it's own help menu
+Run `berg -h` for the help menu. Each subcommand also has it's own help menu
 
 ```sh 
 Codeberg CLI app
 
-Usage: cod [COMMAND]
+Usage: berg [COMMAND]
 
 Commands:
   auth        Authentication subcommands
