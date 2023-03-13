@@ -42,7 +42,7 @@ cargo install codeberg-cli
 After that, the `berg` command should be available for you. Check it with `berg -V`
 
 ```sh
-berg 0.1.0
+berg 1.0.0
 ```
 
 # Usage
